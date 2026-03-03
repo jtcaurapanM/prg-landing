@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Sobre PRG Inversiones · Imprenta certificada FSC Chile"
+  description="Desde 2011 fabricamos comunicación visual sostenible con certificación FSC C143583. Conoce nuestra historia, valores y propuesta de valor diferenciada."
+>
+
+  <!-- Header -->
+  <div class="bg-[#101820] text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="text-xs font-semibold uppercase tracking-widest text-[#F4622A]">Sobre nosotros</span>
+      <h1 class="mt-3 text-4xl sm:text-5xl font-bold max-w-2xl leading-tight">
+        Más que una imprenta.<br />
+        <span class="text-[#F4622A]">Una propuesta diferente.</span>
+      </h1>
+      <p class="mt-5 text-white/60 max-w-xl leading-relaxed">
+        Fundada en 2011, PRG Inversiones integra sustentabilidad real, tecnología industrial
+        y un equipo especializado para resolver necesidades complejas de comunicación visual.
+      </p>
+    </div>
+  </div>
+
+  <!-- Historia -->
+  <section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <h2 class="text-3xl font-bold text-[#101820] mb-6">Desde 2011, innovando con propósito</h2>
+          <p class="text-gray-600 leading-relaxed mb-5">
+            Inversiones PRG SpA nació con una convicción clara: la comunicación visual tiene alta
+            rotación, y por eso debe fabricarse con insumos de menor impacto ambiental. Desde el
+            primer día, trabajamos con proveedores responsables en cadena de custodia forestal.
+          </p>
+          <p class="text-gray-600 leading-relaxed mb-5">
+            Con el tiempo, crecimos en capacidades técnicas, incorporamos equipamiento de producción
+            propio y consolidamos procesos que nos permiten atender proyectos complejos sin
+            sacrificar calidad, plazos ni responsabilidad ambiental.
+          </p>
+          <p class="text-gray-600 leading-relaxed">
+            Hoy somos un equipo técnico especializado que trabaja con empresas que valoran
+            la coherencia entre lo que comunican y cómo lo producen.
+          </p>
+        </div>
+        <div class="rounded-2xl overflow-hidden aspect-video">
+          <img
+            src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80"
+            alt="Equipo de trabajo PRG Inversiones"
+            width="800"
+            height="450"
+            loading="lazy"
+            class="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Valores -->
+  <section class="py-24 bg-[#F8F8F6]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl font-bold text-[#101820]">Tres pilares que nos definen</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[
+          {
+            icon: `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>`,
+            title: 'Sustentabilidad real',
+            desc: 'Certificación FSC C143583 vigente. No es marketing: es una auditoría de cadena de custodia que garantiza el origen responsable de nuestros insumos.',
+          },
+          {
+            icon: `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`,
+            title: 'Tecnología propia',
+            desc: 'Producción en casa, con equipamiento actualizado. Sin intermediarios que dilaten los plazos o comprometan la consistencia del resultado.',
+          },
+          {
+            icon: `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`,
+            title: 'Equipo especializado',
+            desc: 'No solo fabricamos: asesoramos. Nuestro equipo técnico acompaña cada proyecto desde el brief hasta la entrega, garantizando el resultado esperado.',
+          },
+        ].map((v) => (
+          <div class="bg-white rounded-2xl p-8 border border-gray-100">
+            <div class="text-[#F4622A] mb-5">
+              <Fragment set:html={v.icon} />
+            </div>
+            <h3 class="font-bold text-[#101820] text-xl mb-3">{v.title}</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">{v.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FSC Detail -->
+  <section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto text-center">
+        <span class="inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-1.5 mb-6">
+          <span class="w-2 h-2 rounded-full bg-green-500"></span>
+          <span class="text-xs font-semibold text-green-700 uppercase tracking-wide">Certificación FSC C143583</span>
+        </span>
+        <h2 class="text-3xl font-bold text-[#101820] mb-6">¿Qué significa que seamos FSC?</h2>
+        <p class="text-gray-600 leading-relaxed mb-8">
+          FSC (Forest Stewardship Council) es la certificación internacional más reconocida en
+          gestión forestal responsable. El número <strong>C143583</strong> identifica nuestra
+          certificación de cadena de custodia, que garantiza que los materiales de papel y cartón
+          que utilizamos han sido trazados desde el bosque hasta tu producto final.
+        </p>
+        <p class="text-gray-600 leading-relaxed mb-10">
+          Para empresas con políticas de compra responsable, contratar con un proveedor certificado
+          FSC es un requisito o un diferencial competitivo. Al trabajar con PRG, puedes comunicar
+          ese compromiso a tus propios clientes con respaldo documental.
+        </p>
+        <a
+          href="/contacto"
+          class="inline-flex items-center gap-2 px-7 py-3.5 bg-[#F4622A] text-white font-bold rounded-md hover:bg-[#d9521f] transition-colors"
+        >
+          Solicitar información FSC
+        </a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

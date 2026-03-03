@@ -1,0 +1,63 @@
+---
+const lines = [
+  {
+    slug: 'papeleria-corporativa',
+    label: 'Papelería Corporativa',
+    desc: 'Tarjetas, carpetas, cuadernos, afiches y volantes para tu empresa.',
+    icon: `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`,
+  },
+  {
+    slug: 'grandes-formatos',
+    label: 'Grandes Formatos',
+    desc: 'Gigantografías, señalética, brandeo vehicular y mobiliario comunicacional.',
+    icon: `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`,
+  },
+  {
+    slug: 'promocionales',
+    label: 'Promocionales',
+    desc: 'Galvanos, pendrives, lápices, credenciales, lanyards, tazones y más.',
+    icon: `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" /></svg>`,
+  },
+  {
+    slug: 'packaging-etiquetas',
+    label: 'Packaging y Etiquetas',
+    desc: 'Cajas corrugadas, microcorrugado, cajas de lujo y etiquetas industriales.',
+    icon: `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>`,
+  },
+];
+---
+
+<section class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="text-center mb-16">
+      <span class="text-xs font-semibold uppercase tracking-widest text-[#F4622A]">Nuestras líneas</span>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-[#101820]">Soluciones para cada necesidad</h2>
+      <p class="mt-4 text-gray-500 max-w-xl mx-auto">
+        Cuatro líneas especializadas que cubren todo el ciclo de comunicación visual de tu empresa.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {lines.map((line) => (
+        <a
+          href={`/catalogo?categoria=${line.slug}`}
+          class="group flex flex-col p-7 rounded-xl border border-gray-100 hover:border-[#F4622A]/30 hover:shadow-lg transition-all duration-300 bg-white"
+        >
+          <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-[#F4622A]/8 text-[#F4622A] mb-5 group-hover:bg-[#F4622A] group-hover:text-white transition-colors duration-300">
+            <Fragment set:html={line.icon} />
+          </div>
+          <h3 class="font-bold text-[#101820] mb-2 group-hover:text-[#F4622A] transition-colors">{line.label}</h3>
+          <p class="text-sm text-gray-500 leading-relaxed flex-1">{line.desc}</p>
+          <span class="mt-5 text-xs font-semibold text-[#F4622A] flex items-center gap-1">
+            Ver productos
+            <svg class="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+            </svg>
+          </span>
+        </a>
+      ))}
+    </div>
+
+  </div>
+</section>

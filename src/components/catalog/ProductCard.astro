@@ -1,0 +1,52 @@
+---
+import Badge from '../ui/Badge.astro';
+import type { Product } from '../../data/products';
+import { CATEGORY_LABELS } from '../../data/categories';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+const categoryLabel = CATEGORY_LABELS[product.category];
+---
+
+<a
+  href={`/catalogo/${product.slug}`}
+  class="group flex flex-col bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-300"
+>
+  <div class="relative aspect-[4/3] overflow-hidden bg-gray-50">
+    <img
+      src={product.images[0]}
+      alt={product.name}
+      width="400"
+      height="300"
+      loading="lazy"
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+    />
+    {product.featured && (
+      <div class="absolute top-3 left-3">
+        <Badge text="Destacado" variant="orange" />
+      </div>
+    )}
+    {product.fscEligible && (
+      <div class="absolute top-3 right-3">
+        <Badge text="FSC" variant="fsc" />
+      </div>
+    )}
+  </div>
+
+  <div class="p-5 flex flex-col gap-2 flex-1">
+    <span class="text-xs font-semibold uppercase tracking-widest text-gray-400">{categoryLabel}</span>
+    <h3 class="font-bold text-[#101820] group-hover:text-[#F4622A] transition-colors leading-snug">
+      {product.name}
+    </h3>
+    <p class="text-sm text-gray-500 leading-relaxed flex-1">{product.shortDesc}</p>
+    <span class="text-sm font-semibold text-[#F4622A] mt-2 flex items-center gap-1">
+      Ver ficha
+      <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+      </svg>
+    </span>
+  </div>
+</a>

@@ -1,17 +1,21 @@
 ---
-
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroSection from '../sections/HeroSection.astro';
+import ServicesSection from '../sections/ServicesSection.astro';
+import FscSection from '../sections/FscSection.astro';
+import FeaturedProductsSection from '../sections/FeaturedProductsSection.astro';
+import CapabilitiesSection from '../sections/CapabilitiesSection.astro';
+import ContactCTASection from '../sections/ContactCTASection.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  title="PRG Inversiones · Comunicación Visual Industrial Certificada FSC"
+  description="Soluciones de impresión corporativa con certificación FSC C143583. Papelería, grandes formatos, packaging y promocionales. Santiago, Chile. Fundada en 2011."
+>
+  <HeroSection />
+  <ServicesSection />
+  <FscSection />
+  <FeaturedProductsSection />
+  <CapabilitiesSection />
+  <ContactCTASection />
+</BaseLayout>
