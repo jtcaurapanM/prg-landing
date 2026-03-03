@@ -352,20 +352,16 @@ function isActive(href: string) {
         if (e.key === 'Escape' && menuOpen) closeMenu();
       });
 
-      // ── Close menu & reset scroll bar before each navigation swap ─────────
-      document.addEventListener('astro:before-swap', () => {
-        closeMenu();
-      });
+      // ── Dirección de navegación ───────────────────────────────────────────
+      // popstate solo dispara en back/forward del browser, no en pushState.
+      let isBackNav = false;
+      window.addEventListener('popstate', () => { isBackNav = true; });
 
-      // ── Product card image transition ─────────────────────────────────────
-      // Solo la imagen hace morph. El nombre y el texto van en el root fade.
-      // Se asigna viewTransitionName dinámicamente solo al card clickeado para
-      // evitar extraer todos los elementos del snapshot root a la vez.
-
+      // ── Product card transitions ──────────────────────────────────────────
       function setCardTransition(slug: string) {
-        const card       = document.querySelector(`[data-product-card][data-slug="${slug}"]`);
-        const imgEl      = card?.querySelector('[data-card-image]') as HTMLElement | null;
-        const contentEl  = card?.querySelector('[data-card-content]') as HTMLElement | null;
+        const card      = document.querySelector(`[data-product-card][data-slug="${slug}"]`);
+        const imgEl     = card?.querySelector('[data-card-image]') as HTMLElement | null;
+        const contentEl = card?.querySelector('[data-card-content]') as HTMLElement | null;
         if (imgEl)     imgEl.style.viewTransitionName     = `product-img-${slug}`;
         if (contentEl) contentEl.style.viewTransitionName = `product-info-${slug}`;
       }
@@ -380,28 +376,52 @@ function isActive(href: string) {
         document.querySelectorAll('[data-product-card]').forEach((card) => {
           card.addEventListener('click', () => {
             const slug = (card as HTMLElement).dataset.slug ?? '';
-            setCardTransition(slug);
-            // Guardar para la navegación de vuelta
             sessionStorage.setItem('lastProductSlug', slug);
+            // Guardamos el scroll actual para restaurarlo al volver atrás.
+            // No podemos leerlo en astro:after-swap porque en ese punto ya es 0.
+            sessionStorage.setItem('catalogScrollY', window.scrollY.toString());
+            setCardTransition(slug);
           });
         });
       }
 
-      // ── Restaurar transición en navegación hacia atrás ────────────────────
-      // astro:after-swap dispara DESPUÉS de que el DOM nuevo está listo pero
-      // ANTES de que el browser tome el snapshot nuevo. Es el único momento
-      // válido para asignar viewTransitionName para la vuelta atrás.
+      // ── Antes de cada swap: marcar dirección en el html ──────────────────
+      document.addEventListener('astro:before-swap', () => {
+        document.documentElement.dataset.navDirection = isBackNav ? 'back' : 'forward';
+        closeMenu();
+      });
+
+      // ── After swap ────────────────────────────────────────────────────────
+      // El morph calcula posiciones en el momento del swap. Si la card está
+      // fuera del viewport (scroll en 0 y card a 800px), el destino del morph
+      // queda invisible y el scroll llega después — se ven desconectados.
+      // Solución: restaurar el scroll instantáneamente ANTES de que el morph
+      // calcule posiciones, así la card ya está en el viewport y la animación
+      // se ve completa. El movimiento visual lo provee el morph, no el scroll.
       document.addEventListener('astro:after-swap', () => {
+        if (isBackNav) {
+          const savedScrollY = parseInt(sessionStorage.getItem('catalogScrollY') ?? '0', 10);
+          sessionStorage.removeItem('catalogScrollY');
+
+          // Posicionar en el scroll guardado antes de que el morph calcule
+          // dónde está la card — así el destino siempre cae en el viewport.
+          window.scrollTo(0, savedScrollY);
+
+          const slug = sessionStorage.getItem('lastProductSlug');
+          if (slug) setCardTransition(slug);
+          return;
+        }
+
         const slug = sessionStorage.getItem('lastProductSlug');
-        if (!slug) return;
-        // Solo aplicar si la nueva página tiene esa card (catálogo o home)
-        setCardTransition(slug);
+        if (slug) setCardTransition(slug);
       });
 
       // ── Re-init on every page load (initial + after View Transition) ──────
       document.addEventListener('astro:page-load', () => {
-        // Limpiar nombres residuales del ciclo anterior
+        // Limpiar nombres residuales y flag de dirección
         clearCardTransitions();
+        delete document.documentElement.dataset.navDirection;
+        isBackNav = false;
 
         // Guardar slug si estamos en una ficha de producto
         const slugMatch = window.location.pathname.match(/\/catalogo\/([^/]+)/);
