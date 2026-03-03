@@ -8,3 +8,60 @@
   --color-brand-gray: #4A4A4A;
   --color-brand-surface: #F2F2F2;
 }
+
+/* ── View Transitions ─────────────────────────────────────────────────── */
+
+/* Default page transition: fade + subtle slide up */
+@keyframes vt-page-out {
+  from {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes vt-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+::view-transition-old(root) {
+  animation: 350ms cubic-bezier(0.4, 0, 1, 1) both vt-page-out;
+}
+
+::view-transition-new(root) {
+  animation: 500ms cubic-bezier(0, 0, 0.2, 1) both vt-page-in;
+}
+
+/* Named element morphs (product image, product name, etc.)
+   ::view-transition-group(*) covers all named transitions.
+   Root is excluded because its animation is set separately above. */
+::view-transition-group(*) {
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-image-pair(*) {
+  animation-duration: 500ms;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(product-image),
+  ::view-transition-new(product-image),
+  ::view-transition-old(product-name),
+  ::view-transition-new(product-name) {
+    animation: none !important;
+  }
+}

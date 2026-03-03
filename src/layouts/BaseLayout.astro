@@ -1,4 +1,5 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
 import '../styles/global.css';
 
 interface Props {
@@ -17,6 +18,19 @@ const {
 
 const siteUrl = 'https://prginversiones.cl';
 const fullTitle = title.includes('PRG') ? title : `${title} · PRG Inversiones`;
+
+const pathname = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/catalogo', label: 'Catálogo' },
+  { href: '/nosotros', label: 'Nosotros' },
+  { href: '/contacto', label: 'Contacto' },
+];
+
+function isActive(href: string) {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+}
 ---
 
 <!doctype html>
@@ -30,7 +44,6 @@ const fullTitle = title.includes('PRG') ? title : `${title} · PRG Inversiones`;
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
 
-    <!-- Open Graph -->
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={`${siteUrl}${ogImage}`} />
@@ -39,17 +52,14 @@ const fullTitle = title.includes('PRG') ? title : `${title} · PRG Inversiones`;
     <meta property="og:locale" content="es_CL" />
     <meta property="og:site_name" content="PRG Inversiones" />
 
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={`${siteUrl}${ogImage}`} />
 
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -57,7 +67,8 @@ const fullTitle = title.includes('PRG') ? title : `${title} · PRG Inversiones`;
       rel="stylesheet"
     />
 
-    <!-- JSON-LD Organization -->
+    <ViewTransitions />
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -75,27 +86,65 @@ const fullTitle = title.includes('PRG') ? title : `${title} · PRG Inversiones`;
       }
     </script>
   </head>
+
   <body class="bg-white text-[#101820] font-sans antialiased">
 
-    <!-- Navbar -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+    <!-- Scroll progress bar — persists across navigations -->
+    <div
+      id="scroll-progress"
+      transition:persist
+      class="fixed top-0 left-0 z-[60] h-[3px] bg-[#F4622A] w-0"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Mobile overlay — persists, state reset on navigation -->
+    <div
+      id="mobile-overlay"
+      transition:persist
+      class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Navbar — persists across navigations, never animates out/in -->
+    <header
+      id="navbar"
+      transition:persist
+      class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 transition-shadow duration-300"
+    >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
 
           <!-- Logo -->
           <a href="/" class="flex items-center gap-2 font-bold text-xl text-[#101820]">
             <span class="text-[#F4622A]">PRG</span>
-            <span class="font-medium text-gray-600 text-base hidden sm:block">Inversiones</span>
+            <span class="font-medium text-gray-500 text-base hidden sm:block">Inversiones</span>
           </a>
 
-          <!-- Nav links -->
-          <nav class="hidden md:flex items-center gap-8">
-            <a href="/catalogo" class="text-sm font-medium text-gray-600 hover:text-[#F4622A] transition-colors">Catálogo</a>
-            <a href="/nosotros" class="text-sm font-medium text-gray-600 hover:text-[#F4622A] transition-colors">Nosotros</a>
-            <a href="/contacto" class="text-sm font-medium text-gray-600 hover:text-[#F4622A] transition-colors">Contacto</a>
+          <!-- Nav links desktop -->
+          <nav class="hidden md:flex items-center gap-1">
+            {navLinks.map(({ href, label }) => (
+              <a
+                href={href}
+                data-nav-link
+                class={[
+                  'relative px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200',
+                  isActive(href)
+                    ? 'text-[#F4622A]'
+                    : 'text-gray-600 hover:text-[#101820] hover:bg-gray-50',
+                ].join(' ')}
+                aria-current={isActive(href) ? 'page' : 'false'}
+              >
+                {label}
+                <span
+                  data-nav-indicator
+                  style={isActive(href) ? '' : 'display:none'}
+                  class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[#F4622A] rounded-full"
+                ></span>
+              </a>
+            ))}
           </nav>
 
-          <!-- CTA -->
+          <!-- CTA desktop -->
           <a
             href="/contacto"
             class="hidden md:inline-flex items-center px-4 py-2 bg-[#F4622A] text-white text-sm font-semibold rounded-md hover:bg-[#d9521f] transition-colors"
@@ -106,25 +155,53 @@ const fullTitle = title.includes('PRG') ? title : `${title} · PRG Inversiones`;
           <!-- Mobile menu button -->
           <button
             id="mobile-menu-btn"
-            class="md:hidden p-2 rounded-md text-gray-600 hover:text-[#F4622A]"
+            class="md:hidden relative z-50 w-9 h-9 flex items-center justify-center rounded-md text-gray-600 hover:text-[#F4622A] transition-colors"
             aria-label="Abrir menú"
+            aria-expanded="false"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg id="icon-open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg id="icon-close" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
 
         </div>
       </div>
 
-      <!-- Mobile menu -->
-      <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white">
-        <div class="px-4 py-4 flex flex-col gap-4">
-          <a href="/catalogo" class="text-sm font-medium text-gray-700 hover:text-[#F4622A]">Catálogo</a>
-          <a href="/nosotros" class="text-sm font-medium text-gray-700 hover:text-[#F4622A]">Nosotros</a>
-          <a href="/contacto" class="text-sm font-medium text-gray-700 hover:text-[#F4622A]">Contacto</a>
-          <a href="/contacto" class="inline-flex justify-center px-4 py-2 bg-[#F4622A] text-white text-sm font-semibold rounded-md">Cotizar ahora</a>
-        </div>
+      <!-- Mobile menu panel -->
+      <div
+        id="mobile-menu"
+        class="md:hidden overflow-hidden max-h-0 transition-[max-height] duration-300 ease-in-out bg-white border-t border-gray-100"
+      >
+        <nav class="px-4 pt-3 pb-5 flex flex-col gap-1">
+          {navLinks.map(({ href, label }) => (
+            <a
+              href={href}
+              class={[
+                'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200',
+                isActive(href)
+                  ? 'bg-[#F4622A]/8 text-[#F4622A] font-semibold'
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-[#101820]',
+              ].join(' ')}
+              aria-current={isActive(href) ? 'page' : undefined}
+            >
+              {isActive(href) && (
+                <span class="w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0"></span>
+              )}
+              {label}
+            </a>
+          ))}
+          <div class="mt-2 pt-3 border-t border-gray-100">
+            <a
+              href="/contacto"
+              class="flex items-center justify-center px-4 py-3 bg-[#F4622A] text-white text-sm font-bold rounded-lg hover:bg-[#d9521f] transition-colors"
+            >
+              Cotizar ahora
+            </a>
+          </div>
+        </nav>
       </div>
     </header>
 
@@ -137,7 +214,6 @@ const fullTitle = title.includes('PRG') ? title : `${title} · PRG Inversiones`;
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
 
-          <!-- Brand -->
           <div>
             <div class="font-bold text-xl mb-3">
               <span class="text-[#F4622A]">PRG</span> Inversiones
@@ -152,7 +228,6 @@ const fullTitle = title.includes('PRG') ? title : `${title} · PRG Inversiones`;
             </div>
           </div>
 
-          <!-- Links -->
           <div>
             <h3 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Servicios</h3>
             <ul class="space-y-2 text-sm text-gray-300">
@@ -163,7 +238,6 @@ const fullTitle = title.includes('PRG') ? title : `${title} · PRG Inversiones`;
             </ul>
           </div>
 
-          <!-- Contact -->
           <div>
             <h3 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Contacto</h3>
             <ul class="space-y-2 text-sm text-gray-300">
@@ -181,11 +255,12 @@ const fullTitle = title.includes('PRG') ? title : `${title} · PRG Inversiones`;
       </div>
     </footer>
 
-    <!-- WhatsApp flotante -->
+    <!-- WhatsApp flotante — persists across navigations -->
     <a
       href="https://wa.me/56900000000?text=Hola%2C%20me%20gustar%C3%ADa%20cotizar%20un%20producto."
       target="_blank"
       rel="noopener noreferrer"
+      transition:persist
       class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] text-white px-4 py-3 rounded-full shadow-lg hover:bg-[#1ebe5c] transition-colors text-sm font-semibold"
       aria-label="Contactar por WhatsApp"
     >
@@ -195,11 +270,160 @@ const fullTitle = title.includes('PRG') ? title : `${title} · PRG Inversiones`;
       WhatsApp
     </a>
 
-    <!-- Mobile menu toggle -->
     <script>
-      const btn = document.getElementById('mobile-menu-btn');
-      const menu = document.getElementById('mobile-menu');
-      btn?.addEventListener('click', () => menu?.classList.toggle('hidden'));
+      // ── Helpers ──────────────────────────────────────────────────────────
+      const getEl = (id: string) => document.getElementById(id)!;
+
+      // ── Scroll effects ────────────────────────────────────────────────────
+      // Add listener once — the elements persist across navigations
+      function handleScroll() {
+        const progressBar = getEl('scroll-progress');
+        const navbar      = getEl('navbar');
+        const docHeight   = document.documentElement.scrollHeight - window.innerHeight;
+        const pct         = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+
+        progressBar.style.width = `${pct}%`;
+
+        if (window.scrollY > 20) {
+          navbar.classList.add('shadow-md');
+          navbar.classList.remove('border-gray-100');
+        } else {
+          navbar.classList.remove('shadow-md');
+          navbar.classList.add('border-gray-100');
+        }
+      }
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+
+      // ── Mobile menu ───────────────────────────────────────────────────────
+      let menuOpen = false;
+
+      function openMenu() {
+        menuOpen = true;
+        const menu    = getEl('mobile-menu');
+        const overlay = getEl('mobile-overlay');
+        menu.style.maxHeight = menu.scrollHeight + 'px';
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+        overlay.classList.add('opacity-100');
+        getEl('icon-open').classList.add('hidden');
+        getEl('icon-close').classList.remove('hidden');
+        getEl('mobile-menu-btn').setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMenu() {
+        menuOpen = false;
+        const menu    = getEl('mobile-menu');
+        const overlay = getEl('mobile-overlay');
+        menu.style.maxHeight = '0px';
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+        overlay.classList.remove('opacity-100');
+        getEl('icon-open').classList.remove('hidden');
+        getEl('icon-close').classList.add('hidden');
+        getEl('mobile-menu-btn').setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+
+      function initMobileMenu() {
+        const btn     = getEl('mobile-menu-btn');
+        const overlay = getEl('mobile-overlay');
+        const menu    = getEl('mobile-menu');
+
+        // Clone to remove stale listeners before re-attaching
+        const newBtn = btn.cloneNode(true) as HTMLElement;
+        btn.replaceWith(newBtn);
+        const newOverlay = overlay.cloneNode(true) as HTMLElement;
+        overlay.replaceWith(newOverlay);
+
+        newBtn.addEventListener('click', () => menuOpen ? closeMenu() : openMenu());
+        newOverlay.addEventListener('click', closeMenu);
+
+        menu.querySelectorAll('a').forEach((link) =>
+          link.addEventListener('click', closeMenu)
+        );
+
+        window.addEventListener('resize', () => {
+          if (menuOpen) getEl('mobile-menu').style.maxHeight = getEl('mobile-menu').scrollHeight + 'px';
+          if (window.innerWidth >= 768) closeMenu();
+        });
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && menuOpen) closeMenu();
+      });
+
+      // ── Close menu & reset scroll bar before each navigation swap ─────────
+      document.addEventListener('astro:before-swap', () => {
+        closeMenu();
+      });
+
+      // ── Product card image transition ─────────────────────────────────────
+      // Solo la imagen hace morph. El nombre y el texto van en el root fade.
+      // Se asigna viewTransitionName dinámicamente solo al card clickeado para
+      // evitar extraer todos los elementos del snapshot root a la vez.
+
+      function setCardTransition(slug: string) {
+        const card       = document.querySelector(`[data-product-card][data-slug="${slug}"]`);
+        const imgEl      = card?.querySelector('[data-card-image]') as HTMLElement | null;
+        const contentEl  = card?.querySelector('[data-card-content]') as HTMLElement | null;
+        if (imgEl)     imgEl.style.viewTransitionName     = `product-img-${slug}`;
+        if (contentEl) contentEl.style.viewTransitionName = `product-info-${slug}`;
+      }
+
+      function clearCardTransitions() {
+        document.querySelectorAll('[data-card-image], [data-card-content]').forEach((el) => {
+          (el as HTMLElement).style.viewTransitionName = '';
+        });
+      }
+
+      function initCardTransitions() {
+        document.querySelectorAll('[data-product-card]').forEach((card) => {
+          card.addEventListener('click', () => {
+            const slug = (card as HTMLElement).dataset.slug ?? '';
+            setCardTransition(slug);
+            // Guardar para la navegación de vuelta
+            sessionStorage.setItem('lastProductSlug', slug);
+          });
+        });
+      }
+
+      // ── Restaurar transición en navegación hacia atrás ────────────────────
+      // astro:after-swap dispara DESPUÉS de que el DOM nuevo está listo pero
+      // ANTES de que el browser tome el snapshot nuevo. Es el único momento
+      // válido para asignar viewTransitionName para la vuelta atrás.
+      document.addEventListener('astro:after-swap', () => {
+        const slug = sessionStorage.getItem('lastProductSlug');
+        if (!slug) return;
+        // Solo aplicar si la nueva página tiene esa card (catálogo o home)
+        setCardTransition(slug);
+      });
+
+      // ── Re-init on every page load (initial + after View Transition) ──────
+      document.addEventListener('astro:page-load', () => {
+        // Limpiar nombres residuales del ciclo anterior
+        clearCardTransitions();
+
+        // Guardar slug si estamos en una ficha de producto
+        const slugMatch = window.location.pathname.match(/\/catalogo\/([^/]+)/);
+        if (slugMatch) sessionStorage.setItem('lastProductSlug', slugMatch[1]);
+
+        handleScroll();
+        initMobileMenu();
+        initCardTransitions();
+
+        // Actualizar link activo en navbar (persiste entre páginas)
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('[data-nav-link]').forEach((el) => {
+          const link = el as HTMLAnchorElement;
+          const href = link.getAttribute('href') ?? '';
+          const active = href !== '/' ? currentPath.startsWith(href) : currentPath === '/';
+          link.setAttribute('aria-current', active ? 'page' : 'false');
+          link.classList.toggle('text-[#F4622A]', active);
+          link.classList.toggle('text-gray-600', !active);
+          const indicator = link.querySelector('[data-nav-indicator]') as HTMLElement | null;
+          if (indicator) indicator.style.display = active ? 'block' : 'none';
+        });
+      });
     </script>
 
   </body>
