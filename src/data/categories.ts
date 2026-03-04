@@ -10,7 +10,7 @@ export type CategorySlug = (typeof CATEGORIES)[keyof typeof CATEGORIES];
 export const CATEGORY_LABELS: Record<CategorySlug, string> = {
   'papeleria-corporativa': 'Papelería Corporativa',
   'grandes-formatos': 'Grandes Formatos',
-  'promocionales': 'Promocionales',
+  'promocionales': 'Regalos Promocionales',
   'packaging-etiquetas': 'Packaging y Etiquetas',
 };
 
