@@ -2,6 +2,12 @@
 
 /* ── Gotham — fuente corporativa provista por el cliente ──────────────── */
 
+/* ── Métricas normalizadas para todos los pesos
+   Gotham tiene usWinAscent/Descent mayores al em-box real, lo que desplaza
+   el baseline y causa desalineación visual en flex. Estos overrides
+   normalizan el content area a 1em (80% ascent + 20% descent) eliminando
+   el problema en todos los contextos, incluido leading-none. ── */
+
 /* Light · 300 */
 @font-face {
   font-family: 'Gotham';
@@ -9,6 +15,9 @@
   font-weight: 300;
   font-style: normal;
   font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
@@ -16,6 +25,9 @@
   font-weight: 300;
   font-style: italic;
   font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
 }
 
 /* Book / Regular · 400
@@ -27,6 +39,9 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
@@ -34,6 +49,9 @@
   font-weight: 400;
   font-style: italic;
   font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
 }
 
 /* Medium · 500 */
@@ -43,6 +61,9 @@
   font-weight: 500;
   font-style: normal;
   font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
@@ -50,6 +71,9 @@
   font-weight: 500;
   font-style: italic;
   font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
 }
 
 /* Bold · 600–700 (font-semibold y font-bold usan el mismo archivo) */
@@ -59,6 +83,9 @@
   font-weight: 600 700;
   font-style: normal;
   font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
@@ -66,6 +93,9 @@
   font-weight: 600 700;
   font-style: italic;
   font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
 }
 
 /* Ultra · 900 */
@@ -75,6 +105,9 @@
   font-weight: 900;
   font-style: normal;
   font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
@@ -82,6 +115,9 @@
   font-weight: 900;
   font-style: italic;
   font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
 }
 
 @theme {
@@ -95,38 +131,24 @@
 
 /* ── View Transitions ─────────────────────────────────────────────────── */
 
-/* Default page transition: fade + subtle slide up */
-@keyframes vt-page-out {
-  from {
-    opacity: 1;
-    transform: translateY(0px);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
+/* ── Crossfade: la página nueva aparece encima de la antigua.
+   Nunca hay pantalla en blanco — se siente como SPA, no como recarga. ── */
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-@keyframes vt-page-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0px);
-  }
-}
-
+/* Página antigua: se queda quieta (la nueva la cubre) */
 ::view-transition-old(root) {
-  animation: 350ms cubic-bezier(0.4, 0, 1, 1) both vt-page-out;
+  animation: none;
 }
 
+/* Página nueva: fade in rápido encima de la anterior */
 ::view-transition-new(root) {
-  animation: 500ms cubic-bezier(0, 0, 0.2, 1) both vt-page-in;
+  animation: 280ms ease-out both vt-fade-in;
 }
 
-/* Named elements — forward navigation */
+/* Named elements (morph de cards) — forward */
 ::view-transition-group(*) {
   animation-duration: 500ms;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -136,22 +158,18 @@
   animation-duration: 500ms;
 }
 
-/* Back navigation — elementos se encogen: easing más suave y un poco más lento */
-[data-nav-direction="back"] ::view-transition-old(root) {
-  animation: 300ms cubic-bezier(0.4, 0, 1, 1) both vt-page-out;
-}
-
+/* Back navigation */
 [data-nav-direction="back"] ::view-transition-new(root) {
-  animation: 420ms cubic-bezier(0, 0, 0.2, 1) both vt-page-in;
+  animation: 320ms ease-out both vt-fade-in;
 }
 
 [data-nav-direction="back"] ::view-transition-group(*) {
-  animation-duration: 580ms;
+  animation-duration: 500ms;
   animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 [data-nav-direction="back"] ::view-transition-image-pair(*) {
-  animation-duration: 580ms;
+  animation-duration: 500ms;
 }
 
 /* Respect user motion preferences */
