@@ -60,12 +60,6 @@ function isActive(href: string) {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
 
     <ViewTransitions />
 
@@ -115,7 +109,7 @@ function isActive(href: string) {
         <div class="flex items-center justify-between h-16">
 
           <!-- Logo -->
-          <a href="/" class="flex items-center gap-2 font-bold text-xl text-[#101820]">
+          <a href="/" class="flex items-baseline gap-2 font-bold text-xl text-[#101820]">
             <span class="text-[#F4622A]">PRG</span>
             <span class="font-medium text-gray-500 text-base hidden sm:block">Inversiones</span>
           </a>
@@ -403,8 +397,19 @@ function isActive(href: string) {
           const savedScrollY = parseInt(sessionStorage.getItem('catalogScrollY') ?? '0', 10);
           sessionStorage.removeItem('catalogScrollY');
 
-          // Posicionar en el scroll guardado antes de que el morph calcule
-          // dónde está la card — así el destino siempre cae en el viewport.
+          // Aplicar el filtro del catálogo de forma instantánea ANTES de
+          // restaurar el scroll. Si no lo hacemos, el layout tiene todos los
+          // productos visibles y el scroll guardado apunta a una posición
+          // incorrecta. [data-card-wrapper] solo existe en /catalogo,
+          // así que en otras páginas este forEach no hace nada.
+          const filterCat = new URLSearchParams(window.location.search).get('categoria');
+          document.querySelectorAll<HTMLElement>('[data-card-wrapper]').forEach((wrapper) => {
+            const show = !filterCat || wrapper.dataset.category === filterCat;
+            wrapper.style.display = show ? '' : 'none';
+          });
+
+          // Con el layout ya estabilizado, posicionar el scroll antes de que
+          // el morph calcule dónde está la card en el viewport.
           window.scrollTo(0, savedScrollY);
 
           const slug = sessionStorage.getItem('lastProductSlug');
