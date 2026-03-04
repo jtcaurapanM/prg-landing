@@ -83,14 +83,6 @@ function isActive(href: string) {
 
   <body class="bg-white text-[#101820] font-sans antialiased">
 
-    <!-- Scroll progress bar — persists across navigations -->
-    <div
-      id="scroll-progress"
-      transition:persist
-      class="fixed top-0 left-0 z-[60] h-[3px] bg-[#F4622A] w-0"
-      aria-hidden="true"
-    ></div>
-
     <!-- Mobile overlay — persists, state reset on navigation -->
     <div
       id="mobile-overlay"
@@ -269,15 +261,8 @@ function isActive(href: string) {
       const getEl = (id: string) => document.getElementById(id)!;
 
       // ── Scroll effects ────────────────────────────────────────────────────
-      // Add listener once — the elements persist across navigations
       function handleScroll() {
-        const progressBar = getEl('scroll-progress');
-        const navbar      = getEl('navbar');
-        const docHeight   = document.documentElement.scrollHeight - window.innerHeight;
-        const pct         = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
-
-        progressBar.style.width = `${pct}%`;
-
+        const navbar = getEl('navbar');
         if (window.scrollY > 20) {
           navbar.classList.add('shadow-md');
           navbar.classList.remove('border-gray-100');
