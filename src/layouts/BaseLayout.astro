@@ -1,5 +1,5 @@
 ---
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 
@@ -48,7 +48,7 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
 
-    <ViewTransitions />
+    <ClientRouter />
 
     <script type="application/ld+json">
       {
