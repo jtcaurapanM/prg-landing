@@ -497,6 +497,18 @@ function isActive(href: string) {
           return;
         }
 
+        // Navegación hacia adelante: aplicar filtro del catálogo ANTES de que
+        // la página sea visible (durante el fade-in). Así no hay parpadeo de
+        // "todos los productos → filtrados". Solo existe [data-card-wrapper]
+        // en /catalogo, en cualquier otra página el forEach no hace nada.
+        const filterCat = new URLSearchParams(window.location.search).get("categoria");
+        document
+          .querySelectorAll<HTMLElement>("[data-card-wrapper]")
+          .forEach((wrapper) => {
+            const show = !filterCat || wrapper.dataset.category === filterCat;
+            wrapper.style.display = show ? "" : "none";
+          });
+
         const slug = sessionStorage.getItem("lastProductSlug");
         if (slug) setCardTransition(slug);
       });

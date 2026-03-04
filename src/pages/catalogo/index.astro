@@ -70,14 +70,11 @@ const categories = Object.entries(CATEGORY_LABELS) as [CategorySlug, string][];
   -->
 
   <script define:vars={{ categoryLabels: CATEGORY_LABELS, categoryDescriptions: CATEGORY_DESCRIPTIONS }}>
-    function applyFilter(category) {
+    function applyFilter(category, skipAnimation = false) {
       const grid = document.getElementById('catalog-grid');
       if (!grid) return;
 
-      // Fade out → swap → fade in
-      grid.style.opacity = '0';
-
-      setTimeout(() => {
+      const doFilter = () => {
         let visible = 0;
 
         document.querySelectorAll('[data-card-wrapper]').forEach((wrapper) => {
@@ -121,15 +118,28 @@ const categories = Object.entries(CATEGORY_LABELS) as [CategorySlug, string][];
             : 'Catálogo completo de productos de impresión: papelería corporativa, grandes formatos, packaging y más.';
         }
 
-        grid.style.opacity = '1';
-      }, 150);
+        if (!skipAnimation) grid.style.opacity = '1';
+      };
+
+      if (skipAnimation) {
+        // Carga inicial o navegación con View Transition: los productos ya están
+        // filtrados por astro:after-swap en BaseLayout. Solo actualizamos
+        // botones, título y descripción sin tocar la opacidad del grid.
+        doFilter();
+      } else {
+        // Click en filtro: fade out → filtrar → fade in
+        grid.style.opacity = '0';
+        setTimeout(doFilter, 150);
+      }
     }
 
     function initCatalogFilter() {
       // Leer categoría de la URL
       const params   = new URLSearchParams(window.location.search);
       const category = params.get('categoria') || null;
-      applyFilter(category);
+      // skipAnimation=true: los productos ya fueron filtrados en astro:after-swap
+      // antes de que la página fuera visible. Solo sincronizamos el estado UI.
+      applyFilter(category, true);
 
       // Click en filtros
       document.querySelectorAll('[data-filter-btn]').forEach((btn) => {
