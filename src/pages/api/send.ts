@@ -16,7 +16,6 @@ export const POST: APIRoute = async ({ request }) => {
   const {
     name,
     email,
-    company,
     phone,
     category,
     productRef,
@@ -24,7 +23,7 @@ export const POST: APIRoute = async ({ request }) => {
     message,
   } = body;
 
-  if (!name || !email || !company || !message) {
+  if (!name || !email || !message) {
     return new Response(
       JSON.stringify({ error: "Campos requeridos faltantes." }),
       { status: 422 },
@@ -57,7 +56,6 @@ Nueva cotización desde prginversiones.cl
 
 Nombre:    ${name}
 Email:     ${email}
-Empresa:   ${company}
 Teléfono:  ${phone || "No indicado"}
 
 Línea de interés:     ${category || "No indicada"}
@@ -72,7 +70,7 @@ ${message}
     from: fromEmail,
     to: toEmail,
     replyTo: email,
-    subject: `[PRG] Nueva cotización de ${company} — ${name}`,
+    subject: `[PRG] Nueva cotización de ${name}`,
     text: emailBody,
   });
 
