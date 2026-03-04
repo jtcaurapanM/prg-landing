@@ -312,7 +312,12 @@ const { productName = '', compact = false } = Astro.props;
       btnText.textContent = 'Enviando...';
       btnSpinner.classList.remove('hidden');
 
-      const data = Object.fromEntries(new FormData(form).entries());
+      const formData = new FormData(form);
+      const categories = formData.getAll('category') as string[];
+      const data = {
+        ...Object.fromEntries(formData.entries()),
+        category: categories.join(','),
+      };
 
       try {
         const res = await fetch('/api/send', {

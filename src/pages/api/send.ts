@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { Resend } from "resend";
+import { buildNotificationEmail, buildConfirmationEmail } from "../../lib/email-templates";
 
 export const prerender = false;
 
@@ -13,15 +14,7 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  const {
-    name,
-    email,
-    phone,
-    category,
-    productRef,
-    quantity,
-    message,
-  } = body;
+  const { name, email, phone, category, productRef, quantity, message } = body;
 
   if (!name || !email || !message) {
     return new Response(
@@ -37,9 +30,9 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const apiKey = import.meta.env.RESEND_API_KEY;
+  const apiKey    = import.meta.env.RESEND_API_KEY;
   const fromEmail = import.meta.env.RESEND_FROM;
-  const toEmail = import.meta.env.CONTACT_EMAIL;
+  const toEmail   = import.meta.env.CONTACT_EMAIL;
 
   if (!apiKey || !fromEmail || !toEmail) {
     console.error("Variables de entorno de Resend no configuradas.");
@@ -50,36 +43,43 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const resend = new Resend(apiKey);
+  const data   = { name, email, phone, category, productRef, quantity, message };
 
-  const emailBody = `
-Nueva cotización desde prginversiones.cl
+  // ── 1. Notificación interna al equipo PRG ──────────────────────────────────
+  const notification = buildNotificationEmail(data);
 
-Nombre:    ${name}
-Email:     ${email}
-Teléfono:  ${phone || "No indicado"}
-
-Línea de interés:     ${category || "No indicada"}
-Producto referencia:  ${productRef || "No indicado"}
-Cantidad aproximada:  ${quantity || "No indicada"}
-
-Mensaje:
-${message}
-  `.trim();
-
-  const { error } = await resend.emails.send({
-    from: fromEmail,
-    to: toEmail,
+  const { error: notifError } = await resend.emails.send({
+    from:    fromEmail,
+    to:      toEmail,
     replyTo: email,
-    subject: `[PRG] Nueva cotización de ${name}`,
-    text: emailBody,
+    subject: notification.subject,
+    html:    notification.html,
+    text:    notification.text,
   });
 
-  if (error) {
-    console.error("Error Resend:", error);
+  if (notifError) {
+    console.error("Error Resend (notificación):", notifError);
     return new Response(
       JSON.stringify({ error: "No se pudo enviar el correo." }),
       { status: 500 },
     );
+  }
+
+  // ── 2. Confirmación al usuario ────────────────────────────────────────────
+  const confirmation = buildConfirmationEmail(data);
+
+  const { error: confirmError } = await resend.emails.send({
+    from:    fromEmail,
+    to:      email,
+    replyTo: toEmail,
+    subject: confirmation.subject,
+    html:    confirmation.html,
+    text:    confirmation.text,
+  });
+
+  if (confirmError) {
+    // No bloquea: la notificación ya se envió correctamente
+    console.error("Error Resend (confirmación al usuario):", confirmError);
   }
 
   return new Response(JSON.stringify({ ok: true }), { status: 200 });
