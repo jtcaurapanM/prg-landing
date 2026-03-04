@@ -138,6 +138,35 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           competitivo. Al trabajar con PRG, puedes comunicar ese compromiso a
           tus propios clientes con respaldo documental.
         </p>
+
+        <!-- PDF viewer -->
+        <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-sm mb-6">
+          <iframe
+            src="/Certificado-FSC-2023.pdf"
+            title="Certificado FSC C143583 — PRG Inversiones"
+            class="w-full"
+            style="height: 600px;"
+            loading="lazy"
+          >
+            <p class="p-6 text-gray-500 text-sm">
+              Tu navegador no soporta la visualización de PDF.
+              <a href="/Certificado-FSC-2023.pdf" class="text-[#F4622A] underline" download>
+                Descarga el certificado aquí.
+              </a>
+            </p>
+          </iframe>
+        </div>
+
+        <a
+          href="/Certificado-FSC-2023.pdf"
+          download
+          class="inline-flex items-center gap-2 px-6 py-3 bg-[#101820] text-white text-sm font-semibold rounded-md hover:bg-[#1e2d3d] transition-colors"
+        >
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Descargar certificado PDF
+        </a>
       </div>
     </div>
   </section>
