@@ -1,6 +1,9 @@
 ---
 import { ViewTransitions } from "astro:transitions";
 import "../styles/global.css";
+import { CATEGORY_LABELS } from "../data/categories";
+
+const categoryEntries = Object.entries(CATEGORY_LABELS) as [string, string][];
 
 interface Props {
   title: string;
@@ -22,6 +25,7 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
 const pathname = Astro.url.pathname;
 
 const navLinks = [
+  { href: "/", label: "Inicio" },
   { href: "/catalogo", label: "Catálogo" },
   { href: "/nosotros", label: "Nosotros" },
   { href: "/contacto", label: "Contacto" },
@@ -110,8 +114,75 @@ function isActive(href: string) {
 
           <!-- Nav links desktop -->
           <nav class="hidden md:flex items-center gap-1">
+            <!-- Inicio -->
+            <a
+              href="/"
+              data-nav-link
+              class={[
+                "relative px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
+                isActive("/")
+                  ? "text-[#F4622A]"
+                  : "text-gray-600 hover:text-[#101820] hover:bg-gray-50",
+              ].join(" ")}
+              aria-current={isActive("/") ? "page" : "false"}
+            >
+              Inicio
+              <span
+                data-nav-indicator
+                style={isActive("/") ? "" : "display:none"}
+                class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[#F4622A] rounded-full"
+              />
+            </a>
+
+            <!-- Catálogo con dropdown -->
+            <div class="relative group">
+              <a
+                href="/catalogo"
+                data-nav-link
+                class={[
+                  "relative flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
+                  isActive("/catalogo")
+                    ? "text-[#F4622A]"
+                    : "text-gray-600 hover:text-[#101820] hover:bg-gray-50",
+                ].join(" ")}
+                aria-current={isActive("/catalogo") ? "page" : "false"}
+              >
+                Catálogo
+                <svg class="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+                <span
+                  data-nav-indicator
+                  style={isActive("/catalogo") ? "" : "display:none"}
+                  class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[#F4622A] rounded-full"
+                />
+              </a>
+
+              <!-- Dropdown panel — top-full sin gap para mantener hover -->
+              <div class="absolute top-full left-0 pt-1 z-50 min-w-[210px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-150">
+                <div class="bg-white rounded-xl border border-gray-100 shadow-xl overflow-hidden py-1.5">
+                  <a
+                    href="/catalogo"
+                    class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-[#101820] hover:bg-gray-50 border-b border-gray-50"
+                  >
+                    Todos los productos
+                  </a>
+                  {categoryEntries.map(([slug, label]) => (
+                    <a
+                      href={`/catalogo?categoria=${slug}`}
+                      class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#F4622A] transition-colors"
+                    >
+                      <span class="w-1 h-1 rounded-full bg-[#F4622A] shrink-0" />
+                      {label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <!-- Resto de links -->
             {
-              navLinks.map(({ href, label }) => (
+              navLinks.filter(({ href }) => href !== "/" && href !== "/catalogo").map(({ href, label }) => (
                 <a
                   href={href}
                   data-nav-link
@@ -185,10 +256,63 @@ function isActive(href: string) {
         class="md:hidden overflow-hidden max-h-0 transition-[max-height] duration-300 ease-in-out bg-white border-t border-gray-100"
       >
         <nav class="px-4 pt-3 pb-5 flex flex-col gap-1">
+          <!-- Catálogo con submenu expandible -->
+          <div>
+            <!-- items-stretch para que link y botón tengan la misma altura -->
+            <div class="flex items-stretch rounded-lg overflow-hidden">
+              <a
+                href="/catalogo"
+                data-mobile-catalog-link
+                class={[
+                  "flex-1 flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors duration-200",
+                  isActive("/catalogo")
+                    ? "bg-[#F4622A]/8 text-[#F4622A] font-semibold"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-[#101820]",
+                ].join(" ")}
+                aria-current={isActive("/catalogo") ? "page" : undefined}
+              >
+                <!-- dot: siempre en DOM, JS controla visibilidad -->
+                <span data-mobile-dot class={isActive("/catalogo") ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" : "hidden"} />
+                Catálogo
+              </a>
+              <button
+                id="catalog-mobile-toggle"
+                data-mobile-catalog-toggle
+                aria-label="Ver categorías"
+                aria-expanded="false"
+                class={[
+                  "flex items-center justify-center px-3 border-l transition-colors duration-200",
+                  isActive("/catalogo")
+                    ? "border-[#F4622A]/20 text-[#F4622A] bg-[#F4622A]/8"
+                    : "border-gray-100 text-gray-400 hover:text-[#F4622A] hover:bg-gray-50",
+                ].join(" ")}
+              >
+                <svg id="catalog-mobile-chevron" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Subcategorías -->
+            <div id="catalog-mobile-submenu" class="hidden pl-3 pt-1 pb-1 flex flex-col gap-0.5">
+              {categoryEntries.map(([slug, label]) => (
+                <a
+                  href={`/catalogo?categoria=${slug}`}
+                  class="flex items-center gap-2.5 px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:text-[#F4622A] transition-colors"
+                >
+                  <span class="w-1 h-1 rounded-full bg-gray-300 shrink-0" />
+                  {label}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <!-- Resto de links -->
           {
-            navLinks.map(({ href, label }) => (
+            navLinks.filter(({ href }) => href !== "/catalogo").map(({ href, label }) => (
               <a
                 href={href}
+                data-mobile-nav-link
                 class={[
                   "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200",
                   isActive(href)
@@ -197,13 +321,12 @@ function isActive(href: string) {
                 ].join(" ")}
                 aria-current={isActive(href) ? "page" : undefined}
               >
-                {isActive(href) && (
-                  <span class="w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" />
-                )}
+                <span data-mobile-dot class={isActive(href) ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" : "hidden"} />
                 {label}
               </a>
             ))
           }
+
           <div class="mt-2 pt-3 border-t border-gray-100">
             <a
               href="/contacto"
@@ -375,6 +498,85 @@ function isActive(href: string) {
         document.body.style.overflow = "";
       }
 
+      function updateMobileNavActive() {
+        const currentPath = window.location.pathname;
+
+        // ── Catálogo link ────────────────────────────────────────────────────
+        const catalogLink   = document.querySelector<HTMLAnchorElement>("[data-mobile-catalog-link]");
+        const catalogToggle = document.querySelector<HTMLElement>("[data-mobile-catalog-toggle]");
+        const isCatalogActive = currentPath.startsWith("/catalogo");
+
+        if (catalogLink) {
+          catalogLink.classList.toggle("bg-[#F4622A]/8",    isCatalogActive);
+          catalogLink.classList.toggle("text-[#F4622A]",    isCatalogActive);
+          catalogLink.classList.toggle("font-semibold",     isCatalogActive);
+          catalogLink.classList.toggle("text-gray-700",    !isCatalogActive);
+          catalogLink.setAttribute("aria-current", isCatalogActive ? "page" : "false");
+          const dot = catalogLink.querySelector<HTMLElement>("[data-mobile-dot]");
+          if (dot) {
+            dot.className = isCatalogActive
+              ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0"
+              : "hidden";
+          }
+        }
+
+        if (catalogToggle) {
+          catalogToggle.classList.toggle("border-[#F4622A]/20", isCatalogActive);
+          catalogToggle.classList.toggle("text-[#F4622A]",      isCatalogActive);
+          catalogToggle.classList.toggle("bg-[#F4622A]/8",      isCatalogActive);
+          catalogToggle.classList.toggle("border-gray-100",    !isCatalogActive);
+          catalogToggle.classList.toggle("text-gray-400",      !isCatalogActive);
+        }
+
+        // ── Resto de links móvil ─────────────────────────────────────────────
+        document.querySelectorAll<HTMLAnchorElement>("[data-mobile-nav-link]").forEach((link) => {
+          const href   = link.getAttribute("href") ?? "";
+          const active = href !== "/" ? currentPath.startsWith(href) : currentPath === "/";
+          link.classList.toggle("bg-[#F4622A]/8",   active);
+          link.classList.toggle("text-[#F4622A]",   active);
+          link.classList.toggle("font-semibold",    active);
+          link.classList.toggle("text-gray-700",   !active);
+          link.setAttribute("aria-current", active ? "page" : "false");
+          const dot = link.querySelector<HTMLElement>("[data-mobile-dot]");
+          if (dot) {
+            dot.className = active
+              ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0"
+              : "hidden";
+          }
+        });
+      }
+
+      function initCatalogMobileSubmenu() {
+        const toggle  = document.getElementById("catalog-mobile-toggle");
+        const submenu = document.getElementById("catalog-mobile-submenu");
+        const chevron = document.getElementById("catalog-mobile-chevron");
+        if (!toggle || !submenu) return;
+
+        // Clonar para limpiar listeners previos (navbar persiste entre páginas)
+        const newToggle = toggle.cloneNode(true) as HTMLElement;
+        toggle.replaceWith(newToggle);
+
+        newToggle.addEventListener("click", () => {
+          const isOpen = !submenu.classList.contains("hidden");
+          submenu.classList.toggle("hidden", isOpen);
+          chevron?.classList.toggle("rotate-180", !isOpen);
+          newToggle.setAttribute("aria-expanded", String(!isOpen));
+
+          // Recalcular max-height del menú móvil para que quepa el submenu
+          const mobileMenu = document.getElementById("mobile-menu");
+          if (mobileMenu) mobileMenu.style.maxHeight = mobileMenu.scrollHeight + "px";
+        });
+
+        // Cerrar submenu al navegar (el menú móvil se cierra con closeMenu)
+        submenu.querySelectorAll("a").forEach((link) =>
+          link.addEventListener("click", () => {
+            submenu.classList.add("hidden");
+            chevron?.classList.remove("rotate-180");
+            newToggle.setAttribute("aria-expanded", "false");
+          })
+        );
+      }
+
       function initMobileMenu() {
         const btn = getEl("mobile-menu-btn");
         const overlay = getEl("mobile-overlay");
@@ -527,6 +729,8 @@ function isActive(href: string) {
 
         handleScroll();
         initMobileMenu();
+        initCatalogMobileSubmenu();
+        updateMobileNavActive();
         initCardTransitions();
 
         // Actualizar link activo en navbar (persiste entre páginas)
