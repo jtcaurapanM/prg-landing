@@ -7,14 +7,19 @@ interface Props {
 const { productName = '', compact = false } = Astro.props;
 ---
 
-<form
-  id="quote-form"
-  class="space-y-4"
-  novalidate
->
+<!--
+  Tailwind safelist (clases usadas sólo desde JS):
+  border-red-400 ring-red-400 focus:ring-red-400
+-->
+
+<form id="quote-form" class="space-y-4" novalidate>
   <div class={compact ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'space-y-4'}>
+
+    <!-- Nombre -->
     <div>
-      <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre completo <span class="text-[#F4622A]">*</span></label>
+      <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+        Nombre completo <span class="text-[#F4622A]">*</span>
+      </label>
       <input
         type="text"
         id="name"
@@ -22,12 +27,16 @@ const { productName = '', compact = false } = Astro.props;
         required
         autocomplete="name"
         placeholder="Juan González"
-        class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition"
+        class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition"
       />
+      <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
     </div>
 
+    <!-- Email -->
     <div>
-      <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email corporativo <span class="text-[#F4622A]">*</span></label>
+      <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+        Email corporativo <span class="text-[#F4622A]">*</span>
+      </label>
       <input
         type="email"
         id="email"
@@ -35,12 +44,16 @@ const { productName = '', compact = false } = Astro.props;
         required
         autocomplete="email"
         placeholder="juan@empresa.cl"
-        class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition"
+        class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition"
       />
+      <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
     </div>
 
+    <!-- Empresa -->
     <div>
-      <label for="company" class="block text-sm font-medium text-gray-700 mb-1">Empresa <span class="text-[#F4622A]">*</span></label>
+      <label for="company" class="block text-sm font-medium text-gray-700 mb-1">
+        Empresa <span class="text-[#F4622A]">*</span>
+      </label>
       <input
         type="text"
         id="company"
@@ -48,13 +61,16 @@ const { productName = '', compact = false } = Astro.props;
         required
         autocomplete="organization"
         placeholder="Nombre de tu empresa"
-        class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition"
+        class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition"
       />
+      <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
     </div>
 
     {!compact && (
       <div>
-        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Teléfono <span class="text-gray-400 font-normal">(opcional)</span></label>
+        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+          Teléfono <span class="text-gray-400 font-normal">(opcional)</span>
+        </label>
         <input
           type="tel"
           id="phone"
@@ -69,24 +85,44 @@ const { productName = '', compact = false } = Astro.props;
 
   {!compact && (
     <div>
-      <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Línea de interés</label>
-      <select
-        id="category"
-        name="category"
-        class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition bg-white"
-      >
-        <option value="">Selecciona una línea</option>
-        <option value="papeleria-corporativa">Papelería Corporativa</option>
-        <option value="grandes-formatos">Grandes Formatos</option>
-        <option value="promocionales">Promocionales</option>
-        <option value="packaging-etiquetas">Packaging y Etiquetas</option>
-      </select>
+      <span class="block text-sm font-medium text-gray-700 mb-2">
+        Línea de interés <span class="text-[#F4622A]">*</span>
+        <span class="text-gray-400 font-normal">(puedes elegir varias)</span>
+      </span>
+      <div id="category-group" class="flex flex-wrap gap-2" role="group" aria-label="Línea de interés" aria-required="true">
+        {[
+          { value: 'papeleria-corporativa', label: 'Papelería corporativa' },
+          { value: 'grandes-formatos',      label: 'Grandes formatos'      },
+          { value: 'promocionales',          label: 'Promocionales'         },
+          { value: 'packaging-etiquetas',    label: 'Packaging y etiquetas' },
+        ].map(({ value, label }) => (
+          <label class="category-chip inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 bg-white text-sm font-medium text-gray-600 cursor-pointer select-none transition-colors hover:border-[#F4622A] hover:text-[#F4622A]">
+            <input
+              type="checkbox"
+              name="category"
+              value={value}
+              class="sr-only peer"
+            />
+            <span class="w-3.5 h-3.5 shrink-0 rounded-sm border border-gray-300 peer-checked:bg-[#F4622A] peer-checked:border-[#F4622A] transition-colors flex items-center justify-center">
+              <svg class="checkmark hidden w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </span>
+            {label}
+          </label>
+        ))}
+      </div>
+      <p id="category-error" class="hidden text-xs text-red-500 mt-1.5" aria-live="polite">
+        Selecciona al menos una línea de interés.
+      </p>
     </div>
   )}
 
   {!compact && (
     <div>
-      <label for="product-ref" class="block text-sm font-medium text-gray-700 mb-1">Producto de referencia <span class="text-gray-400 font-normal">(opcional)</span></label>
+      <label for="product-ref" class="block text-sm font-medium text-gray-700 mb-1">
+        Producto de referencia <span class="text-gray-400 font-normal">(opcional)</span>
+      </label>
       <input
         type="text"
         id="product-ref"
@@ -115,6 +151,7 @@ const { productName = '', compact = false } = Astro.props;
     </div>
   )}
 
+  <!-- Mensaje -->
   <div>
     <label for="message" class="block text-sm font-medium text-gray-700 mb-1">
       {compact ? 'Mensaje' : 'Descripción de tu necesidad'} <span class="text-[#F4622A]">*</span>
@@ -124,9 +161,12 @@ const { productName = '', compact = false } = Astro.props;
       name="message"
       required
       rows={compact ? 3 : 5}
-      placeholder={compact ? 'Cuéntanos en qué podemos ayudarte...' : 'Ej: Necesito 500 carpetas con logo corporativo para evento en junio. Necesitamos diseño incluido.'}
-      class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition resize-none"
+      placeholder={compact
+        ? 'Cuéntanos en qué podemos ayudarte...'
+        : 'Ej: Necesito 500 carpetas con logo corporativo para evento en junio. Necesitamos diseño incluido.'}
+      class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition resize-none"
     ></textarea>
+    <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
   </div>
 
   <!-- Status messages -->
@@ -153,50 +193,212 @@ const { productName = '', compact = false } = Astro.props;
 </form>
 
 <script>
-  const form = document.getElementById('quote-form') as HTMLFormElement;
-  const submitBtn = document.getElementById('form-submit') as HTMLButtonElement;
-  const btnText = document.getElementById('btn-text')!;
-  const btnSpinner = document.getElementById('btn-spinner')!;
-  const successMsg = document.getElementById('form-success')!;
-  const errorMsg = document.getElementById('form-error')!;
+  type ValidatableInput = HTMLInputElement | HTMLTextAreaElement;
 
-  // Pre-fill product from URL param
-  const productRef = document.getElementById('product-ref') as HTMLInputElement | null;
-  if (productRef) {
-    const param = new URLSearchParams(window.location.search).get('producto');
-    if (param) productRef.value = decodeURIComponent(param);
+  // ── Reglas de validación ────────────────────────────────────────────────────
+  const RULES: Record<string, (v: string) => string | null> = {
+    name:    (v) => !v.trim()
+      ? 'El nombre es obligatorio.'
+      : v.trim().length < 2
+        ? 'Ingresa al menos 2 caracteres.'
+        : null,
+
+    email:   (v) => {
+      if (!v.trim()) return 'El email es obligatorio.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())) return 'Ingresa un email válido.';
+      return null;
+    },
+
+    company: (v) => !v.trim() ? 'El nombre de la empresa es obligatorio.' : null,
+
+    message: (v) => !v.trim()
+      ? 'Describe tu necesidad para poder cotizarte.'
+      : v.trim().length < 10
+        ? 'Añade un poco más de detalle (mínimo 10 caracteres).'
+        : null,
+  };
+
+  const VALID_CLS   = ['border-gray-200', 'focus:ring-[#F4622A]'];
+  const INVALID_CLS = ['border-red-400',  'focus:ring-red-400'];
+
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+  function getErrorEl(el: Element): HTMLElement | null {
+    return el.parentElement?.querySelector('.field-error') ?? null;
   }
 
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    successMsg.classList.add('hidden');
-    errorMsg.classList.add('hidden');
+  function markInvalid(el: ValidatableInput, msg: string) {
+    el.classList.remove(...VALID_CLS);
+    el.classList.add(...INVALID_CLS);
+    el.setAttribute('aria-invalid', 'true');
+    const err = getErrorEl(el);
+    if (err) { err.textContent = msg; err.classList.remove('hidden'); }
+  }
 
-    submitBtn.disabled = true;
-    btnText.textContent = 'Enviando...';
-    btnSpinner.classList.remove('hidden');
+  function markValid(el: ValidatableInput) {
+    el.classList.remove(...INVALID_CLS);
+    el.classList.add(...VALID_CLS);
+    el.removeAttribute('aria-invalid');
+    const err = getErrorEl(el);
+    if (err) { err.textContent = ''; err.classList.add('hidden'); }
+  }
 
-    const data = Object.fromEntries(new FormData(form).entries());
+  function validateInput(el: ValidatableInput): boolean {
+    const rule = RULES[el.name];
+    if (!rule) return true;
+    const msg = rule(el.value);
+    if (msg) { markInvalid(el, msg); return false; }
+    markValid(el);
+    return true;
+  }
 
-    try {
-      const res = await fetch('/api/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+  // ── Inicialización ──────────────────────────────────────────────────────────
+  function initForm() {
+    const form       = document.getElementById('quote-form')     as HTMLFormElement | null;
+    const submitBtn  = document.getElementById('form-submit')    as HTMLButtonElement | null;
+    const btnText    = document.getElementById('btn-text')!;
+    const btnSpinner = document.getElementById('btn-spinner')!;
+    const successMsg = document.getElementById('form-success')!;
+    const errorMsg   = document.getElementById('form-error')!;
+
+    if (!form || !submitBtn) return;
+
+    // Pre-fill producto desde URL param
+    const productRef = form.querySelector<HTMLInputElement>('#product-ref');
+    if (productRef) {
+      const param = new URLSearchParams(window.location.search).get('producto');
+      if (param) productRef.value = decodeURIComponent(param);
+    }
+
+    // Campos que admiten live validation (solo después de un intento de envío o blur)
+    const liveFields = new Set<string>();
+
+    // Adjuntar listeners de blur e input a todos los campos validables
+    form.querySelectorAll<ValidatableInput>('.field-input').forEach((el) => {
+      // Validar al salir del campo (blur) — solo si el campo tiene regla
+      el.addEventListener('blur', () => {
+        if (RULES[el.name]) {
+          liveFields.add(el.name);
+          validateInput(el);
+        }
       });
 
-      if (res.ok) {
-        successMsg.classList.remove('hidden');
-        form.reset();
-      } else {
-        errorMsg.classList.remove('hidden');
+      // Validar mientras escribe — solo si ya tuvo un error o intentó enviar
+      el.addEventListener('input', () => {
+        if (liveFields.has(el.name)) validateInput(el);
+      });
+    });
+
+    // Submit handler
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      successMsg.classList.add('hidden');
+      errorMsg.classList.add('hidden');
+
+      // Validar todos los campos con regla
+      const inputs = Array.from(form.querySelectorAll<ValidatableInput>('.field-input'));
+      let firstInvalid: ValidatableInput | null = null;
+      let allValid = true;
+
+      inputs.forEach((el) => {
+        if (!RULES[el.name]) return;
+        liveFields.add(el.name);
+        const ok = validateInput(el);
+        if (!ok && !firstInvalid) firstInvalid = el;
+        if (!ok) allValid = false;
+      });
+
+      // Validar checkboxes de categoría
+      const categoriesValid: boolean =
+        typeof (window as any).__validateCategories === 'function'
+          ? (window as any).__validateCategories()
+          : true;
+
+      if (!categoriesValid) allValid = false;
+
+      if (!allValid) {
+        if (firstInvalid) {
+          firstInvalid.focus();
+        } else {
+          // El único error es en categorías: scroll al grupo
+          document.getElementById('category-group')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
       }
-    } catch {
-      errorMsg.classList.remove('hidden');
-    } finally {
-      submitBtn.disabled = false;
-      btnText.textContent = 'Enviar cotización';
-      btnSpinner.classList.add('hidden');
+
+      // Enviar
+      submitBtn.disabled = true;
+      btnText.textContent = 'Enviando...';
+      btnSpinner.classList.remove('hidden');
+
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      try {
+        const res = await fetch('/api/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        if (res.ok) {
+          successMsg.classList.remove('hidden');
+          form.reset();
+          liveFields.clear();
+          inputs.forEach((el) => { if (RULES[el.name]) markValid(el); });
+          document.getElementById('category-error')?.classList.add('hidden');
+        } else {
+          errorMsg.classList.remove('hidden');
+        }
+      } catch {
+        errorMsg.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Enviar cotización';
+        btnSpinner.classList.add('hidden');
+      }
+    });
+  }
+
+  // ── Chips de categoría ──────────────────────────────────────────────────────
+  function initChips() {
+    const categoryError = document.getElementById('category-error');
+
+    function validateCategories(): boolean {
+      const anyChecked = Array.from(
+        document.querySelectorAll<HTMLInputElement>('input[name="category"]')
+      ).some((cb) => cb.checked);
+
+      if (categoryError) categoryError.classList.toggle('hidden', anyChecked);
+      return anyChecked;
     }
-  });
+
+    // Exponer para que initForm pueda llamarla en submit
+    (window as any).__validateCategories = validateCategories;
+
+    document.querySelectorAll<HTMLLabelElement>('.category-chip').forEach((chip) => {
+      const checkbox  = chip.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
+      const checkmark = chip.querySelector<SVGElement>('.checkmark')!;
+
+      function syncChip() {
+        if (checkbox.checked) {
+          chip.classList.add('border-[#F4622A]', 'text-[#F4622A]', 'bg-orange-50');
+          chip.classList.remove('border-gray-200', 'text-gray-600', 'bg-white');
+          checkmark?.classList.remove('hidden');
+        } else {
+          chip.classList.remove('border-[#F4622A]', 'text-[#F4622A]', 'bg-orange-50');
+          chip.classList.add('border-gray-200', 'text-gray-600', 'bg-white');
+          checkmark?.classList.add('hidden');
+        }
+        // Si ya hubo intento de envío, re-validar al cambiar
+        if (categoryError && !categoryError.classList.contains('hidden')) {
+          validateCategories();
+        }
+      }
+
+      checkbox.addEventListener('change', syncChip);
+      syncChip(); // estado inicial
+    });
+  }
+
+  document.addEventListener('astro:page-load', initChips);
+  document.addEventListener('astro:page-load', initForm);
 </script>
