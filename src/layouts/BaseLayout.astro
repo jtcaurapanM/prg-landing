@@ -1,9 +1,7 @@
 ---
 import { ViewTransitions } from "astro:transitions";
 import "../styles/global.css";
-import { CATEGORY_LABELS } from "../data/categories";
-
-const categoryEntries = Object.entries(CATEGORY_LABELS) as [string, string][];
+import Navbar from "../components/Navbar.astro";
 
 interface Props {
   title: string;
@@ -19,22 +17,8 @@ const {
   canonical = Astro.url.href,
 } = Astro.props;
 
-const siteUrl = "https://prg.cl";
+const siteUrl  = "https://prg.cl";
 const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
-
-const pathname = Astro.url.pathname;
-
-const navLinks = [
-  { href: "/", label: "Inicio" },
-  { href: "/catalogo", label: "Catálogo" },
-  { href: "/nosotros", label: "Nosotros" },
-  { href: "/contacto", label: "Contacto" },
-];
-
-function isActive(href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname.startsWith(href);
-}
 ---
 
 <!doctype html>
@@ -48,18 +32,18 @@ function isActive(href: string) {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
 
-    <meta property="og:title" content={fullTitle} />
+    <meta property="og:title"       content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={`${siteUrl}${ogImage}`} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="es_CL" />
-    <meta property="og:site_name" content="PRG Inversiones" />
+    <meta property="og:image"       content={`${siteUrl}${ogImage}`} />
+    <meta property="og:url"         content={canonical} />
+    <meta property="og:type"        content="website" />
+    <meta property="og:locale"      content="es_CL" />
+    <meta property="og:site_name"   content="PRG Inversiones" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={`${siteUrl}${ogImage}`} />
+    <meta name="twitter:image"       content={`${siteUrl}${ogImage}`} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
@@ -85,259 +69,8 @@ function isActive(href: string) {
   </head>
 
   <body class="bg-white text-[#101820] font-sans antialiased">
-    <!-- Mobile overlay — persists, state reset on navigation -->
-    <div
-      id="mobile-overlay"
-      transition:persist
-      class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"
-      aria-hidden="true"
-    >
-    </div>
 
-    <!-- Navbar — persists across navigations, never animates out/in -->
-    <header
-      id="navbar"
-      transition:persist
-      class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 transition-shadow duration-300"
-    >
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between py-2">
-          <!-- Logo -->
-          <a href="/" class="flex items-center">
-            <img
-              src="/logoPRG.svg"
-              alt="PRG Inversiones"
-              class="h-18 w-auto"
-              loading="eager"
-            />
-          </a>
-
-          <!-- Nav links desktop -->
-          <nav class="hidden md:flex items-center gap-1">
-            <!-- Inicio -->
-            <a
-              href="/"
-              data-nav-link
-              class={[
-                "relative px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
-                isActive("/")
-                  ? "text-[#F4622A]"
-                  : "text-gray-600 hover:text-[#101820] hover:bg-gray-50",
-              ].join(" ")}
-              aria-current={isActive("/") ? "page" : "false"}
-            >
-              Inicio
-              <span
-                data-nav-indicator
-                style={isActive("/") ? "" : "display:none"}
-                class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[#F4622A] rounded-full"
-              />
-            </a>
-
-            <!-- Catálogo con dropdown -->
-            <div class="relative group">
-              <a
-                href="/catalogo"
-                data-nav-link
-                class={[
-                  "relative flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
-                  isActive("/catalogo")
-                    ? "text-[#F4622A]"
-                    : "text-gray-600 hover:text-[#101820] hover:bg-gray-50",
-                ].join(" ")}
-                aria-current={isActive("/catalogo") ? "page" : "false"}
-              >
-                Catálogo
-                <svg class="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                </svg>
-                <span
-                  data-nav-indicator
-                  style={isActive("/catalogo") ? "" : "display:none"}
-                  class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[#F4622A] rounded-full"
-                />
-              </a>
-
-              <!-- Dropdown panel — top-full sin gap para mantener hover -->
-              <div class="absolute top-full left-0 pt-1 z-50 min-w-[210px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-150">
-                <div class="bg-white rounded-xl border border-gray-100 shadow-xl overflow-hidden py-1.5">
-                  <a
-                    href="/catalogo"
-                    class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-[#101820] hover:bg-gray-50 border-b border-gray-50"
-                  >
-                    Todos los productos
-                  </a>
-                  {categoryEntries.map(([slug, label]) => (
-                    <a
-                      href={`/catalogo?categoria=${slug}`}
-                      class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#F4622A] transition-colors"
-                    >
-                      <span class="w-1 h-1 rounded-full bg-[#F4622A] shrink-0" />
-                      {label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <!-- Resto de links -->
-            {
-              navLinks.filter(({ href }) => href !== "/" && href !== "/catalogo").map(({ href, label }) => (
-                <a
-                  href={href}
-                  data-nav-link
-                  class={[
-                    "relative px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
-                    isActive(href)
-                      ? "text-[#F4622A]"
-                      : "text-gray-600 hover:text-[#101820] hover:bg-gray-50",
-                  ].join(" ")}
-                  aria-current={isActive(href) ? "page" : "false"}
-                >
-                  {label}
-                  <span
-                    data-nav-indicator
-                    style={isActive(href) ? "" : "display:none"}
-                    class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[#F4622A] rounded-full"
-                  />
-                </a>
-              ))
-            }
-          </nav>
-
-          <!-- CTA desktop -->
-          <a
-            href="/contacto"
-            class="hidden md:inline-flex items-center px-4 py-2 bg-[#F4622A] text-white text-sm font-semibold rounded-md hover:bg-[#d9521f] transition-colors"
-          >
-            Cotizar ahora
-          </a>
-
-          <!-- Mobile menu button -->
-          <button
-            id="mobile-menu-btn"
-            class="md:hidden relative z-50 w-9 h-9 flex items-center justify-center rounded-md text-gray-600 hover:text-[#F4622A] transition-colors"
-            aria-label="Abrir menú"
-            aria-expanded="false"
-          >
-            <svg
-              id="icon-open"
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-            <svg
-              id="icon-close"
-              class="w-5 h-5 hidden"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile menu panel -->
-      <div
-        id="mobile-menu"
-        class="md:hidden overflow-hidden max-h-0 transition-[max-height] duration-300 ease-in-out bg-white border-t border-gray-100"
-      >
-        <nav class="px-4 pt-3 pb-5 flex flex-col gap-1">
-          <!-- Catálogo con submenu expandible -->
-          <div>
-            <!-- items-stretch para que link y botón tengan la misma altura -->
-            <div class="flex items-stretch rounded-lg overflow-hidden">
-              <a
-                href="/catalogo"
-                data-mobile-catalog-link
-                class={[
-                  "flex-1 flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors duration-200",
-                  isActive("/catalogo")
-                    ? "bg-[#F4622A]/8 text-[#F4622A] font-semibold"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-[#101820]",
-                ].join(" ")}
-                aria-current={isActive("/catalogo") ? "page" : undefined}
-              >
-                <!-- dot: siempre en DOM, JS controla visibilidad -->
-                <span data-mobile-dot class={isActive("/catalogo") ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" : "hidden"} />
-                Catálogo
-              </a>
-              <button
-                id="catalog-mobile-toggle"
-                data-mobile-catalog-toggle
-                aria-label="Ver categorías"
-                aria-expanded="false"
-                class={[
-                  "flex items-center justify-center px-3 border-l transition-colors duration-200",
-                  isActive("/catalogo")
-                    ? "border-[#F4622A]/20 text-[#F4622A] bg-[#F4622A]/8"
-                    : "border-gray-100 text-gray-400 hover:text-[#F4622A] hover:bg-gray-50",
-                ].join(" ")}
-              >
-                <svg id="catalog-mobile-chevron" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-            </div>
-
-            <!-- Subcategorías -->
-            <div id="catalog-mobile-submenu" class="hidden pl-3 pt-1 pb-1 flex flex-col gap-0.5">
-              {categoryEntries.map(([slug, label]) => (
-                <a
-                  href={`/catalogo?categoria=${slug}`}
-                  class="flex items-center gap-2.5 px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:text-[#F4622A] transition-colors"
-                >
-                  <span class="w-1 h-1 rounded-full bg-gray-300 shrink-0" />
-                  {label}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <!-- Resto de links -->
-          {
-            navLinks.filter(({ href }) => href !== "/catalogo").map(({ href, label }) => (
-              <a
-                href={href}
-                data-mobile-nav-link
-                class={[
-                  "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200",
-                  isActive(href)
-                    ? "bg-[#F4622A]/8 text-[#F4622A] font-semibold"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-[#101820]",
-                ].join(" ")}
-                aria-current={isActive(href) ? "page" : undefined}
-              >
-                <span data-mobile-dot class={isActive(href) ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" : "hidden"} />
-                {label}
-              </a>
-            ))
-          }
-
-          <div class="mt-2 pt-3 border-t border-gray-100">
-            <a
-              href="/contacto"
-              class="flex items-center justify-center px-4 py-3 bg-[#F4622A] text-white text-sm font-bold rounded-lg hover:bg-[#d9521f] transition-colors"
-            >
-              Cotizar ahora
-            </a>
-          </div>
-        </nav>
-      </div>
-    </header>
+    <Navbar />
 
     <main>
       <slot />
@@ -347,6 +80,7 @@ function isActive(href: string) {
     <footer class="bg-[#101820] text-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+
           <div>
             <div class="font-bold text-xl mb-3">
               <span class="text-[#F4622A]">PRG</span> Inversiones
@@ -356,76 +90,37 @@ function isActive(href: string) {
               tecnología de impresión, corte, grabado y terminación, y el
               respaldo de la certificación FSC C143583.
             </p>
-            <div
-              class="mt-4 inline-flex items-center gap-2 bg-white/10 rounded-md px-3 py-2"
-            >
-              <span class="text-xs text-gray-300 font-medium"
-                >Certificación FSC</span
-              >
+            <div class="mt-4 inline-flex items-center gap-2 bg-white/10 rounded-md px-3 py-2">
+              <span class="text-xs text-gray-300 font-medium">Certificación FSC</span>
               <span class="text-xs text-[#F4622A] font-bold">C143583</span>
             </div>
           </div>
 
           <div>
-            <h3
-              class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4"
-            >
+            <h3 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">
               Servicios
             </h3>
             <ul class="space-y-2 text-sm text-gray-300">
-              <li>
-                <a
-                  href="/catalogo?categoria=papeleria-corporativa"
-                  class="hover:text-white transition-colors"
-                  >Papelería Corporativa</a
-                >
-              </li>
-              <li>
-                <a
-                  href="/catalogo?categoria=grandes-formatos"
-                  class="hover:text-white transition-colors">Grandes Formatos</a
-                >
-              </li>
-              <li>
-                <a
-                  href="/catalogo?categoria=promocionales"
-                  class="hover:text-white transition-colors">Regalos Promocionales</a
-                >
-              </li>
-              <li>
-                <a
-                  href="/catalogo?categoria=packaging-etiquetas"
-                  class="hover:text-white transition-colors"
-                  >Packaging y Etiquetas</a
-                >
-              </li>
+              <li><a href="/catalogo?categoria=papeleria-corporativa" class="hover:text-white transition-colors">Papelería Corporativa</a></li>
+              <li><a href="/catalogo?categoria=grandes-formatos"      class="hover:text-white transition-colors">Grandes Formatos</a></li>
+              <li><a href="/catalogo?categoria=promocionales"         class="hover:text-white transition-colors">Regalos Promocionales</a></li>
+              <li><a href="/catalogo?categoria=packaging-etiquetas"   class="hover:text-white transition-colors">Packaging y Etiquetas</a></li>
             </ul>
           </div>
 
           <div>
-            <h3
-              class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4"
-            >
+            <h3 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">
               Contacto
             </h3>
             <ul class="space-y-2 text-sm text-gray-300">
-              <li>
-                <a href="/contacto" class="hover:text-white transition-colors"
-                  >Formulario de cotización</a
-                >
-              </li>
-              <li>
-                <a href="/nosotros" class="hover:text-white transition-colors"
-                  >Sobre PRG Inversiones</a
-                >
-              </li>
+              <li><a href="/contacto"  class="hover:text-white transition-colors">Formulario de cotización</a></li>
+              <li><a href="/nosotros"  class="hover:text-white transition-colors">Sobre PRG Inversiones</a></li>
             </ul>
           </div>
+
         </div>
 
-        <div
-          class="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4"
-        >
+        <div class="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p class="text-gray-500 text-xs">
             © {new Date().getFullYear()} Inversiones PRG SpA. Todos los derechos reservados.
           </p>
@@ -434,7 +129,7 @@ function isActive(href: string) {
       </div>
     </footer>
 
-    <!-- WhatsApp flotante — persists across navigations -->
+    <!-- WhatsApp flotante -->
     <a
       href="https://wa.me/56900000000?text=Hola%2C%20me%20gustar%C3%ADa%20cotizar%20un%20producto."
       target="_blank"
@@ -444,18 +139,15 @@ function isActive(href: string) {
       aria-label="Contactar por WhatsApp"
     >
       <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-        <path
-          d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
-        ></path>
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
       </svg>
       WhatsApp
     </a>
 
     <script>
-      // ── Helpers ──────────────────────────────────────────────────────────
       const getEl = (id: string) => document.getElementById(id)!;
 
-      // ── Scroll effects ────────────────────────────────────────────────────
+      // ── Scroll shadow ──────────────────────────────────────────────────────
       function handleScroll() {
         const navbar = getEl("navbar");
         if (window.scrollY > 20) {
@@ -469,175 +161,23 @@ function isActive(href: string) {
 
       window.addEventListener("scroll", handleScroll, { passive: true });
 
-      // ── Mobile menu ───────────────────────────────────────────────────────
-      let menuOpen = false;
-
-      function openMenu() {
-        menuOpen = true;
-        const menu = getEl("mobile-menu");
-        const overlay = getEl("mobile-overlay");
-        menu.style.maxHeight = menu.scrollHeight + "px";
-        overlay.classList.remove("opacity-0", "pointer-events-none");
-        overlay.classList.add("opacity-100");
-        getEl("icon-open").classList.add("hidden");
-        getEl("icon-close").classList.remove("hidden");
-        getEl("mobile-menu-btn").setAttribute("aria-expanded", "true");
-        document.body.style.overflow = "hidden";
-      }
-
-      function closeMenu() {
-        menuOpen = false;
-        const menu = getEl("mobile-menu");
-        const overlay = getEl("mobile-overlay");
-        menu.style.maxHeight = "0px";
-        overlay.classList.add("opacity-0", "pointer-events-none");
-        overlay.classList.remove("opacity-100");
-        getEl("icon-open").classList.remove("hidden");
-        getEl("icon-close").classList.add("hidden");
-        getEl("mobile-menu-btn").setAttribute("aria-expanded", "false");
-        document.body.style.overflow = "";
-      }
-
-      function updateMobileNavActive() {
-        const currentPath = window.location.pathname;
-
-        // ── Catálogo link ────────────────────────────────────────────────────
-        const catalogLink   = document.querySelector<HTMLAnchorElement>("[data-mobile-catalog-link]");
-        const catalogToggle = document.querySelector<HTMLElement>("[data-mobile-catalog-toggle]");
-        const isCatalogActive = currentPath.startsWith("/catalogo");
-
-        if (catalogLink) {
-          catalogLink.classList.toggle("bg-[#F4622A]/8",    isCatalogActive);
-          catalogLink.classList.toggle("text-[#F4622A]",    isCatalogActive);
-          catalogLink.classList.toggle("font-semibold",     isCatalogActive);
-          catalogLink.classList.toggle("text-gray-700",    !isCatalogActive);
-          catalogLink.setAttribute("aria-current", isCatalogActive ? "page" : "false");
-          const dot = catalogLink.querySelector<HTMLElement>("[data-mobile-dot]");
-          if (dot) {
-            dot.className = isCatalogActive
-              ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0"
-              : "hidden";
-          }
-        }
-
-        if (catalogToggle) {
-          catalogToggle.classList.toggle("border-[#F4622A]/20", isCatalogActive);
-          catalogToggle.classList.toggle("text-[#F4622A]",      isCatalogActive);
-          catalogToggle.classList.toggle("bg-[#F4622A]/8",      isCatalogActive);
-          catalogToggle.classList.toggle("border-gray-100",    !isCatalogActive);
-          catalogToggle.classList.toggle("text-gray-400",      !isCatalogActive);
-        }
-
-        // ── Resto de links móvil ─────────────────────────────────────────────
-        document.querySelectorAll<HTMLAnchorElement>("[data-mobile-nav-link]").forEach((link) => {
-          const href   = link.getAttribute("href") ?? "";
-          const active = href !== "/" ? currentPath.startsWith(href) : currentPath === "/";
-          link.classList.toggle("bg-[#F4622A]/8",   active);
-          link.classList.toggle("text-[#F4622A]",   active);
-          link.classList.toggle("font-semibold",    active);
-          link.classList.toggle("text-gray-700",   !active);
-          link.setAttribute("aria-current", active ? "page" : "false");
-          const dot = link.querySelector<HTMLElement>("[data-mobile-dot]");
-          if (dot) {
-            dot.className = active
-              ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0"
-              : "hidden";
-          }
-        });
-      }
-
-      function initCatalogMobileSubmenu() {
-        const toggle  = document.getElementById("catalog-mobile-toggle");
-        const submenu = document.getElementById("catalog-mobile-submenu");
-        const chevron = document.getElementById("catalog-mobile-chevron");
-        if (!toggle || !submenu) return;
-
-        // Clonar para limpiar listeners previos (navbar persiste entre páginas)
-        const newToggle = toggle.cloneNode(true) as HTMLElement;
-        toggle.replaceWith(newToggle);
-
-        newToggle.addEventListener("click", () => {
-          const isOpen = !submenu.classList.contains("hidden");
-          submenu.classList.toggle("hidden", isOpen);
-          chevron?.classList.toggle("rotate-180", !isOpen);
-          newToggle.setAttribute("aria-expanded", String(!isOpen));
-
-          // Recalcular max-height del menú móvil para que quepa el submenu
-          const mobileMenu = document.getElementById("mobile-menu");
-          if (mobileMenu) mobileMenu.style.maxHeight = mobileMenu.scrollHeight + "px";
-        });
-
-        // Cerrar submenu al navegar (el menú móvil se cierra con closeMenu)
-        submenu.querySelectorAll("a").forEach((link) =>
-          link.addEventListener("click", () => {
-            submenu.classList.add("hidden");
-            chevron?.classList.remove("rotate-180");
-            newToggle.setAttribute("aria-expanded", "false");
-          })
-        );
-      }
-
-      function initMobileMenu() {
-        const btn = getEl("mobile-menu-btn");
-        const overlay = getEl("mobile-overlay");
-        const menu = getEl("mobile-menu");
-
-        // Clone to remove stale listeners before re-attaching
-        const newBtn = btn.cloneNode(true) as HTMLElement;
-        btn.replaceWith(newBtn);
-        const newOverlay = overlay.cloneNode(true) as HTMLElement;
-        overlay.replaceWith(newOverlay);
-
-        newBtn.addEventListener("click", () =>
-          menuOpen ? closeMenu() : openMenu(),
-        );
-        newOverlay.addEventListener("click", closeMenu);
-
-        menu
-          .querySelectorAll("a")
-          .forEach((link) => link.addEventListener("click", closeMenu));
-
-        window.addEventListener("resize", () => {
-          if (menuOpen)
-            getEl("mobile-menu").style.maxHeight =
-              getEl("mobile-menu").scrollHeight + "px";
-          if (window.innerWidth >= 768) closeMenu();
-        });
-      }
-
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && menuOpen) closeMenu();
-      });
-
-      // ── Dirección de navegación ───────────────────────────────────────────
-      // popstate solo dispara en back/forward del browser, no en pushState.
+      // ── Dirección de navegación ────────────────────────────────────────────
       let isBackNav = false;
-      window.addEventListener("popstate", () => {
-        isBackNav = true;
-      });
+      window.addEventListener("popstate", () => { isBackNav = true; });
 
-      // ── Product card transitions ──────────────────────────────────────────
+      // ── Product card transitions ───────────────────────────────────────────
       function setCardTransition(slug: string) {
-        const card = document.querySelector(
-          `[data-product-card][data-slug="${slug}"]`,
-        );
-        const imgEl = card?.querySelector(
-          "[data-card-image]",
-        ) as HTMLElement | null;
-        const contentEl = card?.querySelector(
-          "[data-card-content]",
-        ) as HTMLElement | null;
-        if (imgEl) imgEl.style.viewTransitionName = `product-img-${slug}`;
-        if (contentEl)
-          contentEl.style.viewTransitionName = `product-info-${slug}`;
+        const card     = document.querySelector(`[data-product-card][data-slug="${slug}"]`);
+        const imgEl    = card?.querySelector("[data-card-image]")   as HTMLElement | null;
+        const contentEl = card?.querySelector("[data-card-content]") as HTMLElement | null;
+        if (imgEl)     imgEl.style.viewTransitionName     = `product-img-${slug}`;
+        if (contentEl) contentEl.style.viewTransitionName = `product-info-${slug}`;
       }
 
       function clearCardTransitions() {
-        document
-          .querySelectorAll("[data-card-image], [data-card-content]")
-          .forEach((el) => {
-            (el as HTMLElement).style.viewTransitionName = "";
-          });
+        document.querySelectorAll("[data-card-image], [data-card-content]").forEach((el) => {
+          (el as HTMLElement).style.viewTransitionName = "";
+        });
       }
 
       function initCardTransitions() {
@@ -645,54 +185,30 @@ function isActive(href: string) {
           card.addEventListener("click", () => {
             const slug = (card as HTMLElement).dataset.slug ?? "";
             sessionStorage.setItem("lastProductSlug", slug);
-            // Guardamos el scroll actual para restaurarlo al volver atrás.
-            // No podemos leerlo en astro:after-swap porque en ese punto ya es 0.
             sessionStorage.setItem("catalogScrollY", window.scrollY.toString());
             setCardTransition(slug);
           });
         });
       }
 
-      // ── Antes de cada swap: marcar dirección en el html ──────────────────
+      // ── Antes de swap: marcar dirección ───────────────────────────────────
       document.addEventListener("astro:before-swap", () => {
-        document.documentElement.dataset.navDirection = isBackNav
-          ? "back"
-          : "forward";
-        closeMenu();
+        document.documentElement.dataset.navDirection = isBackNav ? "back" : "forward";
       });
 
-      // ── After swap ────────────────────────────────────────────────────────
-      // El morph calcula posiciones en el momento del swap. Si la card está
-      // fuera del viewport (scroll en 0 y card a 800px), el destino del morph
-      // queda invisible y el scroll llega después — se ven desconectados.
-      // Solución: restaurar el scroll instantáneamente ANTES de que el morph
-      // calcule posiciones, así la card ya está en el viewport y la animación
-      // se ve completa. El movimiento visual lo provee el morph, no el scroll.
+      // ── After swap: filtro catálogo + scroll ──────────────────────────────
       document.addEventListener("astro:after-swap", () => {
+        const filterCat = new URLSearchParams(window.location.search).get("categoria");
+
         if (isBackNav) {
-          const savedScrollY = parseInt(
-            sessionStorage.getItem("catalogScrollY") ?? "0",
-            10,
-          );
+          const savedScrollY = parseInt(sessionStorage.getItem("catalogScrollY") ?? "0", 10);
           sessionStorage.removeItem("catalogScrollY");
 
-          // Aplicar el filtro del catálogo de forma instantánea ANTES de
-          // restaurar el scroll. Si no lo hacemos, el layout tiene todos los
-          // productos visibles y el scroll guardado apunta a una posición
-          // incorrecta. [data-card-wrapper] solo existe en /catalogo,
-          // así que en otras páginas este forEach no hace nada.
-          const filterCat = new URLSearchParams(window.location.search).get(
-            "categoria",
-          );
-          document
-            .querySelectorAll<HTMLElement>("[data-card-wrapper]")
-            .forEach((wrapper) => {
-              const show = !filterCat || wrapper.dataset.category === filterCat;
-              wrapper.style.display = show ? "" : "none";
-            });
+          document.querySelectorAll<HTMLElement>("[data-card-wrapper]").forEach((wrapper) => {
+            const show = !filterCat || wrapper.dataset.category === filterCat;
+            wrapper.style.display = show ? "" : "none";
+          });
 
-          // Con el layout ya estabilizado, posicionar el scroll antes de que
-          // el morph calcule dónde está la card en el viewport.
           window.scrollTo(0, savedScrollY);
 
           const slug = sessionStorage.getItem("lastProductSlug");
@@ -700,54 +216,26 @@ function isActive(href: string) {
           return;
         }
 
-        // Navegación hacia adelante: aplicar filtro del catálogo ANTES de que
-        // la página sea visible (durante el fade-in). Así no hay parpadeo de
-        // "todos los productos → filtrados". Solo existe [data-card-wrapper]
-        // en /catalogo, en cualquier otra página el forEach no hace nada.
-        const filterCat = new URLSearchParams(window.location.search).get("categoria");
-        document
-          .querySelectorAll<HTMLElement>("[data-card-wrapper]")
-          .forEach((wrapper) => {
-            const show = !filterCat || wrapper.dataset.category === filterCat;
-            wrapper.style.display = show ? "" : "none";
-          });
+        document.querySelectorAll<HTMLElement>("[data-card-wrapper]").forEach((wrapper) => {
+          const show = !filterCat || wrapper.dataset.category === filterCat;
+          wrapper.style.display = show ? "" : "none";
+        });
 
         const slug = sessionStorage.getItem("lastProductSlug");
         if (slug) setCardTransition(slug);
       });
 
-      // ── Re-init on every page load (initial + after View Transition) ──────
+      // ── Page load ─────────────────────────────────────────────────────────
       document.addEventListener("astro:page-load", () => {
-        // Limpiar nombres residuales y flag de dirección
         clearCardTransitions();
         delete document.documentElement.dataset.navDirection;
         isBackNav = false;
 
-        // Guardar slug si estamos en una ficha de producto
         const slugMatch = window.location.pathname.match(/\/catalogo\/([^/]+)/);
         if (slugMatch) sessionStorage.setItem("lastProductSlug", slugMatch[1]);
 
         handleScroll();
-        initMobileMenu();
-        initCatalogMobileSubmenu();
-        updateMobileNavActive();
         initCardTransitions();
-
-        // Actualizar link activo en navbar (persiste entre páginas)
-        const currentPath = window.location.pathname;
-        document.querySelectorAll("[data-nav-link]").forEach((el) => {
-          const link = el as HTMLAnchorElement;
-          const href = link.getAttribute("href") ?? "";
-          const active =
-            href !== "/" ? currentPath.startsWith(href) : currentPath === "/";
-          link.setAttribute("aria-current", active ? "page" : "false");
-          link.classList.toggle("text-[#F4622A]", active);
-          link.classList.toggle("text-gray-600", !active);
-          const indicator = link.querySelector(
-            "[data-nav-indicator]",
-          ) as HTMLElement | null;
-          if (indicator) indicator.style.display = active ? "block" : "none";
-        });
       });
     </script>
   </body>
