@@ -1,56 +1,53 @@
 ---
-import QuoteForm from '../components/forms/QuoteForm.astro';
 ---
 
-<section class="py-24 bg-white">
+<section class="py-24 bg-[#F8F8F6]">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto text-center">
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+      <span class="text-xs font-semibold uppercase tracking-widest text-[#F4622A]">Cotización</span>
+      <h2 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101820] leading-tight">
+        ¿Listo para tu próximo<br />proyecto de impresión?
+      </h2>
+      <p class="mt-5 text-gray-500 leading-relaxed max-w-xl mx-auto">
+        Cuéntanos tu necesidad y te respondemos en menos de 24 horas hábiles
+        con una propuesta a medida. Sin costo ni compromiso.
+      </p>
 
-      <!-- Left: copy -->
-      <div class="lg:sticky lg:top-24">
-        <span class="text-xs font-semibold uppercase tracking-widest text-[#F4622A]">Cotización</span>
-        <h2 class="mt-3 text-3xl sm:text-4xl font-bold text-[#101820] mb-5 leading-tight">
-          ¿Listo para tu próximo<br />proyecto de impresión?
-        </h2>
-        <p class="text-gray-500 leading-relaxed mb-8">
-          Cuéntanos tu necesidad y te respondemos en menos de 24 horas hábiles con
-          una propuesta a medida. Sin compromiso.
-        </p>
-
-        <div class="space-y-4 mb-8">
-          {[
-            { icon: '⏱', label: 'Respuesta en 24 horas hábiles' },
-            { icon: '📋', label: 'Cotización sin costo ni compromiso' },
-            { icon: '🌿', label: 'Certificación FSC disponible para tu pedido' },
-          ].map((item) => (
-            <div class="flex items-center gap-3">
-              <span class="text-xl">{item.icon}</span>
-              <span class="text-sm text-gray-600">{item.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <!-- WhatsApp alternative -->
-        <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
-          <p class="text-sm text-gray-500 mb-3">¿Prefieres hablar directamente?</p>
-          <a
-            href="https://wa.me/56900000000?text=Hola%2C%20me%20gustar%C3%ADa%20cotizar%20un%20producto."
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#25D366] text-white text-sm font-semibold rounded-md hover:bg-[#1ebe5c] transition-colors"
-          >
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            Escribir por WhatsApp
-          </a>
-        </div>
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a
+          href="/contacto"
+          class="inline-flex items-center gap-2 px-8 py-4 bg-[#F4622A] text-white font-bold rounded-md hover:bg-[#d9521f] transition-colors text-base"
+        >
+          Solicitar cotización
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+        <a
+          href="https://wa.me/56900000000?text=Hola%2C%20me%20gustar%C3%ADa%20cotizar%20un%20producto."
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-8 py-4 border-2 border-gray-200 text-gray-700 font-semibold rounded-md hover:border-[#25D366] hover:text-[#25D366] transition-colors text-base"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          <span class="leading-none">WhatsApp</span>
+        </a>
       </div>
 
-      <!-- Right: form -->
-      <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm">
-        <QuoteForm compact={true} />
+      <div class="mt-12 grid grid-cols-3 gap-6 max-w-lg mx-auto">
+        {[
+          { value: '24h', label: 'Tiempo de respuesta' },
+          { value: 'FSC', label: 'Certificación vigente' },
+          { value: '14+', label: 'Años de experiencia' },
+        ].map((stat) => (
+          <div class="text-center">
+            <div class="text-2xl font-bold text-[#F4622A]">{stat.value}</div>
+            <div class="text-xs text-gray-400 mt-1 uppercase tracking-wide">{stat.label}</div>
+          </div>
+        ))}
       </div>
 
     </div>
