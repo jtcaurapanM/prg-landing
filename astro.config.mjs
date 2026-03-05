@@ -6,13 +6,11 @@ import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
   site: "https://prg.cl",
-  output: "hybrid",
+  output: "static",
   adapter: vercel(),
   integrations: [sitemap()],
   image: {
-    remotePatterns: [
-      { protocol: "https", hostname: "**.unsplash.com" },
-    ],
+    remotePatterns: [{ protocol: "https", hostname: "**.unsplash.com" }],
   },
   vite: {
     plugins: [tailwindcss()],

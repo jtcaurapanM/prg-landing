@@ -34,24 +34,26 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             Desde 2011, innovando con propósito
           </h2>
           <p class="text-gray-600 leading-relaxed mb-5">
-            Inversiones PRG SpA nació el año 2011 y desde el inicio hemos innovado
-            continuamente para resolver las necesidades de nuestros clientes, buscando
-            siempre una propuesta de valor sustentable y amigable con el medio ambiente.
+            Inversiones PRG SpA nació el año 2011 y desde el inicio hemos
+            innovado continuamente para resolver las necesidades de nuestros
+            clientes, buscando siempre una propuesta de valor sustentable y
+            amigable con el medio ambiente.
           </p>
           <p class="text-gray-600 leading-relaxed mb-5">
-            La producción de elementos de comunicación visual, dada la alta rotación
-            de los mismos, debe fabricarse con insumos que provoquen el menor impacto
-            ambiental al momento de cambiarlos. Por eso, uno de nuestros primeros
-            objetivos fue trabajar con proveedores que nos aseguraran absoluta
-            responsabilidad en la cadena de custodia forestal en cada etapa del
-            proceso productivo. Hoy contamos con la certificación FSC C143583.
+            La producción de elementos de comunicación visual, dada la alta
+            rotación de los mismos, debe fabricarse con insumos que provoquen el
+            menor impacto ambiental al momento de cambiarlos. Por eso, uno de
+            nuestros primeros objetivos fue trabajar con proveedores que nos
+            aseguraran absoluta responsabilidad en la cadena de custodia
+            forestal en cada etapa del proceso productivo. Hoy contamos con la
+            certificación FSC C143583.
           </p>
           <p class="text-gray-600 leading-relaxed">
-            Entendiendo la necesidad de nuestros clientes de comunicar y mantener una
-            constante presencia, contamos con soluciones y tecnologías de impresión,
-            corte, grabado y terminación que, junto a nuestro equipo humano, son
-            capaces de plasmar en cualquier tipo de objeto y material el mensaje o
-            imagen que se quiera entregar.
+            Entendiendo la necesidad de nuestros clientes de comunicar y
+            mantener una constante presencia, contamos con soluciones y
+            tecnologías de impresión, corte, grabado y terminación que, junto a
+            nuestro equipo humano, son capaces de plasmar en cualquier tipo de
+            objeto y material el mensaje o imagen que se quiera entregar.
           </p>
         </div>
         <div class="rounded-2xl overflow-hidden aspect-video">
@@ -140,20 +142,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         </p>
 
         <!-- PDF viewer -->
-        <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-sm mb-6">
-          <object
-            data="/Certificado-FSC-2023.pdf"
-            type="application/pdf"
+        <div
+          class="rounded-2xl overflow-hidden border border-gray-200 shadow-sm mb-6"
+        >
+          <iframe
+            src="/Certificado-FSC-2023.pdf"
             class="w-full"
             style="height: 600px;"
+            loading="lazy"
           >
-            <p class="p-6 text-gray-500 text-sm">
-              Tu navegador no soporta la visualización de PDF.
-              <a href="/Certificado-FSC-2023.pdf" class="text-[#F4622A] underline" download>
-                Descarga el certificado aquí.
-              </a>
-            </p>
-          </object>
+          </iframe>
         </div>
 
         <a
@@ -161,8 +159,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           download
           class="inline-flex items-center gap-2 px-6 py-3 bg-[#101820] text-white text-sm font-semibold rounded-md hover:bg-[#1e2d3d] transition-colors"
         >
-          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          <svg
+            class="w-4 h-4 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            ></path>
           </svg>
           Descargar certificado PDF
         </a>
