@@ -63,6 +63,7 @@ const structuredData = {
       <div>
         <div
           transition:name={`product-img-${product.slug}`}
+          data-gpu-fix
           class="rounded-2xl overflow-hidden bg-gray-50 aspect-[4/3]"
         >
           <img
@@ -86,7 +87,7 @@ const structuredData = {
       </div>
 
       <!-- Info -->
-      <div transition:name={`product-info-${product.slug}`}>
+      <div transition:name={`product-info-${product.slug}`} data-gpu-fix>
         <div class="flex flex-wrap gap-2 mb-4">
           <Badge text={categoryLabel} variant="gray" />
           {product.featured && <Badge text="Destacado" variant="orange" />}
