@@ -159,12 +159,8 @@ input, textarea {
   }
 }
 
-/* ── Scroll padding: compensa el navbar sticky al hacer scroll a elementos ── */
-/* El valor real lo setea JS en astro:page-load via --navbar-height */
+/* ── Font rendering antialiased: prevents "ghost text" in Safari ── */
 html {
-  scroll-padding-top: var(--navbar-height, 88px);
-  /* Rendering de texto antialiased: previene el "ghost text" en Safari
-     causado por re-composición de capas GPU al hacer swap de fuentes */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -245,15 +241,17 @@ html {
 /* ── Safari GPU compositing fix ───────────────────────────────────────────
    SOLO en Safari (el único browser con el bug de re-uso de texturas GPU al
    hacer resize). @supports (-webkit-hyphens:auto) es soportado únicamente
-   por WebKit/Safari y excluye Chrome y Firefox, evitando el overhead de
-   compositing innecesario en browsers que no lo necesitan.
+   por WebKit/Safari y excluye Chrome y Firefox.
 
-   Cada section y footer obtiene su propia capa GPU: translateZ(0) crea una
-   compositing layer que Safari invalida correctamente al cambiar el viewport,
-   previniendo "ghost text" y texto clipeado durante resize. */
+   Opt-in explícito via data-gpu-fix: SOLO las secciones que lo necesitan
+   reciben la capa GPU. Las secciones con formularios (inputs/textarea/select)
+   NUNCA deben tener transform — eso cambia el containing block para el
+   auto-scroll de Safari al hacer focus en inputs, causando un salto al inicio
+   de la página (bug documentado en WebKit).
+
+   Uso: agregar data-gpu-fix al <section> o <footer> que lo necesite. */
 @supports (-webkit-hyphens: auto) {
-  section,
-  footer {
+  [data-gpu-fix] {
     transform: translateZ(0);
   }
 }
