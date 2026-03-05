@@ -141,12 +141,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
         <!-- PDF viewer -->
         <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-sm mb-6">
-          <iframe
-            src="/Certificado-FSC-2023.pdf"
-            title="Certificado FSC C143583 — PRG Inversiones"
+          <object
+            data="/Certificado-FSC-2023.pdf"
+            type="application/pdf"
             class="w-full"
             style="height: 600px;"
-            loading="lazy"
           >
             <p class="p-6 text-gray-500 text-sm">
               Tu navegador no soporta la visualización de PDF.
@@ -154,7 +153,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
                 Descarga el certificado aquí.
               </a>
             </p>
-          </iframe>
+          </object>
         </div>
 
         <a
