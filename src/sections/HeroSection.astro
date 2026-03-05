@@ -3,7 +3,8 @@
 ---
 
 <section
-  class="relative min-h-[92vh] flex items-center overflow-hidden bg-[#101820]"
+  class="relative flex items-center overflow-hidden bg-[#101820]"
+  style="min-height: 92svh; min-height: 92dvh;"
 >
   <!-- Background image -->
   <div class="absolute inset-0">
@@ -26,13 +27,18 @@
   <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
     <div class="max-w-2xl">
       <!-- Badge FSC -->
+      <!-- Usar flex+w-fit en lugar de inline-flex: evita el bug de alineación
+           vertical de Safari donde inline-flex + items-center + leading-none
+           no centra correctamente los flex items. -->
+      <!-- isolation: isolate contiene la capa GPU del animate-pulse
+           evitando que Safari filtre el texto de capas vecinas -->
       <div
-        class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-8"
+        class="flex w-fit items-baseline gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-8 isolate"
       >
         <span
-          class="w-2 h-2 rounded-full bg-green-400 animate-pulse shrink-0"
+          class="block w-2 h-2 rounded-full bg-green-400 animate-pulse shrink-0 mb-px"
         ></span>
-        <span class="text-sm text-white/80 font-medium leading-none"
+        <span class="block text-sm text-white/80 font-medium leading-none"
           >Certificación FSC C143583 vigente</span
         >
       </div>

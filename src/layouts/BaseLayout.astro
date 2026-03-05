@@ -50,13 +50,9 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <!-- Preload fuentes criticas (pesos mas usados en el sitio) -->
+    <!-- Preload fuentes críticas en WOFF2 (formato óptimo generado con convert-fonts.sh) -->
     <link rel="preload" href="/fonts/Gotham-Medium.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/Gotham-Bold.woff2" as="font" type="font/woff2" crossorigin />
-
-    <!-- Preload fuentes críticas (pesos más usados en el sitio) -->
-    <link rel="preload" href="/fonts/Gotham-Medium.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/Gotham-Bold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Gotham-Bold.woff2"   as="font" type="font/woff2" crossorigin />
 
     <ClientRouter />
 
@@ -99,12 +95,14 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
               respaldo de la certificación FSC C143583.
             </p>
             <div
-              class="mt-4 inline-flex items-center gap-2 bg-white/10 rounded-md px-3 py-2"
+              class="mt-4 flex w-fit items-center gap-2 bg-white/10 rounded-md px-3 py-2"
             >
-              <span class="text-xs text-gray-300 font-medium"
+              <span class="block text-xs text-gray-300 font-medium leading-none"
                 >Certificación FSC</span
               >
-              <span class="text-xs text-[#F4622A] font-bold">C143583</span>
+              <span class="block text-xs text-[#F4622A] font-bold leading-none"
+                >C143583</span
+              >
             </div>
           </div>
 

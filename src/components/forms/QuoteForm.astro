@@ -298,6 +298,11 @@ const { productName = '', compact = false } = Astro.props;
     // Campos que admiten live validation (solo despues de un intento de envio o blur)
     const liveFields = new Set<string>();
 
+    // ── Fix scroll iOS: cuando el teclado virtual abre, iOS puede desplazar la
+    // página dejando el input fuera de vista. Con un pequeño delay esperamos a
+    // que el teclado termine de abrirse y scrolleamos el input al centro. ──
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+
     // Adjuntar listeners de blur e input a todos los campos validables
     form.querySelectorAll<ValidatableInput>('.field-input').forEach((el) => {
       el.addEventListener('blur', () => {
@@ -310,6 +315,16 @@ const { productName = '', compact = false } = Astro.props;
       el.addEventListener('input', () => {
         if (liveFields.has(el.name)) validateInput(el);
       });
+
+      // iOS: al enfocar un input, el teclado abre y puede mover el scroll.
+      // Esperamos 350ms (tiempo de animación del teclado) y luego reposicionamos.
+      if (isIOS) {
+        el.addEventListener('focus', () => {
+          setTimeout(() => {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 350);
+        });
+      }
     });
 
     // Submit handler

@@ -78,7 +78,7 @@ function isActive(href: string) {
                   href={`/catalogo?categoria=${slug}`}
                   class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#F4622A] transition-colors"
                 >
-                  <span class="w-1 h-1 rounded-full bg-[#F4622A] shrink-0" />
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" />
                   {label}
                 </a>
               ))}
@@ -134,7 +134,8 @@ function isActive(href: string) {
   <!-- Mobile menu panel -->
   <div
     id="mobile-menu"
-    class="md:hidden overflow-hidden max-h-0 transition-[max-height] duration-300 ease-in-out bg-white border-t border-gray-100"
+    class="md:hidden bg-white border-t border-gray-100"
+    style="max-height:0;overflow:hidden;transition:max-height 320ms cubic-bezier(0.4,0,0.2,1)"
   >
     <nav class="px-4 pt-3 pb-5 flex flex-col gap-1">
 
@@ -230,36 +231,73 @@ function isActive(href: string) {
   </div>
 </header>
 
+<!-- Overlay para menú mobile: debe estar FUERA del <header> para no quedar
+     dentro de su stacking context (z-50). Así el header siempre queda encima. -->
+<div
+  id="mobile-overlay"
+  aria-hidden="true"
+  class="md:hidden fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none transition-opacity duration-300"
+></div>
+
 <script>
   const getEl = (id: string) => document.getElementById(id)!;
 
-  // ── Estado del menú ────────────────────────────────────────────────────────
+  // ── Estado ────────────────────────────────────────────────────────────────
   let menuOpen = false;
   let resizeHandler: (() => void) | null = null;
 
+  // ── Helpers de overlay ────────────────────────────────────────────────────
+  function showOverlay() {
+    const overlay = document.getElementById("mobile-overlay");
+    if (!overlay) return;
+    overlay.classList.remove("opacity-0", "pointer-events-none");
+    overlay.classList.add("opacity-100");
+  }
+
+  function hideOverlay() {
+    const overlay = document.getElementById("mobile-overlay");
+    if (!overlay) return;
+    overlay.classList.remove("opacity-100");
+    overlay.classList.add("opacity-0", "pointer-events-none");
+  }
+
+  // ── Abrir / cerrar menú ───────────────────────────────────────────────────
+  // Se usa dvh (dynamic viewport height) para que el menú no quede cortado
+  // por la barra del navegador en iOS. El menú scrollea internamente cuando
+  // el contenido supera el espacio disponible — esto elimina el cálculo
+  // dinámico de altura al abrir/cerrar el submenu (fix del "buceo").
   function openMenu() {
     menuOpen = true;
-    const menu = getEl("mobile-menu");
-    void menu.offsetHeight; // Force reflow antes de leer scrollHeight (Safari fix)
-    menu.style.maxHeight = menu.scrollHeight + "px";
+    const menu       = getEl("mobile-menu");
+    const navbarEl   = document.getElementById("navbar");
+    const navH       = navbarEl ? navbarEl.offsetHeight : 72;
+    // 100dvh = viewport dinámico (excluye barra del browser en iOS)
+    menu.style.maxHeight  = `calc(100dvh - ${navH}px)`;
+    menu.style.overflowY  = "auto";
     getEl("icon-open").classList.add("opacity-0", "-rotate-90");
     getEl("icon-close").classList.remove("opacity-0", "rotate-90");
     const menuBtn = getEl("mobile-menu-btn");
     menuBtn.setAttribute("aria-expanded", "true");
-    menuBtn.setAttribute("aria-label", "Cerrar menu");
+    menuBtn.setAttribute("aria-label", "Cerrar menú");
     document.body.style.overflow = "hidden";
+    showOverlay();
   }
 
   function closeMenu() {
     menuOpen = false;
     const menu = getEl("mobile-menu");
     menu.style.maxHeight = "0px";
+    // Volver a overflow:hidden después de la transición para que no se vea contenido
+    menu.addEventListener("transitionend", () => {
+      if (!menuOpen) menu.style.overflowY = "hidden";
+    }, { once: true });
     getEl("icon-open").classList.remove("opacity-0", "-rotate-90");
     getEl("icon-close").classList.add("opacity-0", "rotate-90");
     const menuBtn2 = getEl("mobile-menu-btn");
     menuBtn2.setAttribute("aria-expanded", "false");
-    menuBtn2.setAttribute("aria-label", "Abrir menu");
+    menuBtn2.setAttribute("aria-label", "Abrir menú");
     document.body.style.overflow = "";
+    hideOverlay();
   }
 
   // ── Active state móvil ────────────────────────────────────────────────────
@@ -302,37 +340,30 @@ function isActive(href: string) {
   }
 
   // ── Submenu catálogo móvil ────────────────────────────────────────────────
+  // IMPORTANTE: Ya NO recalculamos la altura del menú padre al abrir/cerrar el
+  // submenu. El menú padre ahora usa overflow-y:auto con max-height basado en
+  // dvh, por lo que el submenu se expande naturalmente dentro del scroll.
   function initCatalogMobileSubmenu() {
-    const toggle  = document.getElementById("catalog-mobile-toggle");
+    const toggle    = document.getElementById("catalog-mobile-toggle");
     const submenuEl = document.getElementById("catalog-mobile-submenu");
-    const chevron = document.getElementById("catalog-mobile-chevron");
+    const chevron   = document.getElementById("catalog-mobile-chevron");
     if (!toggle || !submenuEl) return;
 
-    // Asignar a const tipada para que TypeScript infiera HTMLElement en los closures
     const submenu: HTMLElement = submenuEl;
     const newToggle = toggle.cloneNode(true) as HTMLElement;
     toggle.replaceWith(newToggle);
 
     function openSubmenu() {
-      void submenu.offsetHeight; // Force reflow (Safari fix)
+      void submenu.offsetHeight;
       submenu.style.maxHeight = submenu.scrollHeight + "px";
       chevron?.classList.add("rotate-180");
       newToggle.setAttribute("aria-expanded", "true");
-      const mobileMenu = document.getElementById("mobile-menu");
-      if (mobileMenu) {
-        // Force reflow so scrollHeight includes the newly revealed submenu
-        void mobileMenu.offsetHeight;
-        mobileMenu.style.maxHeight = mobileMenu.scrollHeight + "px";
-      }
     }
 
     function closeSubmenu() {
-      const h = parseInt(submenu.style.maxHeight) || 0;
       submenu.style.maxHeight = "0px";
       chevron?.classList.remove("rotate-180");
       newToggle.setAttribute("aria-expanded", "false");
-      const mobileMenu = document.getElementById("mobile-menu");
-      if (mobileMenu) mobileMenu.style.maxHeight = Math.max(0, (parseInt(mobileMenu.style.maxHeight) || 0) - h) + "px";
     }
 
     newToggle.addEventListener("click", () => {
@@ -358,7 +389,13 @@ function isActive(href: string) {
     newBtn.addEventListener("click", () => menuOpen ? closeMenu() : openMenu());
     menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
 
-    // Close when clicking outside the navbar
+    // Cerrar al hacer click en el overlay
+    const overlay = document.getElementById("mobile-overlay");
+    if (overlay) {
+      overlay.addEventListener("click", closeMenu);
+    }
+
+    // Cerrar al hacer click fuera del navbar
     if (outsideClickHandler) document.removeEventListener("click", outsideClickHandler);
     outsideClickHandler = (e: MouseEvent) => {
       const navbar = document.getElementById("navbar");
@@ -368,7 +405,12 @@ function isActive(href: string) {
 
     if (resizeHandler) window.removeEventListener("resize", resizeHandler);
     resizeHandler = () => {
-      if (menuOpen) getEl("mobile-menu").style.maxHeight = getEl("mobile-menu").scrollHeight + "px";
+      if (menuOpen) {
+        // Recalcular altura en cambio de orientación
+        const navbarEl = document.getElementById("navbar");
+        const navH = navbarEl ? navbarEl.offsetHeight : 72;
+        getEl("mobile-menu").style.maxHeight = `calc(100dvh - ${navH}px)`;
+      }
       if (window.innerWidth >= 768) closeMenu();
     };
     window.addEventListener("resize", resizeHandler);
@@ -378,7 +420,6 @@ function isActive(href: string) {
     if (e.key === "Escape" && menuOpen) closeMenu();
   });
 
-  // Cerrar menú al navegar
   document.addEventListener("astro:before-swap", closeMenu);
 
   document.addEventListener("astro:page-load", () => {
@@ -401,8 +442,6 @@ function isActive(href: string) {
     });
 
     // CB-06: Touch support para dropdown catalogo en tablets/touch devices
-    // En dispositivos touch, el :hover CSS no funciona igual.
-    // Un primer tap abre el dropdown; un segundo tap navega.
     const catalogGroup = document.querySelector('[data-catalog-group]') as HTMLElement | null;
     if (catalogGroup) {
       catalogGroup.addEventListener('touchstart', (e) => {
@@ -411,14 +450,12 @@ function isActive(href: string) {
         const isOpen = dropdown.classList.contains('touch-open');
         if (!isOpen) {
           e.preventDefault();
-          // Cerrar cualquier otro dropdown abierto
           document.querySelectorAll('[data-catalog-dropdown].touch-open').forEach((el) => {
             el.classList.remove('touch-open', 'opacity-100', 'visible');
             el.classList.add('opacity-0', 'invisible');
           });
           dropdown.classList.add('touch-open', 'opacity-100', 'visible');
           dropdown.classList.remove('opacity-0', 'invisible');
-          // Cerrar al tocar fuera
           const closeOnOutside = (ev: TouchEvent) => {
             if (!catalogGroup.contains(ev.target as Node)) {
               dropdown.classList.remove('touch-open', 'opacity-100', 'visible');

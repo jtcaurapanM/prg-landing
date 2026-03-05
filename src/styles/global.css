@@ -15,22 +15,20 @@
 /* Light · 300 */
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Light.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Light.ttf') format('truetype');
+  src: url('/fonts/Gotham-Light.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Light-Italic.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Light Italic.ttf') format('truetype');
+  src: url('/fonts/Gotham-Light-Italic.woff2') format('woff2');
   font-weight: 300;
   font-style: italic;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
@@ -41,22 +39,20 @@
    cercano al normal y se usa como stand-in para font-weight 400. */
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Light.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Light.ttf') format('truetype');
+  src: url('/fonts/Gotham-Light.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Book-Italic.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Book Italic.ttf') format('truetype');
+  src: url('/fonts/Gotham-Book-Italic.woff2') format('woff2');
   font-weight: 400;
   font-style: italic;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
@@ -65,22 +61,20 @@
 /* Medium · 500 */
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Medium.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Medium.ttf') format('truetype');
+  src: url('/fonts/Gotham-Medium.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Medium-Italic.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Medium Italic.ttf') format('truetype');
+  src: url('/fonts/Gotham-Medium-Italic.woff2') format('woff2');
   font-weight: 500;
   font-style: italic;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
@@ -90,44 +84,40 @@
    (CB-04: font-weight range no soportado en Safari 14) */
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Bold.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Bold.ttf') format('truetype');
+  src: url('/fonts/Gotham-Bold.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Bold.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Bold.ttf') format('truetype');
+  src: url('/fonts/Gotham-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Bold-Italic.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Bold Italic.ttf') format('truetype');
+  src: url('/fonts/Gotham-Bold-Italic.woff2') format('woff2');
   font-weight: 600;
   font-style: italic;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Bold-Italic.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Bold Italic.ttf') format('truetype');
+  src: url('/fonts/Gotham-Bold-Italic.woff2') format('woff2');
   font-weight: 700;
   font-style: italic;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
@@ -136,22 +126,20 @@
 /* Ultra · 900 */
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Ultra.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Ultra.ttf') format('truetype');
+  src: url('/fonts/Gotham-Ultra.woff2') format('woff2');
   font-weight: 900;
   font-style: normal;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('/fonts/Gotham-Ultra-Italic.woff2') format('woff2'),
-       url('../assets/fonts/Gotham Ultra Italic.otf') format('opentype');
+  src: url('/fonts/Gotham-Ultra-Italic.woff2') format('woff2');
   font-weight: 900;
   font-style: italic;
-  font-display: swap;
+  font-display: fallback;
   ascent-override: 80%;
   descent-override: 20%;
   line-gap-override: 0%;
@@ -175,6 +163,10 @@ input, textarea {
 /* El valor real lo setea JS en astro:page-load via --navbar-height */
 html {
   scroll-padding-top: var(--navbar-height, 88px);
+  /* Rendering de texto antialiased: previene el "ghost text" en Safari
+     causado por re-composición de capas GPU al hacer swap de fuentes */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @theme {
@@ -198,11 +190,20 @@ html {
 /* Página antigua: se queda quieta (la nueva la cubre) */
 ::view-transition-old(root) {
   animation: none;
+  /* normal evita que Safari mezcle el blending de capas */
+  mix-blend-mode: normal;
 }
 
 /* Página nueva: fade in rápido encima de la anterior */
 ::view-transition-new(root) {
   animation: 280ms ease-out both vt-fade-in;
+  mix-blend-mode: normal;
+}
+
+/* Aísla el par old/new en su propio stacking context:
+   impide que el compositor de Safari filtre texto entre capas */
+::view-transition-image-pair(root) {
+  isolation: isolate;
 }
 
 /* Named elements (morph de cards) — forward */
@@ -238,6 +239,22 @@ html {
   ::view-transition-old(product-name),
   ::view-transition-new(product-name) {
     animation: none !important;
+  }
+}
+
+/* ── Safari GPU compositing fix ───────────────────────────────────────────
+   SOLO en Safari (el único browser con el bug de re-uso de texturas GPU al
+   hacer resize). @supports (-webkit-hyphens:auto) es soportado únicamente
+   por WebKit/Safari y excluye Chrome y Firefox, evitando el overhead de
+   compositing innecesario en browsers que no lo necesitan.
+
+   Cada section y footer obtiene su propia capa GPU: translateZ(0) crea una
+   compositing layer que Safari invalida correctamente al cambiar el viewport,
+   previniendo "ghost text" y texto clipeado durante resize. */
+@supports (-webkit-hyphens: auto) {
+  section,
+  footer {
+    transform: translateZ(0);
   }
 }
 
