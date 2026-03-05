@@ -12,6 +12,9 @@ export async function getStaticPaths() {
   }));
 }
 
+const SHOW_SPECS     = false;
+const SHOW_MATERIALS = false;
+
 const { product } = Astro.props;
 const categoryLabel = CATEGORY_LABELS[product.category];
 const relatedProducts = products
@@ -94,20 +97,22 @@ const structuredData = {
         <p class="text-gray-600 leading-relaxed mb-8">{product.description}</p>
 
         <!-- Specs -->
-        <div class="mb-8">
-          <h2 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Especificaciones</h2>
-          <ul class="space-y-2">
-            {product.specs.map((spec) => (
-              <li class="flex items-start gap-3 text-sm text-gray-700">
-                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0"></span>
-                {spec}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {SHOW_SPECS && (
+          <div class="mb-8">
+            <h2 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Especificaciones</h2>
+            <ul class="space-y-2">
+              {product.specs.map((spec) => (
+                <li class="flex items-start gap-3 text-sm text-gray-700">
+                  <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0"></span>
+                  {spec}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <!-- Materials -->
-        {product.materials.length > 0 && (
+        {SHOW_MATERIALS && product.materials.length > 0 && (
           <div class="mb-8">
             <h2 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Materiales disponibles</h2>
             <div class="flex flex-wrap gap-2">
