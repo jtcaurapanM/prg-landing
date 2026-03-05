@@ -4,32 +4,85 @@ import { buildNotificationEmail, buildConfirmationEmail } from "../../lib/email-
 
 export const prerender = false;
 
+// ── Validación whitelist de categorías ────────────────────────────────────────
+const VALID_CATEGORIES = new Set([
+  'papeleria-corporativa',
+  'grandes-formatos',
+  'promocionales',
+  'packaging-etiquetas',
+]);
+
+const VALID_QUANTITIES = new Set([
+  '', '1-50', '51-200', '201-1000', '1000+',
+]);
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) && email.length <= 254;
+}
+
+function sanitizeString(value: unknown, maxLength: number): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (trimmed.length === 0 || trimmed.length > maxLength) return null;
+  return trimmed;
+}
+
+function validateCategories(raw: unknown): string | null {
+  if (typeof raw !== 'string' || raw.trim() === '') return null;
+  const cats = raw.split(',').map(s => s.trim()).filter(Boolean);
+  if (cats.length === 0) return null;
+  const allValid = cats.every(c => VALID_CATEGORIES.has(c));
+  return allValid ? cats.join(',') : null;
+}
+
+// ── Endpoint ──────────────────────────────────────────────────────────────────
 export const POST: APIRoute = async ({ request }) => {
   const body = await request.json().catch(() => null);
 
-  if (!body) {
+  if (!body || typeof body !== 'object') {
     return new Response(
       JSON.stringify({ error: "Cuerpo de solicitud inválido." }),
       { status: 400 },
     );
   }
 
-  const { name, email, phone, category, productRef, quantity, message } = body;
+  // ── Validar y sanitizar campos ───────────────────────────────────────────
+  const name    = sanitizeString(body.name,    100);
+  const email   = sanitizeString(body.email,   254);
+  const phone   = sanitizeString(body.phone,    30) ?? undefined;
+  const message = sanitizeString(body.message, 5000);
 
   if (!name || !email || !message) {
     return new Response(
-      JSON.stringify({ error: "Campos requeridos faltantes." }),
+      JSON.stringify({ error: "Campos requeridos faltantes o inválidos." }),
       { status: 422 },
     );
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return new Response(JSON.stringify({ error: "Email inválido." }), {
-      status: 422,
-    });
+  if (!isValidEmail(email)) {
+    return new Response(
+      JSON.stringify({ error: "Email inválido." }),
+      { status: 422 },
+    );
   }
 
+  // Categorías: al menos una, todas válidas
+  const category = validateCategories(body.category);
+  if (!category) {
+    return new Response(
+      JSON.stringify({ error: "Línea de interés inválida." }),
+      { status: 422 },
+    );
+  }
+
+  // Campos opcionales con whitelist
+  const productRef = sanitizeString(body.productRef, 200) ?? undefined;
+  const quantity   = typeof body.quantity === 'string' && VALID_QUANTITIES.has(body.quantity)
+    ? body.quantity
+    : undefined;
+
+  // ── Variables de entorno ─────────────────────────────────────────────────
   const apiKey    = import.meta.env.RESEND_API_KEY;
   const fromEmail = import.meta.env.RESEND_FROM;
   const toEmail   = import.meta.env.CONTACT_EMAIL;
@@ -45,7 +98,7 @@ export const POST: APIRoute = async ({ request }) => {
   const resend = new Resend(apiKey);
   const data   = { name, email, phone, category, productRef, quantity, message };
 
-  // ── 1. Notificación interna al equipo PRG ──────────────────────────────────
+  // ── 1. Notificación interna al equipo PRG ────────────────────────────────
   const notification = buildNotificationEmail(data);
 
   const { error: notifError } = await resend.emails.send({
@@ -65,7 +118,7 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  // ── 2. Confirmación al usuario ────────────────────────────────────────────
+  // ── 2. Confirmación al usuario ───────────────────────────────────────────
   const confirmation = buildConfirmationEmail(data);
 
   const { error: confirmError } = await resend.emails.send({
@@ -78,7 +131,6 @@ export const POST: APIRoute = async ({ request }) => {
   });
 
   if (confirmError) {
-    // No bloquea: la notificación ya se envió correctamente
     console.error("Error Resend (confirmación al usuario):", confirmError);
   }
 

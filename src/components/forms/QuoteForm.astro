@@ -145,6 +145,7 @@ const { productName = '', compact = false } = Astro.props;
       name="message"
       required
       rows={compact ? 3 : 5}
+      maxlength="5000"
       placeholder={compact
         ? 'Cuéntanos en qué podemos ayudarte...'
         : 'Ej: Necesito 500 carpetas con logo corporativo para evento en junio. Necesitamos diseño incluido.'}
