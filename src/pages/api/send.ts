@@ -38,6 +38,18 @@ function validateCategories(raw: unknown): string | null {
 
 // ── Endpoint ──────────────────────────────────────────────────────────────────
 export const POST: APIRoute = async ({ request }) => {
+  // ── Verificación de origen (MEJ-04: rate limiting básico) ───────────────
+  const origin  = request.headers.get('origin')  ?? '';
+  const referer = request.headers.get('referer') ?? '';
+  const isDev   = import.meta.env.DEV;
+
+  if (!isDev && !origin.includes('prg.cl') && !referer.includes('prg.cl')) {
+    return new Response(
+      JSON.stringify({ error: "Solicitud no permitida." }),
+      { status: 403 },
+    );
+  }
+
   const body = await request.json().catch(() => null);
 
   if (!body || typeof body !== 'object') {

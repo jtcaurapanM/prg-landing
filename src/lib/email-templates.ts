@@ -1,3 +1,5 @@
+import { CATEGORY_LABELS as CAT_LABELS } from '../data/categories';
+
 export interface QuoteData {
   name: string;
   email: string;
@@ -8,12 +10,8 @@ export interface QuoteData {
   message: string;
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  'papeleria-corporativa': 'Papelería Corporativa',
-  'grandes-formatos':      'Grandes Formatos',
-  'promocionales':         'Regalos Promocionales',
-  'packaging-etiquetas':   'Packaging y Etiquetas',
-};
+// Re-exportar como Record<string, string> para uso interno flexible (DT-02)
+const CATEGORY_LABELS: Record<string, string> = CAT_LABELS as Record<string, string>;
 
 function esc(str: string): string {
   return str

@@ -32,7 +32,7 @@ No incluye:
 
 ## Stack Técnico
 
-- Astro 5 (output: hybrid)
+- Astro 5 (output: static)
 - Adaptador: @astrojs/vercel
 - Tailwind 4
 - TypeScript (strict mode)
@@ -40,7 +40,8 @@ No incluye:
 - Sitemap
 - Resend (npm package)
 
-Arquitectura híbrida: sitio estático con un único endpoint serverless para el formulario de cotización.
+Arquitectura estática con un único endpoint serverless para el formulario de cotización.
+Solo `src/pages/api/send.ts` tiene `export const prerender = false`.
 
 ---
 

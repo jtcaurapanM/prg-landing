@@ -36,7 +36,8 @@ const structuredData = {
   title={`${product.name} · Catálogo PRG Inversiones`}
   description={`${product.shortDesc} Solicita cotización sin compromiso.`}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  {/* Sanitizar </script> dentro del JSON-LD para prevenir XSS (PERF-07) */}
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/<\//g, '<\\/')} />
 
   <!-- Breadcrumb -->
   <div class="bg-[#F8F8F6] border-b border-gray-100">

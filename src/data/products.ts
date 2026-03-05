@@ -29,7 +29,7 @@ export const products: Product[] = [
       'Cantidad mínima: 100 unidades',
     ],
     materials: ['Couché 300 g', 'Couché 350 g', 'Kraft', 'Papel especial'],
-    images: ['https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&q=80&fm=webp'],
     featured: true,
     fscEligible: true,
   },
@@ -47,7 +47,7 @@ export const products: Product[] = [
       'Cantidad mínima: 50 unidades',
     ],
     materials: ['Couché brillante', 'Couché mate', 'Kraft'],
-    images: ['https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=800&q=80&fm=webp'],
     featured: true,
     fscEligible: true,
   },
@@ -66,7 +66,7 @@ export const products: Product[] = [
       'Cantidad mínima: 30 unidades',
     ],
     materials: ['Tapa couché', 'Tapa kraft', 'Interior bond blanco', 'Interior bond crema'],
-    images: ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80&fm=webp'],
     fscEligible: true,
   },
   {
@@ -83,7 +83,7 @@ export const products: Product[] = [
       'Cantidad mínima: 500 unidades',
     ],
     materials: ['Couché 115 g', 'Couché 150 g', 'Couché 300 g'],
-    images: ['https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80&fm=webp'],
     fscEligible: true,
   },
   {
@@ -100,7 +100,7 @@ export const products: Product[] = [
       'Cantidad mínima: 20 unidades',
     ],
     materials: ['Couché laminado', 'Tela sintética', 'Interior 90 g bond'],
-    images: ['https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&q=80&fm=webp'],
     fscEligible: true,
   },
 
@@ -120,7 +120,7 @@ export const products: Product[] = [
       'Laminado UV disponible',
     ],
     materials: ['PVC 440 g/m²', 'PVC 510 g/m²', 'PVC microperforado'],
-    images: ['https://images.unsplash.com/photo-1534536281715-e28d76689b4d?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1534536281715-e28d76689b4d?w=800&q=80&fm=webp'],
     featured: true,
   },
   {
@@ -137,7 +137,7 @@ export const products: Product[] = [
       'Instalación disponible en Santiago',
     ],
     materials: ['PVC espumado', 'Aluminio compuesto', 'Acrílico', 'Acero inoxidable'],
-    images: ['https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80&fm=webp'],
   },
   {
     name: 'Brandeo Vehicular',
@@ -153,7 +153,7 @@ export const products: Product[] = [
       'Diseño disponible',
     ],
     materials: ['Vinilo cast', 'Vinilo calendrado', 'Laminado protector'],
-    images: ['https://images.unsplash.com/photo-1558981852-426c349659c1?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1558981852-426c349659c1?w=800&q=80&fm=webp'],
     featured: true,
   },
   {
@@ -170,7 +170,7 @@ export const products: Product[] = [
       'Con o sin estructura tensora',
     ],
     materials: ['Tela poliéster', 'Tela backlit', 'Tela blackout'],
-    images: ['https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80&fm=webp'],
   },
 
   // --- PROMOCIONALES ---
@@ -188,7 +188,7 @@ export const products: Product[] = [
       'Colores personalizables',
     ],
     materials: ['Plástico ABS', 'Aluminio anodizado', 'Bambú', 'Madera'],
-    images: ['https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80&fm=webp'],
     fscEligible: true,
   },
   {
@@ -205,7 +205,7 @@ export const products: Product[] = [
       'Cantidad mínima: 50 unidades',
     ],
     materials: ['PVC', 'Papel laminado', 'Poliéster'],
-    images: ['https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80&fm=webp'],
     featured: true,
   },
   {
@@ -222,7 +222,7 @@ export const products: Product[] = [
       'Cantidad mínima: 24 unidades',
     ],
     materials: ['Cerámica blanca', 'Acero inoxidable', 'Plástico BPA free'],
-    images: ['https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=800&q=80&fm=webp'],
   },
   {
     name: 'Pendrives Personalizados',
@@ -238,7 +238,7 @@ export const products: Product[] = [
       'Cantidad mínima: 50 unidades',
     ],
     materials: ['Aluminio anodizado', 'Madera', 'Plástico ABS'],
-    images: ['https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80&fm=webp'],
     fscEligible: true,
   },
 
@@ -258,7 +258,7 @@ export const products: Product[] = [
       'Cantidad mínima: 100 unidades',
     ],
     materials: ['Cartón rígido', 'Couché laminado', 'Papel especial de fantasía'],
-    images: ['https://images.unsplash.com/photo-1618220179428-22790b461013?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1618220179428-22790b461013?w=800&q=80&fm=webp'],
     featured: true,
   },
   {
@@ -275,7 +275,7 @@ export const products: Product[] = [
       'Cantidad mínima: 500 unidades',
     ],
     materials: ['Corrugado simple canal C', 'Corrugado doble canal BC', 'Corrugado triple canal'],
-    images: ['https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800&q=80&fm=webp'],
     fscEligible: true,
   },
   {
@@ -293,7 +293,7 @@ export const products: Product[] = [
       'Cantidad mínima: 1.000 unidades',
     ],
     materials: ['Papel adhesivo', 'Poliéster transparente', 'BOPP', 'Polipropileno blanco'],
-    images: ['https://images.unsplash.com/photo-1580169980114-ccd0babfa840?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1580169980114-ccd0babfa840?w=800&q=80&fm=webp'],
     featured: true,
     fscEligible: true,
   },
@@ -312,7 +312,7 @@ export const products: Product[] = [
       'Cantidad mínima: 200 unidades',
     ],
     materials: ['Microcorrugado canal E', 'Microcorrugado canal F'],
-    images: ['https://images.unsplash.com/photo-1553413077-190dd305871c?w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1553413077-190dd305871c?w=800&q=80&fm=webp'],
     fscEligible: true,
   },
 ];

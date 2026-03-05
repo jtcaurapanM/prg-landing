@@ -234,16 +234,59 @@ const { productName = '', compact = false } = Astro.props;
     return true;
   }
 
-  // ── Inicialización ──────────────────────────────────────────────────────────
-  function initForm() {
+  // ── Chips de categoría ──────────────────────────────────────────────────────
+  // Retorna la función validateCategories como closure para que initForm
+  // la use directamente, sin pasar por window globals (BUG-04/05 fix)
+  function initChips(): () => boolean {
+    const categoryError = document.getElementById('category-error');
+
+    function validateCategories(): boolean {
+      const anyChecked = Array.from(
+        document.querySelectorAll<HTMLInputElement>('input[name="category"]')
+      ).some((cb) => cb.checked);
+
+      if (categoryError) categoryError.classList.toggle('hidden', anyChecked);
+      return anyChecked;
+    }
+
+    document.querySelectorAll<HTMLLabelElement>('.category-chip').forEach((chip) => {
+      const checkbox  = chip.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
+      const checkmark = chip.querySelector<SVGElement>('.checkmark')!;
+
+      function syncChip() {
+        if (checkbox.checked) {
+          chip.classList.add('border-[#F4622A]', 'text-[#F4622A]', 'bg-orange-50');
+          chip.classList.remove('border-gray-200', 'text-gray-600', 'bg-white');
+          checkmark?.classList.remove('hidden');
+        } else {
+          chip.classList.remove('border-[#F4622A]', 'text-[#F4622A]', 'bg-orange-50');
+          chip.classList.add('border-gray-200', 'text-gray-600', 'bg-white');
+          checkmark?.classList.add('hidden');
+        }
+        // Si ya hubo intento de envio, re-validar al cambiar
+        if (categoryError && !categoryError.classList.contains('hidden')) {
+          validateCategories();
+        }
+      }
+
+      checkbox.addEventListener('change', syncChip);
+      syncChip(); // estado inicial
+    });
+
+    // Retornar para que initForm la use como closure (no via window global)
+    return validateCategories;
+  }
+
+  // ── Inicializacion ──────────────────────────────────────────────────────────
+  function initForm(validateCategories: () => boolean) {
     const form       = document.getElementById('quote-form')     as HTMLFormElement | null;
     const submitBtn  = document.getElementById('form-submit')    as HTMLButtonElement | null;
-    const btnText    = document.getElementById('btn-text')!;
-    const btnSpinner = document.getElementById('btn-spinner')!;
-    const successMsg = document.getElementById('form-success')!;
-    const errorMsg   = document.getElementById('form-error')!;
+    const btnText    = document.getElementById('btn-text') as HTMLElement | null;
+    const btnSpinner = document.getElementById('btn-spinner') as HTMLElement | null;
+    const successMsg = document.getElementById('form-success') as HTMLElement | null;
+    const errorMsg   = document.getElementById('form-error') as HTMLElement | null;
 
-    if (!form || !submitBtn) return;
+    if (!form || !submitBtn || !btnText || !btnSpinner || !successMsg || !errorMsg) return;
 
     // Pre-fill producto desde URL param
     const productRef = form.querySelector<HTMLInputElement>('#product-ref');
@@ -252,12 +295,11 @@ const { productName = '', compact = false } = Astro.props;
       if (param) productRef.value = decodeURIComponent(param);
     }
 
-    // Campos que admiten live validation (solo después de un intento de envío o blur)
+    // Campos que admiten live validation (solo despues de un intento de envio o blur)
     const liveFields = new Set<string>();
 
     // Adjuntar listeners de blur e input a todos los campos validables
     form.querySelectorAll<ValidatableInput>('.field-input').forEach((el) => {
-      // Validar al salir del campo (blur) — solo si el campo tiene regla
       el.addEventListener('blur', () => {
         if (RULES[el.name]) {
           liveFields.add(el.name);
@@ -265,7 +307,6 @@ const { productName = '', compact = false } = Astro.props;
         }
       });
 
-      // Validar mientras escribe — solo si ya tuvo un error o intentó enviar
       el.addEventListener('input', () => {
         if (liveFields.has(el.name)) validateInput(el);
       });
@@ -277,7 +318,6 @@ const { productName = '', compact = false } = Astro.props;
       successMsg.classList.add('hidden');
       errorMsg.classList.add('hidden');
 
-      // Validar todos los campos con regla
       const inputs = Array.from(form.querySelectorAll<ValidatableInput>('.field-input'));
       let firstInvalid: ValidatableInput | null = null;
       let allValid = true;
@@ -290,25 +330,19 @@ const { productName = '', compact = false } = Astro.props;
         if (!ok) allValid = false;
       });
 
-      // Validar checkboxes de categoría
-      const categoriesValid: boolean =
-        typeof (window as any).__validateCategories === 'function'
-          ? (window as any).__validateCategories()
-          : true;
-
+      // Validar checkboxes de categoria usando la funcion closure (sin global)
+      const categoriesValid = validateCategories();
       if (!categoriesValid) allValid = false;
 
       if (!allValid) {
         if (firstInvalid) {
           firstInvalid.focus();
         } else {
-          // El único error es en categorías: scroll al grupo
           document.getElementById('category-group')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         return;
       }
 
-      // Enviar
       submitBtn.disabled = true;
       btnText.textContent = 'Enviando...';
       btnSpinner.classList.remove('hidden');
@@ -333,6 +367,12 @@ const { productName = '', compact = false } = Astro.props;
           liveFields.clear();
           inputs.forEach((el) => { if (RULES[el.name]) markValid(el); });
           document.getElementById('category-error')?.classList.add('hidden');
+          // Re-sincronizar chips al hacer reset
+          document.querySelectorAll<HTMLLabelElement>('.category-chip').forEach((chip) => {
+            chip.classList.remove('border-[#F4622A]', 'text-[#F4622A]', 'bg-orange-50');
+            chip.classList.add('border-gray-200', 'text-gray-600', 'bg-white');
+            chip.querySelector<SVGElement>('.checkmark')?.classList.add('hidden');
+          });
         } else {
           errorMsg.classList.remove('hidden');
         }
@@ -340,53 +380,14 @@ const { productName = '', compact = false } = Astro.props;
         errorMsg.classList.remove('hidden');
       } finally {
         submitBtn.disabled = false;
-        btnText.textContent = 'Enviar cotización';
+        btnText.textContent = 'Enviar cotizacion';
         btnSpinner.classList.add('hidden');
       }
     });
   }
 
-  // ── Chips de categoría ──────────────────────────────────────────────────────
-  function initChips() {
-    const categoryError = document.getElementById('category-error');
-
-    function validateCategories(): boolean {
-      const anyChecked = Array.from(
-        document.querySelectorAll<HTMLInputElement>('input[name="category"]')
-      ).some((cb) => cb.checked);
-
-      if (categoryError) categoryError.classList.toggle('hidden', anyChecked);
-      return anyChecked;
-    }
-
-    // Exponer para que initForm pueda llamarla en submit
-    (window as any).__validateCategories = validateCategories;
-
-    document.querySelectorAll<HTMLLabelElement>('.category-chip').forEach((chip) => {
-      const checkbox  = chip.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
-      const checkmark = chip.querySelector<SVGElement>('.checkmark')!;
-
-      function syncChip() {
-        if (checkbox.checked) {
-          chip.classList.add('border-[#F4622A]', 'text-[#F4622A]', 'bg-orange-50');
-          chip.classList.remove('border-gray-200', 'text-gray-600', 'bg-white');
-          checkmark?.classList.remove('hidden');
-        } else {
-          chip.classList.remove('border-[#F4622A]', 'text-[#F4622A]', 'bg-orange-50');
-          chip.classList.add('border-gray-200', 'text-gray-600', 'bg-white');
-          checkmark?.classList.add('hidden');
-        }
-        // Si ya hubo intento de envío, re-validar al cambiar
-        if (categoryError && !categoryError.classList.contains('hidden')) {
-          validateCategories();
-        }
-      }
-
-      checkbox.addEventListener('change', syncChip);
-      syncChip(); // estado inicial
-    });
-  }
-
-  document.addEventListener('astro:page-load', initChips);
-  document.addEventListener('astro:page-load', initForm);
+  document.addEventListener('astro:page-load', () => {
+    const validateCategories = initChips();
+    initForm(validateCategories);
+  });
 </script>

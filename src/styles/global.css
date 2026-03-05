@@ -6,12 +6,17 @@
    Gotham tiene usWinAscent/Descent mayores al em-box real, lo que desplaza
    el baseline y causa desalineación visual en flex. Estos overrides
    normalizan el content area a 1em (80% ascent + 20% descent) eliminando
-   el problema en todos los contextos, incluido leading-none. ── */
+   el problema en todos los contextos, incluido leading-none.
+
+   Orden de fuentes: WOFF2 desde /fonts/ (public/) primero como formato
+   óptimo para web, TTF como fallback de compatibilidad.
+   Para generar los WOFF2: scripts/convert-fonts.sh ── */
 
 /* Light · 300 */
 @font-face {
   font-family: 'Gotham';
-  src: url('../assets/fonts/Gotham Light.ttf') format('truetype');
+  src: url('/fonts/Gotham-Light.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Light.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -21,7 +26,8 @@
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('../assets/fonts/Gotham Light Italic.ttf') format('truetype');
+  src: url('/fonts/Gotham-Light-Italic.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Light Italic.ttf') format('truetype');
   font-weight: 300;
   font-style: italic;
   font-display: swap;
@@ -35,7 +41,8 @@
    cercano al normal y se usa como stand-in para font-weight 400. */
 @font-face {
   font-family: 'Gotham';
-  src: url('../assets/fonts/Gotham Light.ttf') format('truetype');
+  src: url('/fonts/Gotham-Light.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Light.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -45,7 +52,8 @@
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('../assets/fonts/Gotham Book Italic.ttf') format('truetype');
+  src: url('/fonts/Gotham-Book-Italic.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Book Italic.ttf') format('truetype');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -57,7 +65,8 @@
 /* Medium · 500 */
 @font-face {
   font-family: 'Gotham';
-  src: url('../assets/fonts/Gotham Medium.ttf') format('truetype');
+  src: url('/fonts/Gotham-Medium.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -67,7 +76,8 @@
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('../assets/fonts/Gotham Medium Italic.ttf') format('truetype');
+  src: url('/fonts/Gotham-Medium-Italic.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Medium Italic.ttf') format('truetype');
   font-weight: 500;
   font-style: italic;
   font-display: swap;
@@ -76,11 +86,13 @@
   line-gap-override: 0%;
 }
 
-/* Bold · 600–700 (font-semibold y font-bold usan el mismo archivo) */
+/* Bold · 600 y 700 declarados por separado para máxima compatibilidad
+   (CB-04: font-weight range no soportado en Safari 14) */
 @font-face {
   font-family: 'Gotham';
-  src: url('../assets/fonts/Gotham Bold.ttf') format('truetype');
-  font-weight: 600 700;
+  src: url('/fonts/Gotham-Bold.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Bold.ttf') format('truetype');
+  font-weight: 600;
   font-style: normal;
   font-display: swap;
   ascent-override: 80%;
@@ -89,8 +101,31 @@
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('../assets/fonts/Gotham Bold Italic.ttf') format('truetype');
-  font-weight: 600 700;
+  src: url('/fonts/Gotham-Bold.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Gotham';
+  src: url('/fonts/Gotham-Bold-Italic.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Bold Italic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Gotham';
+  src: url('/fonts/Gotham-Bold-Italic.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Bold Italic.ttf') format('truetype');
+  font-weight: 700;
   font-style: italic;
   font-display: swap;
   ascent-override: 80%;
@@ -101,7 +136,8 @@
 /* Ultra · 900 */
 @font-face {
   font-family: 'Gotham';
-  src: url('../assets/fonts/Gotham Ultra.ttf') format('truetype');
+  src: url('/fonts/Gotham-Ultra.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Ultra.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
   font-display: swap;
@@ -111,7 +147,8 @@
 }
 @font-face {
   font-family: 'Gotham';
-  src: url('../assets/fonts/Gotham Ultra Italic.otf') format('opentype');
+  src: url('/fonts/Gotham-Ultra-Italic.woff2') format('woff2'),
+       url('../assets/fonts/Gotham Ultra Italic.otf') format('opentype');
   font-weight: 900;
   font-style: italic;
   font-display: swap;
@@ -135,8 +172,9 @@ input, textarea {
 }
 
 /* ── Scroll padding: compensa el navbar sticky al hacer scroll a elementos ── */
+/* El valor real lo setea JS en astro:page-load via --navbar-height */
 html {
-  scroll-padding-top: 88px;
+  scroll-padding-top: var(--navbar-height, 88px);
 }
 
 @theme {
@@ -201,4 +239,18 @@ html {
   ::view-transition-new(product-name) {
     animation: none !important;
   }
+}
+
+/* ── Accesibilidad: focus visible en chips de categoria (ACC-04) ─────────── */
+.category-chip:focus-within {
+  outline: 2px solid #F4622A;
+  outline-offset: 2px;
+}
+
+/* ── Focus visible para botones y links con outline naranja ─────────────── */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #F4622A;
+  outline-offset: 2px;
+  border-radius: 4px;
 }

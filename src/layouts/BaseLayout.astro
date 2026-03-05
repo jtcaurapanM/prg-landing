@@ -50,6 +50,13 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    <!-- Preload fuentes criticas (pesos mas usados en el sitio) -->
+    <link rel="preload" href="/fonts/Gotham-Medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Gotham-Bold.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Preload fuentes críticas (pesos más usados en el sitio) -->
+    <link rel="preload" href="/fonts/Gotham-Medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Gotham-Bold.woff2" as="font" type="font/woff2" crossorigin />
 
     <ClientRouter />
 
@@ -176,11 +183,10 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
     </footer>
 
     <script>
-      const getEl = (id: string) => document.getElementById(id)!;
-
       // ── Scroll shadow ──────────────────────────────────────────────────────
       function handleScroll() {
-        const navbar = getEl("navbar");
+        const navbar = document.getElementById("navbar");
+        if (!navbar) return;
         if (window.scrollY > 20) {
           navbar.classList.add("shadow-md");
           navbar.classList.remove("border-gray-100");
@@ -233,20 +239,24 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
         });
       }
 
-      // ── Antes de swap: marcar dirección ───────────────────────────────────
+      // ── Antes de swap: marcar dirección + reset del flag ──────────────────
       document.addEventListener("astro:before-swap", () => {
         document.documentElement.dataset.navDirection = isBackNav
           ? "back"
           : "forward";
+        // Resetear aquí también para evitar que un popstate tardío
+        // contamine la siguiente navegación forward
+        isBackNav = false;
       });
 
       // ── After swap: filtro catálogo + scroll ──────────────────────────────
       document.addEventListener("astro:after-swap", () => {
+        const navDir = document.documentElement.dataset.navDirection;
         const filterCat = new URLSearchParams(window.location.search).get(
           "categoria",
         );
 
-        if (isBackNav) {
+        if (navDir === "back") {
           const savedScrollY = parseInt(
             sessionStorage.getItem("catalogScrollY") ?? "0",
             10,
@@ -283,7 +293,15 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
         document.body.style.overflow = "";
         clearCardTransitions();
         delete document.documentElement.dataset.navDirection;
-        isBackNav = false;
+
+        // Actualizar CSS custom property con la altura real del navbar
+        const navbar = document.getElementById("navbar");
+        if (navbar) {
+          document.documentElement.style.setProperty(
+            "--navbar-height",
+            navbar.offsetHeight + "px",
+          );
+        }
 
         const slugMatch = window.location.pathname.match(/\/catalogo\/([^/]+)/);
         if (slugMatch) sessionStorage.setItem("lastProductSlug", slugMatch[1]);
