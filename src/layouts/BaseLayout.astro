@@ -17,7 +17,7 @@ const {
   canonical = Astro.url.href,
 } = Astro.props;
 
-const siteUrl  = "https://prg.cl";
+const siteUrl = "https://prg.cl";
 const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
 ---
 
@@ -25,25 +25,28 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-visual" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, interactive-widget=resizes-visual"
+    />
     <meta name="generator" content={Astro.generator} />
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
 
-    <meta property="og:title"       content={fullTitle} />
+    <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image"       content={`${siteUrl}${ogImage}`} />
-    <meta property="og:url"         content={canonical} />
-    <meta property="og:type"        content="website" />
-    <meta property="og:locale"      content="es_CL" />
-    <meta property="og:site_name"   content="PRG Inversiones" />
+    <meta property="og:image" content={`${siteUrl}${ogImage}`} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:site_name" content="PRG Inversiones" />
 
-    <meta name="twitter:card"        content="summary_large_image" />
-    <meta name="twitter:title"       content={fullTitle} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image"       content={`${siteUrl}${ogImage}`} />
+    <meta name="twitter:image" content={`${siteUrl}${ogImage}`} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
@@ -69,7 +72,6 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
   </head>
 
   <body class="bg-white text-[#101820] font-sans antialiased">
-
     <Navbar />
 
     <main>
@@ -80,7 +82,6 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
     <footer class="bg-[#101820] text-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-
           <div>
             <div class="font-bold text-xl mb-3">
               <span class="text-[#F4622A]">PRG</span> Inversiones
@@ -90,37 +91,82 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
               tecnología de impresión, corte, grabado y terminación, y el
               respaldo de la certificación FSC C143583.
             </p>
-            <div class="mt-4 inline-flex items-center gap-2 bg-white/10 rounded-md px-3 py-2">
-              <span class="text-xs text-gray-300 font-medium">Certificación FSC</span>
+            <div
+              class="mt-4 inline-flex items-center gap-2 bg-white/10 rounded-md px-3 py-2"
+            >
+              <span class="text-xs text-gray-300 font-medium"
+                >Certificación FSC</span
+              >
               <span class="text-xs text-[#F4622A] font-bold">C143583</span>
             </div>
           </div>
 
           <div>
-            <h3 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">
+            <h3
+              class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4"
+            >
               Servicios
             </h3>
             <ul class="space-y-2 text-sm text-gray-300">
-              <li><a href="/catalogo?categoria=papeleria-corporativa" class="hover:text-white transition-colors">Papelería Corporativa</a></li>
-              <li><a href="/catalogo?categoria=grandes-formatos"      class="hover:text-white transition-colors">Grandes Formatos</a></li>
-              <li><a href="/catalogo?categoria=promocionales"         class="hover:text-white transition-colors">Regalos Promocionales</a></li>
-              <li><a href="/catalogo?categoria=packaging-etiquetas"   class="hover:text-white transition-colors">Packaging y Etiquetas</a></li>
+              <li>
+                <a
+                  href="/catalogo?categoria=papeleria-corporativa"
+                  class="block hover:text-white transition-colors"
+                  >Papelería Corporativa</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/catalogo?categoria=grandes-formatos"
+                  class="block hover:text-white transition-colors"
+                  >Grandes Formatos</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/catalogo?categoria=promocionales"
+                  class="block hover:text-white transition-colors"
+                  >Regalos Promocionales</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/catalogo?categoria=packaging-etiquetas"
+                  class="block hover:text-white transition-colors"
+                  >Packaging y Etiquetas</a
+                >
+              </li>
             </ul>
           </div>
 
           <div>
-            <h3 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">
+            <h3
+              class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4"
+            >
               Contacto
             </h3>
             <ul class="space-y-2 text-sm text-gray-300">
-              <li><a href="/contacto"  class="hover:text-white transition-colors">Formulario de cotización</a></li>
-              <li><a href="/nosotros"  class="hover:text-white transition-colors">Sobre PRG Inversiones</a></li>
+              <li>
+                <a
+                  href="/contacto"
+                  class="block hover:text-white transition-colors"
+                  >Formulario de cotización</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/nosotros"
+                  class="block hover:text-white transition-colors"
+                  >Sobre PRG Inversiones</a
+                >
+              </li>
             </ul>
           </div>
-
         </div>
 
-        <div class="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div
+          class="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4"
+        >
           <p class="text-gray-500 text-xs">
             © {new Date().getFullYear()} Inversiones PRG SpA. Todos los derechos reservados.
           </p>
@@ -148,21 +194,32 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
 
       // ── Dirección de navegación ────────────────────────────────────────────
       let isBackNav = false;
-      window.addEventListener("popstate", () => { isBackNav = true; });
+      window.addEventListener("popstate", () => {
+        isBackNav = true;
+      });
 
       // ── Product card transitions ───────────────────────────────────────────
       function setCardTransition(slug: string) {
-        const card     = document.querySelector(`[data-product-card][data-slug="${slug}"]`);
-        const imgEl    = card?.querySelector("[data-card-image]")   as HTMLElement | null;
-        const contentEl = card?.querySelector("[data-card-content]") as HTMLElement | null;
-        if (imgEl)     imgEl.style.viewTransitionName     = `product-img-${slug}`;
-        if (contentEl) contentEl.style.viewTransitionName = `product-info-${slug}`;
+        const card = document.querySelector(
+          `[data-product-card][data-slug="${slug}"]`,
+        );
+        const imgEl = card?.querySelector(
+          "[data-card-image]",
+        ) as HTMLElement | null;
+        const contentEl = card?.querySelector(
+          "[data-card-content]",
+        ) as HTMLElement | null;
+        if (imgEl) imgEl.style.viewTransitionName = `product-img-${slug}`;
+        if (contentEl)
+          contentEl.style.viewTransitionName = `product-info-${slug}`;
       }
 
       function clearCardTransitions() {
-        document.querySelectorAll("[data-card-image], [data-card-content]").forEach((el) => {
-          (el as HTMLElement).style.viewTransitionName = "";
-        });
+        document
+          .querySelectorAll("[data-card-image], [data-card-content]")
+          .forEach((el) => {
+            (el as HTMLElement).style.viewTransitionName = "";
+          });
       }
 
       function initCardTransitions() {
@@ -178,21 +235,30 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
 
       // ── Antes de swap: marcar dirección ───────────────────────────────────
       document.addEventListener("astro:before-swap", () => {
-        document.documentElement.dataset.navDirection = isBackNav ? "back" : "forward";
+        document.documentElement.dataset.navDirection = isBackNav
+          ? "back"
+          : "forward";
       });
 
       // ── After swap: filtro catálogo + scroll ──────────────────────────────
       document.addEventListener("astro:after-swap", () => {
-        const filterCat = new URLSearchParams(window.location.search).get("categoria");
+        const filterCat = new URLSearchParams(window.location.search).get(
+          "categoria",
+        );
 
         if (isBackNav) {
-          const savedScrollY = parseInt(sessionStorage.getItem("catalogScrollY") ?? "0", 10);
+          const savedScrollY = parseInt(
+            sessionStorage.getItem("catalogScrollY") ?? "0",
+            10,
+          );
           sessionStorage.removeItem("catalogScrollY");
 
-          document.querySelectorAll<HTMLElement>("[data-card-wrapper]").forEach((wrapper) => {
-            const show = !filterCat || wrapper.dataset.category === filterCat;
-            wrapper.style.display = show ? "" : "none";
-          });
+          document
+            .querySelectorAll<HTMLElement>("[data-card-wrapper]")
+            .forEach((wrapper) => {
+              const show = !filterCat || wrapper.dataset.category === filterCat;
+              wrapper.style.display = show ? "" : "none";
+            });
 
           window.scrollTo(0, savedScrollY);
 
@@ -201,10 +267,12 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
           return;
         }
 
-        document.querySelectorAll<HTMLElement>("[data-card-wrapper]").forEach((wrapper) => {
-          const show = !filterCat || wrapper.dataset.category === filterCat;
-          wrapper.style.display = show ? "" : "none";
-        });
+        document
+          .querySelectorAll<HTMLElement>("[data-card-wrapper]")
+          .forEach((wrapper) => {
+            const show = !filterCat || wrapper.dataset.category === filterCat;
+            wrapper.style.display = show ? "" : "none";
+          });
 
         const slug = sessionStorage.getItem("lastProductSlug");
         if (slug) setCardTransition(slug);
