@@ -21,7 +21,8 @@ function isActive(href: string) {
 <div
   id="mobile-overlay"
   transition:persist
-  class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none invisible transition-opacity duration-300"
+  class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm opacity-0 transition-opacity duration-300"
+  style="display:none"
   aria-hidden="true"
 ></div>
 
@@ -249,8 +250,11 @@ function isActive(href: string) {
     const menu    = getEl("mobile-menu");
     const overlay = getEl("mobile-overlay");
     menu.style.maxHeight = menu.scrollHeight + "px";
-    overlay.classList.remove("opacity-0", "pointer-events-none", "invisible");
-    overlay.classList.add("opacity-100");
+    overlay.style.display = '';
+    requestAnimationFrame(() => {
+      overlay.classList.remove("opacity-0");
+      overlay.classList.add("opacity-100");
+    });
     getEl("icon-open").classList.add("opacity-0", "-rotate-90");
     getEl("icon-close").classList.remove("opacity-0", "rotate-90");
     getEl("mobile-menu-btn").setAttribute("aria-expanded", "true");
@@ -262,9 +266,9 @@ function isActive(href: string) {
     const menu    = getEl("mobile-menu");
     const overlay = getEl("mobile-overlay");
     menu.style.maxHeight = "0px";
-    overlay.classList.add("opacity-0", "pointer-events-none");
+    overlay.classList.add("opacity-0");
     overlay.classList.remove("opacity-100");
-    setTimeout(() => overlay.classList.add("invisible"), 300);
+    setTimeout(() => { overlay.style.display = 'none'; }, 300);
     getEl("icon-open").classList.remove("opacity-0", "-rotate-90");
     getEl("icon-close").classList.add("opacity-0", "rotate-90");
     getEl("mobile-menu-btn").setAttribute("aria-expanded", "false");
@@ -357,6 +361,7 @@ function isActive(href: string) {
     const newBtn = btn.cloneNode(true) as HTMLElement;
     btn.replaceWith(newBtn);
     const newOverlay = overlay.cloneNode(true) as HTMLElement;
+    newOverlay.style.display = 'none';
     overlay.replaceWith(newOverlay);
 
     newBtn.addEventListener("click", () => menuOpen ? closeMenu() : openMenu());
