@@ -21,7 +21,7 @@ function isActive(href: string) {
 <div
   id="mobile-overlay"
   transition:persist
-  class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"
+  class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none invisible transition-opacity duration-300"
   aria-hidden="true"
 ></div>
 
@@ -249,7 +249,7 @@ function isActive(href: string) {
     const menu    = getEl("mobile-menu");
     const overlay = getEl("mobile-overlay");
     menu.style.maxHeight = menu.scrollHeight + "px";
-    overlay.classList.remove("opacity-0", "pointer-events-none");
+    overlay.classList.remove("opacity-0", "pointer-events-none", "invisible");
     overlay.classList.add("opacity-100");
     getEl("icon-open").classList.add("opacity-0", "-rotate-90");
     getEl("icon-close").classList.remove("opacity-0", "rotate-90");
@@ -264,6 +264,7 @@ function isActive(href: string) {
     menu.style.maxHeight = "0px";
     overlay.classList.add("opacity-0", "pointer-events-none");
     overlay.classList.remove("opacity-100");
+    setTimeout(() => overlay.classList.add("invisible"), 300);
     getEl("icon-open").classList.remove("opacity-0", "-rotate-90");
     getEl("icon-close").classList.add("opacity-0", "rotate-90");
     getEl("mobile-menu-btn").setAttribute("aria-expanded", "false");

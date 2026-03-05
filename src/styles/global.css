@@ -120,6 +120,11 @@
   line-gap-override: 0%;
 }
 
+/* ── Caret visible en inputs ─────────────────────────────────────────────── */
+input, textarea {
+  caret-color: #F4622A;
+}
+
 /* ── iOS Safari: evita zoom automático en inputs (requiere font-size ≥ 16px) ── */
 @supports (-webkit-touch-callout: none) {
   input,
