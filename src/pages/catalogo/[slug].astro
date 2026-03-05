@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Badge from '../../components/ui/Badge.astro';
 import ProductCard from '../../components/catalog/ProductCard.astro';
+import QuoteForm from '../../components/forms/QuoteForm.astro';
 import { products } from '../../data/products';
 import { CATEGORY_LABELS } from '../../data/categories';
 
@@ -126,12 +127,18 @@ const structuredData = {
 
         <!-- CTAs -->
         <div class="flex flex-col sm:flex-row gap-3">
-          <a
-            href={`/contacto?producto=${encodeURIComponent(product.name)}`}
-            class="flex-1 inline-flex items-center justify-center px-6 py-3.5 bg-[#F4622A] text-white font-bold rounded-md hover:bg-[#d9521f] transition-colors"
+          <button
+            id="open-quote-dialog"
+            type="button"
+            class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#F4622A] text-white font-bold rounded-md hover:bg-[#d9521f] transition-colors"
+            aria-haspopup="dialog"
+            aria-controls="quote-dialog"
           >
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
             Cotizar este producto
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -149,3 +156,114 @@ const structuredData = {
     )}
   </section>
 </BaseLayout>
+
+<!-- ── Dialog modal de cotización ─────────────────────────────────────────── -->
+<dialog id="quote-dialog" aria-modal="true" aria-labelledby="dialog-title">
+  <!-- Sticky header -->
+  <div class="sticky top-0 z-10 flex items-center justify-between px-6 sm:px-8 py-4 bg-white border-b border-gray-100">
+    <div>
+      <h2 id="dialog-title" class="font-bold text-[#101820] text-base">Solicitar cotización</h2>
+      <p class="text-xs text-gray-400 mt-0.5 truncate max-w-xs">{product.name}</p>
+    </div>
+    <button
+      type="button"
+      id="close-quote-dialog"
+      class="flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:text-[#101820] hover:bg-gray-100 transition-colors"
+      aria-label="Cerrar formulario"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+  <!-- Form content -->
+  <div class="px-6 sm:px-8 py-6">
+    <QuoteForm productName={product.name} dialogMode={true} />
+  </div>
+</dialog>
+
+<style>
+  #quote-dialog {
+    border: none;
+    padding: 0;
+    border-radius: 1.25rem;
+    background: white;
+    margin: auto;
+    width: calc(100% - 2rem);
+    max-width: 820px;
+    max-height: 96dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.04),
+      0 25px 60px -12px rgba(0,0,0,0.28);
+  }
+  #quote-dialog::backdrop {
+    background: rgba(16, 24, 32, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  #quote-dialog[open] {
+    animation: dialog-in 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  #quote-dialog.is-closing {
+    animation: dialog-out 180ms ease both;
+  }
+  @keyframes dialog-in {
+    from { opacity: 0; transform: scale(0.95) translateY(16px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0);    }
+  }
+  @keyframes dialog-out {
+    to { opacity: 0; transform: scale(0.96) translateY(8px); }
+  }
+</style>
+
+<script>
+  function initQuoteDialog() {
+    const openBtn  = document.getElementById('open-quote-dialog');
+    const dialog   = document.getElementById('quote-dialog')       as HTMLDialogElement | null;
+    const closeBtn = document.getElementById('close-quote-dialog') as HTMLButtonElement  | null;
+
+    if (!openBtn || !dialog) return;
+
+    function openDialog() {
+      dialog!.showModal();
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDialog() {
+      dialog!.classList.add('is-closing');
+      dialog!.addEventListener('animationend', () => {
+        dialog!.classList.remove('is-closing');
+        dialog!.close();
+        document.body.style.overflow = '';
+      }, { once: true });
+    }
+
+    openBtn.addEventListener('click', openDialog);
+    closeBtn?.addEventListener('click', closeDialog);
+
+    // Clic en el backdrop (fuera del contenido del dialog)
+    dialog.addEventListener('click', (e: MouseEvent) => {
+      if (e.target === dialog) closeDialog();
+    });
+
+    // Interceptar ESC para ejecutar la animación de cierre
+    dialog.addEventListener('cancel', (e: Event) => {
+      e.preventDefault();
+      closeDialog();
+    });
+  }
+
+  document.addEventListener('astro:page-load', initQuoteDialog);
+
+  // Cerrar limpiamente antes de View Transitions
+  document.addEventListener('astro:before-swap', () => {
+    const dialog = document.getElementById('quote-dialog') as HTMLDialogElement | null;
+    if (dialog?.open) {
+      dialog.classList.remove('is-closing');
+      dialog.close();
+    }
+    document.body.style.overflow = '';
+  });
+</script>

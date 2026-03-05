@@ -2,52 +2,25 @@
 interface Props {
   productName?: string;
   compact?: boolean;
+  dialogMode?: boolean;
 }
 
-const { productName = "", compact = false } = Astro.props;
+const { productName = "", compact = false, dialogMode = false } = Astro.props;
 ---
 
-<!--
-  Tailwind safelist (clases usadas sólo desde JS):
-  border-red-400 border-gray-200
---><!-- ── FORM ──────────────────────────────────────────────────────────────── -->
-<form id="quote-form" class="space-y-5" novalidate>
+<!-- ── FORM ──────────────────────────────────────────────────────────────── -->
+<form id="quote-form" class={dialogMode ? "space-y-4" : "space-y-5"} novalidate>
   <!-- Honeypot: invisible para usuarios; bots lo completan automáticamente -->
   <div
     style="position:absolute;left:-9999px;width:0;height:0;overflow:hidden;"
     aria-hidden="true"
   >
     <label for="website">No completar este campo</label>
-    <input
-      type="text"
-      id="website"
-      name="website"
-      tabindex="-1"
-      autocomplete="off"
-    />
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
   </div>
 
-  <!-- Empresa + Nombre -->
+  <!-- Row 1: Nombre + Email -->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <div>
-      <label for="empresa" class="block text-sm font-medium text-gray-700 mb-1">
-        Empresa <span class="text-[#F4622A]">*</span>
-      </label>
-      <input
-        type="text"
-        id="empresa"
-        name="empresa"
-        required
-        autocomplete="organization"
-        placeholder="Nombre de tu empresa"
-        class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition"
-      />
-      <p
-        class="field-error hidden text-xs text-red-500 mt-1.5"
-        aria-live="polite"
-      >
-      </p>
-    </div>
     <div>
       <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
         Nombre <span class="text-[#F4622A]">*</span>
@@ -61,16 +34,8 @@ const { productName = "", compact = false } = Astro.props;
         placeholder="Tu nombre"
         class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition"
       />
-      <p
-        class="field-error hidden text-xs text-red-500 mt-1.5"
-        aria-live="polite"
-      >
-      </p>
+      <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
     </div>
-  </div>
-
-  <!-- Email + Teléfono -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
       <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
         Correo electrónico <span class="text-[#F4622A]">*</span>
@@ -84,12 +49,12 @@ const { productName = "", compact = false } = Astro.props;
         placeholder="tu@empresa.com"
         class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition"
       />
-      <p
-        class="field-error hidden text-xs text-red-500 mt-1.5"
-        aria-live="polite"
-      >
-      </p>
+      <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
     </div>
+  </div>
+
+  <!-- Row 2: Teléfono + Producto de referencia -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
       <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
         Teléfono <span class="text-gray-400 font-normal">(opcional)</span>
@@ -102,175 +67,24 @@ const { productName = "", compact = false } = Astro.props;
         placeholder="+56 9 0000 0000"
         class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition"
       />
-      <p
-        class="field-error hidden text-xs text-red-500 mt-1.5"
-        aria-live="polite"
-      >
-      </p>
+      <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
+    </div>
+    <div>
+      <label for="product-ref" class="block text-sm font-medium text-gray-700 mb-1">
+        Producto de referencia <span class="text-gray-400 font-normal">(opcional)</span>
+      </label>
+      <input
+        type="text"
+        id="product-ref"
+        name="productRef"
+        value={productName}
+        placeholder="Ej: Tarjetas de presentación, gigantografía..."
+        class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition"
+      />
     </div>
   </div>
 
-  <!-- Línea de interés: solo en modo full -->
-  {
-    !compact && (
-      <div>
-        <span class="block text-sm font-medium text-gray-700 mb-2">
-          Línea de interés <span class="text-[#F4622A]">*</span>
-          <span class="text-gray-400 font-normal">(puedes elegir varias)</span>
-        </span>
-        <div
-          id="category-group"
-          class="flex flex-wrap gap-2"
-          role="group"
-          aria-label="Línea de interés"
-          aria-required="true"
-        >
-          {[
-            { value: "papeleria-corporativa", label: "Papelería corporativa" },
-            { value: "grandes-formatos", label: "Grandes formatos" },
-            { value: "promocionales", label: "Regalos Promocionales" },
-            { value: "packaging-etiquetas", label: "Packaging y etiquetas" },
-          ].map(({ value, label }) => (
-            <label class="category-chip inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 bg-white text-sm font-medium text-gray-600 cursor-pointer select-none transition-colors hover:border-[#F4622A] hover:text-[#F4622A]">
-              <input
-                type="checkbox"
-                name="category"
-                value={value}
-                class="sr-only peer"
-              />
-              <span class="w-3.5 h-3.5 shrink-0 rounded-sm border border-gray-300 peer-checked:bg-[#F4622A] peer-checked:border-[#F4622A] transition-colors flex items-center justify-center">
-                <svg
-                  class="checkmark hidden w-2.5 h-2.5 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="3"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </span>
-              {label}
-            </label>
-          ))}
-        </div>
-        <p
-          id="category-error"
-          class="hidden text-xs text-red-500 mt-1.5"
-          aria-live="polite"
-        >
-          Selecciona al menos una línea de interés.
-        </p>
-      </div>
-    )
-  }
-
-  <!-- Producto de referencia: solo en modo full -->
-  {
-    !compact && (
-      <div>
-        <label
-          for="product-ref"
-          class="block text-sm font-medium text-gray-700 mb-1"
-        >
-          Producto de referencia{" "}
-          <span class="text-gray-400 font-normal">(opcional)</span>
-        </label>
-        <input
-          type="text"
-          id="product-ref"
-          name="productRef"
-          value={productName}
-          placeholder="Ej: Tarjetas de presentación, gigantografía..."
-          class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition"
-        />
-      </div>
-    )
-  }
-
-  <!-- Cantidad + Urgencia: solo en modo full -->
-  {
-    !compact && (
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label for="qty" class="block text-sm font-medium text-gray-700 mb-1">
-            Cantidad aproximada{" "}
-            <span class="text-gray-400 font-normal">(opcional)</span>
-          </label>
-          <div class="relative">
-            <select
-              id="qty"
-              name="quantity"
-              class="w-full px-4 py-2.5 pr-10 border border-gray-200 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition bg-white appearance-none"
-            >
-              <option value="">No lo sé aún</option>
-              <option value="1-50">1 – 50 unidades</option>
-              <option value="51-200">51 – 200 unidades</option>
-              <option value="201-1000">201 – 1.000 unidades</option>
-              <option value="1000+">Más de 1.000 unidades</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div>
-          <label
-            for="urgency"
-            class="block text-sm font-medium text-gray-700 mb-1"
-          >
-            ¿Cuándo lo necesitas?{" "}
-            <span class="text-gray-400 font-normal">(opcional)</span>
-          </label>
-          <div class="relative">
-            <select
-              id="urgency"
-              name="urgency"
-              class="w-full px-4 py-2.5 pr-10 border border-gray-200 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition bg-white appearance-none"
-            >
-              <option value="">Sin fecha definida</option>
-              <option value="urgente">Lo antes posible</option>
-              <option value="1-2-semanas">En 1 a 2 semanas</option>
-              <option value="1-mes">En aproximadamente 1 mes</option>
-              <option value="mas-1-mes">En más de 1 mes</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  <!-- Descripción / mensaje -->
+  <!-- Row 3: Descripción (full width) -->
   <div>
     <label for="message" class="block text-sm font-medium text-gray-700 mb-1">
       {compact ? "Mensaje" : "Descripción de tu necesidad"}
@@ -280,7 +94,7 @@ const { productName = "", compact = false } = Astro.props;
       id="message"
       name="message"
       required
-      rows={compact ? 3 : 5}
+      rows={compact ? 3 : dialogMode ? 3 : 4}
       maxlength="5000"
       placeholder={compact
         ? "Cuéntanos en qué podemos ayudarte..."
@@ -288,25 +102,13 @@ const { productName = "", compact = false } = Astro.props;
       class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition resize-none"
     ></textarea>
     <div class="flex items-start justify-between mt-1 gap-2">
-      <p
-        class="field-error hidden text-xs text-red-500 leading-relaxed flex-1"
-        aria-live="polite"
-      >
-      </p>
-      <p
-        id="char-counter"
-        class="text-xs text-gray-400 tabular-nums shrink-0 ml-auto"
-      >
-        0 / 5.000
-      </p>
+      <p class="field-error hidden text-xs text-red-500 leading-relaxed flex-1" aria-live="polite"></p>
+      <p id="char-counter" class="text-xs text-gray-400 tabular-nums shrink-0 ml-auto">0 / 5.000</p>
     </div>
   </div>
 
   <!-- Error de servidor -->
-  <div
-    id="form-error"
-    class="hidden p-4 bg-red-50 border border-red-200 rounded-md"
-  >
+  <div id="form-error" class="hidden p-4 bg-red-50 border border-red-200 rounded-md">
     <p class="text-sm text-red-700 font-medium">
       Ocurrió un error. Por favor intenta nuevamente o contáctanos directamente.
     </p>
@@ -319,21 +121,9 @@ const { productName = "", compact = false } = Astro.props;
     class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#F4622A] text-white font-semibold rounded-md hover:bg-[#d9521f] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
   >
     <span id="btn-text">Enviar cotización</span>
-    <svg
-      id="btn-spinner"
-      class="hidden w-4 h-4 animate-spin"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <circle
-        class="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"
-      ></path>
+    <svg id="btn-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
     </svg>
   </button>
 
@@ -342,80 +132,41 @@ const { productName = "", compact = false } = Astro.props;
   </p>
 </form>
 
-<!-- ── PANEL DE ÉXITO (hermano del form, oculto inicialmente) ─────────────── -->
-<div
-  id="success-panel"
-  class="hidden space-y-6"
-  aria-live="polite"
-  aria-atomic="true"
->
-  <!-- Header -->
+<!-- ── PANEL DE ÉXITO ─────────────────────────────────────────────────────── -->
+<div id="success-panel" class="hidden space-y-6" aria-live="polite" aria-atomic="true">
   <div class="text-center py-2">
-    <div
-      class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
-    >
-      <svg
-        class="w-8 h-8 text-green-600"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2.5"
-          d="M5 13l4 4L19 7"></path>
+    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
       </svg>
     </div>
-    <h3 class="text-xl font-bold text-[#101820] mb-2">
-      ¡Solicitud enviada con éxito!
-    </h3>
+    <h3 class="text-xl font-bold text-[#101820] mb-2">¡Solicitud enviada con éxito!</h3>
     <p class="text-gray-500 text-sm leading-relaxed">
       Te responderemos en menos de 24 horas hábiles.<br />
       También recibirás una copia por correo electrónico.
     </p>
   </div>
 
-  <!-- Resumen de lo enviado (poblado por JS) -->
-  <div id="success-summary" class="bg-[#F8F8F6] rounded-xl p-5 text-sm">
-    <!-- Populated by JS -->
-  </div>
+  <div id="success-summary" class="bg-[#F8F8F6] rounded-xl p-5 text-sm"></div>
 
-  <!-- ¿Qué sigue? -->
   <div>
     <p class="text-sm font-semibold text-[#101820] mb-3">¿Qué sigue?</p>
     <div class="space-y-3">
       <div class="flex items-start gap-3">
-        <span
-          class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5"
-          >1</span
-        >
-        <p class="text-sm text-gray-500">
-          Revisamos los detalles de tu proyecto.
-        </p>
+        <span class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+        <p class="text-sm text-gray-500">Revisamos los detalles de tu proyecto.</p>
       </div>
       <div class="flex items-start gap-3">
-        <span
-          class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5"
-          >2</span
-        >
-        <p class="text-sm text-gray-500">
-          Preparamos una propuesta a medida, sin costo ni compromiso.
-        </p>
+        <span class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+        <p class="text-sm text-gray-500">Preparamos una propuesta a medida, sin costo ni compromiso.</p>
       </div>
       <div class="flex items-start gap-3">
-        <span
-          class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5"
-          >3</span
-        >
-        <p class="text-sm text-gray-500">
-          Recibirás nuestra respuesta por correo electrónico.
-        </p>
+        <span class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+        <p class="text-sm text-gray-500">Recibirás nuestra respuesta por correo electrónico.</p>
       </div>
     </div>
   </div>
 
-  <!-- Botón para enviar otra cotización -->
   <button
     type="button"
     id="btn-reset"
@@ -428,23 +179,8 @@ const { productName = "", compact = false } = Astro.props;
 <script>
   type ValidatableInput = HTMLInputElement | HTMLTextAreaElement;
 
-  // Labels de categorías para mostrar en el resumen de éxito
-  const CATEGORY_DISPLAY: Record<string, string> = {
-    "papeleria-corporativa": "Papelería corporativa",
-    "grandes-formatos": "Grandes formatos",
-    promocionales: "Regalos Promocionales",
-    "packaging-etiquetas": "Packaging y etiquetas",
-  };
-
-  // ── Reglas de validación ────────────────────────────────────────────────────
+  // ── Reglas de validación ──────────────────────────────────────────────────────
   const RULES: Record<string, (v: string) => string | null> = {
-    empresa: (v) =>
-      !v.trim()
-        ? "El nombre de la empresa es obligatorio."
-        : v.trim().length < 2
-          ? "Ingresa al menos 2 caracteres."
-          : null,
-
     name: (v) =>
       !v.trim()
         ? "El nombre es obligatorio."
@@ -474,10 +210,10 @@ const { productName = "", compact = false } = Astro.props;
           : null,
   };
 
-  const VALID_CLS = ["border-gray-200"];
+  const VALID_CLS   = ["border-gray-200"];
   const INVALID_CLS = ["border-red-400"];
 
-  // ── Helpers ─────────────────────────────────────────────────────────────────
+  // ── Helpers ───────────────────────────────────────────────────────────────────
   function getErrorEl(el: Element): HTMLElement | null {
     return el.parentElement?.querySelector(".field-error") ?? null;
   }
@@ -487,10 +223,7 @@ const { productName = "", compact = false } = Astro.props;
     el.classList.add(...INVALID_CLS);
     el.setAttribute("aria-invalid", "true");
     const err = getErrorEl(el);
-    if (err) {
-      err.textContent = msg;
-      err.classList.remove("hidden");
-    }
+    if (err) { err.textContent = msg; err.classList.remove("hidden"); }
   }
 
   function markValid(el: ValidatableInput) {
@@ -498,20 +231,14 @@ const { productName = "", compact = false } = Astro.props;
     el.classList.add(...VALID_CLS);
     el.removeAttribute("aria-invalid");
     const err = getErrorEl(el);
-    if (err) {
-      err.textContent = "";
-      err.classList.add("hidden");
-    }
+    if (err) { err.textContent = ""; err.classList.add("hidden"); }
   }
 
   function validateInput(el: ValidatableInput): boolean {
     const rule = RULES[el.name];
     if (!rule) return true;
     const msg = rule(el.value);
-    if (msg) {
-      markInvalid(el, msg);
-      return false;
-    }
+    if (msg) { markInvalid(el, msg); return false; }
     markValid(el);
     return true;
   }
@@ -524,116 +251,35 @@ const { productName = "", compact = false } = Astro.props;
       .replace(/"/g, "&quot;");
   }
 
-  // ── Chips de categoría ──────────────────────────────────────────────────────
-  function initChips(): () => boolean {
-    const categoryError = document.getElementById("category-error");
-
-    function validateCategories(): boolean {
-      const anyChecked = Array.from(
-        document.querySelectorAll<HTMLInputElement>('input[name="category"]'),
-      ).some((cb) => cb.checked);
-      if (categoryError) categoryError.classList.toggle("hidden", anyChecked);
-      return anyChecked;
-    }
-
-    document
-      .querySelectorAll<HTMLLabelElement>(".category-chip")
-      .forEach((chip) => {
-        const checkbox = chip.querySelector<HTMLInputElement>(
-          'input[type="checkbox"]',
-        )!;
-        const checkmark = chip.querySelector<SVGElement>(".checkmark")!;
-
-        function syncChip() {
-          if (checkbox.checked) {
-            chip.classList.add(
-              "border-[#F4622A]",
-              "text-[#F4622A]",
-              "bg-orange-50",
-            );
-            chip.classList.remove(
-              "border-gray-200",
-              "text-gray-600",
-              "bg-white",
-            );
-            checkmark?.classList.remove("hidden");
-          } else {
-            chip.classList.remove(
-              "border-[#F4622A]",
-              "text-[#F4622A]",
-              "bg-orange-50",
-            );
-            chip.classList.add("border-gray-200", "text-gray-600", "bg-white");
-            checkmark?.classList.add("hidden");
-          }
-          if (categoryError && !categoryError.classList.contains("hidden")) {
-            validateCategories();
-          }
-        }
-
-        checkbox.addEventListener("change", syncChip);
-        syncChip();
-      });
-
-    return validateCategories;
-  }
-
-  // ── Contador de caracteres ──────────────────────────────────────────────────
+  // ── Contador de caracteres ────────────────────────────────────────────────────
   function initCharCounter() {
-    const textarea = document.getElementById(
-      "message",
-    ) as HTMLTextAreaElement | null;
-    const charCounter = document.getElementById("char-counter");
+    const textarea   = document.getElementById("message")      as HTMLTextAreaElement | null;
+    const charCounter = document.getElementById("char-counter") as HTMLElement | null;
     if (!textarea || !charCounter) return;
 
     textarea.addEventListener("input", () => {
       const count = textarea.value.length;
       charCounter.textContent = `${count.toLocaleString("es-CL")} / 5.000`;
-      charCounter.classList.toggle(
-        "text-orange-500",
-        count > 4800 && count <= 5000,
-      );
-      charCounter.classList.toggle("text-red-500", count > 5000);
-      charCounter.classList.toggle("text-gray-400", count <= 4800);
+      charCounter.classList.toggle("text-orange-500", count > 4800 && count <= 5000);
+      charCounter.classList.toggle("text-red-500",    count > 5000);
+      charCounter.classList.toggle("text-gray-400",   count <= 4800);
     });
   }
 
-  // ── Inicialización del formulario ───────────────────────────────────────────
-  function initForm(validateCategories: () => boolean) {
-    const form = document.getElementById(
-      "quote-form",
-    ) as HTMLFormElement | null;
-    const successPanel = document.getElementById(
-      "success-panel",
-    ) as HTMLElement | null;
-    const successSummary = document.getElementById(
-      "success-summary",
-    ) as HTMLElement | null;
-    const submitBtn = document.getElementById(
-      "form-submit",
-    ) as HTMLButtonElement | null;
-    const btnText = document.getElementById("btn-text") as HTMLElement | null;
-    const btnSpinner = document.getElementById(
-      "btn-spinner",
-    ) as HTMLElement | null;
-    const errorMsg = document.getElementById(
-      "form-error",
-    ) as HTMLElement | null;
-    const btnReset = document.getElementById(
-      "btn-reset",
-    ) as HTMLButtonElement | null;
+  // ── Inicialización del formulario ─────────────────────────────────────────────
+  function initForm() {
+    const form         = document.getElementById("quote-form")   as HTMLFormElement   | null;
+    const successPanel = document.getElementById("success-panel") as HTMLElement      | null;
+    const successSummary = document.getElementById("success-summary") as HTMLElement  | null;
+    const submitBtn    = document.getElementById("form-submit")   as HTMLButtonElement | null;
+    const btnText      = document.getElementById("btn-text")      as HTMLElement      | null;
+    const btnSpinner   = document.getElementById("btn-spinner")   as HTMLElement      | null;
+    const errorMsg     = document.getElementById("form-error")    as HTMLElement      | null;
+    const btnReset     = document.getElementById("btn-reset")     as HTMLButtonElement | null;
 
-    if (
-      !form ||
-      !submitBtn ||
-      !btnText ||
-      !btnSpinner ||
-      !errorMsg ||
-      !successPanel
-    )
-      return;
+    if (!form || !submitBtn || !btnText || !btnSpinner || !errorMsg || !successPanel) return;
 
-    // Pre-fill producto desde URL param
+    // Pre-fill producto desde URL param (cuando viene del catálogo)
     const productRef = form.querySelector<HTMLInputElement>("#product-ref");
     if (productRef) {
       const param = new URLSearchParams(window.location.search).get("producto");
@@ -644,39 +290,21 @@ const { productName = "", compact = false } = Astro.props;
 
     form.querySelectorAll<ValidatableInput>(".field-input").forEach((el) => {
       el.addEventListener("blur", () => {
-        if (RULES[el.name]) {
-          liveFields.add(el.name);
-          validateInput(el);
-        }
+        if (RULES[el.name]) { liveFields.add(el.name); validateInput(el); }
       });
       el.addEventListener("input", () => {
         if (liveFields.has(el.name)) validateInput(el);
       });
     });
 
-    // ── Restaurar formulario ──────────────────────────────────────────────────
-    // Asignación local para que TypeScript sepa que form no es null dentro del closure
+    // ── Reset ─────────────────────────────────────────────────────────────────
     const safeForm = form;
     function resetForm() {
       safeForm.reset();
       liveFields.clear();
-      safeForm
-        .querySelectorAll<ValidatableInput>(".field-input")
-        .forEach((el) => {
-          if (RULES[el.name]) markValid(el);
-        });
-      document.getElementById("category-error")?.classList.add("hidden");
-      document
-        .querySelectorAll<HTMLLabelElement>(".category-chip")
-        .forEach((chip) => {
-          chip.classList.remove(
-            "border-[#F4622A]",
-            "text-[#F4622A]",
-            "bg-orange-50",
-          );
-          chip.classList.add("border-gray-200", "text-gray-600", "bg-white");
-          chip.querySelector<SVGElement>(".checkmark")?.classList.add("hidden");
-        });
+      safeForm.querySelectorAll<ValidatableInput>(".field-input").forEach((el) => {
+        if (RULES[el.name]) markValid(el);
+      });
       const counter = document.getElementById("char-counter");
       if (counter) counter.textContent = "0 / 5.000";
     }
@@ -693,13 +321,10 @@ const { productName = "", compact = false } = Astro.props;
       e.preventDefault();
       errorMsg.classList.add("hidden");
 
-      const inputs = Array.from(
-        form.querySelectorAll<ValidatableInput>(".field-input"),
-      );
+      const inputs = Array.from(form.querySelectorAll<ValidatableInput>(".field-input"));
       let firstInvalid: ValidatableInput | null = null;
       let allValid = true;
 
-      // for...of permite que TypeScript rastree la asignación a firstInvalid correctamente
       for (const el of inputs) {
         if (!RULES[el.name]) continue;
         liveFields.add(el.name);
@@ -708,47 +333,22 @@ const { productName = "", compact = false } = Astro.props;
         if (!ok) allValid = false;
       }
 
-      // Validar categorías solo si el grupo existe en el DOM (modo full)
-      const hasCategoryGroup = !!document.getElementById("category-group");
-      if (hasCategoryGroup && !validateCategories()) allValid = false;
-
       if (!allValid) {
-        if (firstInvalid) {
-          firstInvalid.focus();
-        } else {
-          document
-            .getElementById("category-group")
-            ?.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
+        firstInvalid?.focus();
         return;
       }
 
-      // Capturar datos antes del reset para el resumen de éxito
-      const submittedEmpresa = (
-        form.querySelector<HTMLInputElement>("#empresa")?.value ?? ""
-      ).trim();
-      const submittedName = (
-        form.querySelector<HTMLInputElement>("#name")?.value ?? ""
-      ).trim();
-      const submittedEmail = (
-        form.querySelector<HTMLInputElement>("#email")?.value ?? ""
-      ).trim();
-      const submittedCats = Array.from(
-        form.querySelectorAll<HTMLInputElement>(
-          'input[name="category"]:checked',
-        ),
-      ).map((cb) => CATEGORY_DISPLAY[cb.value] ?? cb.value);
+      // Capturar datos para el resumen de éxito (antes del reset)
+      const submittedName       = (form.querySelector<HTMLInputElement>("#name")?.value       ?? "").trim();
+      const submittedEmail      = (form.querySelector<HTMLInputElement>("#email")?.value      ?? "").trim();
+      const submittedProductRef = (form.querySelector<HTMLInputElement>("#product-ref")?.value ?? "").trim();
 
       submitBtn.disabled = true;
       btnText.textContent = "Enviando...";
       btnSpinner.classList.remove("hidden");
 
       const formData = new FormData(form);
-      const categories = formData.getAll("category") as string[];
-      const data = {
-        ...Object.fromEntries(formData.entries()),
-        category: categories.join(","),
-      };
+      const data = Object.fromEntries(formData.entries());
 
       try {
         const res = await fetch("/api/send", {
@@ -758,20 +358,11 @@ const { productName = "", compact = false } = Astro.props;
         });
 
         if (res.ok) {
-          // Poblar resumen de éxito
           if (successSummary) {
             const rows: Array<{ label: string; value: string }> = [
-              { label: "Empresa", value: submittedEmpresa },
               { label: "Contacto", value: submittedName },
-              { label: "Correo", value: submittedEmail },
-              ...(submittedCats.length > 0
-                ? [
-                    {
-                      label: "Líneas de interés",
-                      value: submittedCats.join(", "),
-                    },
-                  ]
-                : []),
+              { label: "Correo",   value: submittedEmail },
+              ...(submittedProductRef ? [{ label: "Producto", value: submittedProductRef }] : []),
             ].filter((r) => r.value.length > 0);
 
             successSummary.innerHTML = rows
@@ -780,17 +371,14 @@ const { productName = "", compact = false } = Astro.props;
                 <div class="flex justify-between gap-4 py-2.5 ${i > 0 ? "border-t border-gray-200" : ""}">
                   <span class="text-gray-500 text-sm shrink-0">${escHtml(r.label)}</span>
                   <span class="text-[#101820] font-medium text-sm text-right break-all">${escHtml(r.value)}</span>
-                </div>
-              `,
+                </div>`,
               )
               .join("");
           }
 
-          // Mostrar panel de éxito, ocultar formulario
           form.classList.add("hidden");
           successPanel.classList.remove("hidden");
           successPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-
           resetForm();
         } else {
           errorMsg.classList.remove("hidden");
@@ -806,17 +394,15 @@ const { productName = "", compact = false } = Astro.props;
   }
 
   document.addEventListener("astro:page-load", () => {
-    const validateCategories = initChips();
     initCharCounter();
-    initForm(validateCategories);
+    initForm();
   });
 </script>
 
 <style>
   /*
-   * Estado inválido: Safari re-calcula el scroll del elemento activo cuando
-   * se agregan/quitan clases focus:* desde JS. Por eso el estado de error en
-   * focus se maneja íntegramente con CSS via aria-invalid, sin tocar JS.
+   * Estado inválido via CSS (aria-invalid) para evitar que Safari recalcule
+   * el scroll cuando JS modifica clases en campos con foco activo.
    */
   .field-input[aria-invalid="true"] {
     border-color: #f87171; /* red-400 */

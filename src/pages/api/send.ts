@@ -70,13 +70,13 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // ── Validar y sanitizar campos ───────────────────────────────────────────
-  const empresa = sanitizeString(body.empresa, 200);
+  const empresa = sanitizeString(body.empresa, 200) ?? undefined;
   const name    = sanitizeString(body.name,    100);
   const email   = sanitizeString(body.email,   254);
   const phone   = sanitizeString(body.phone,    30) ?? undefined;
   const message = sanitizeString(body.message, 5000);
 
-  if (!empresa || !name || !email || !message) {
+  if (!name || !email || !message) {
     return new Response(
       JSON.stringify({ error: "Campos requeridos faltantes o inválidos." }),
       { status: 422 },

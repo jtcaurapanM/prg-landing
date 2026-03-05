@@ -1,7 +1,7 @@
 import { CATEGORY_LABELS as CAT_LABELS } from '../data/categories';
 
 export interface QuoteData {
-  empresa: string;
+  empresa?: string;
   name: string;
   email: string;
   phone?: string;
@@ -155,7 +155,7 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
           </td></tr>
           <tr><td style="padding:4px 24px 20px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-              ${dataRow('Empresa', val(esc(d.empresa)))}
+              ${d.empresa ? dataRow('Empresa', val(esc(d.empresa))) : ''}
               ${dataRow('Nombre', val(esc(d.name)))}
               ${dataRow('Correo',
                 `<a href="mailto:${esc(d.email)}" style="color:#F4622A;font-size:13px;
@@ -252,8 +252,7 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
   const text = `Nueva cotización — PRG Inversiones
 ${dateStr} · ${timeStr}
 
-Empresa:  ${d.empresa}
-Nombre:   ${d.name}
+${d.empresa ? `Empresa:  ${d.empresa}\n` : ''}Nombre:   ${d.name}
 Correo:   ${d.email}
 Teléfono: ${d.phone || 'No indicado'}
 
@@ -324,7 +323,7 @@ export function buildConfirmationEmail(d: QuoteData): { subject: string; html: s
   ).join('');
 
   const summaryRows = [
-    dataRow('Empresa', val(esc(d.empresa))),
+    d.empresa ? dataRow('Empresa', val(esc(d.empresa))) : '',
     cats.length > 0 ? dataRow('Línea de interés', catPills) : '',
     d.productRef ? dataRow('Producto', val(esc(d.productRef))) : '',
     d.quantity    ? dataRow('Cantidad',  val(esc(d.quantity)))  : '',
@@ -457,8 +456,7 @@ Nos pondremos en contacto contigo en menos de 24 horas hábiles.
 3. Te respondemos en menos de 24 horas hábiles
 
 Resumen de tu solicitud:
-Empresa: ${d.empresa}
-${cats.length > 0 ? `Línea de interés: ${cats.join(', ')}\n` : ''}${d.productRef ? `Producto: ${d.productRef}\n` : ''}${d.quantity ? `Cantidad: ${d.quantity}\n` : ''}${d.urgency ? `Urgencia: ${URGENCY_LABELS[d.urgency] ?? d.urgency}\n` : ''}Mensaje: ${d.message}
+${d.empresa ? `Empresa: ${d.empresa}\n` : ''}${cats.length > 0 ? `Línea de interés: ${cats.join(', ')}\n` : ''}${d.productRef ? `Producto: ${d.productRef}\n` : ''}${d.quantity ? `Cantidad: ${d.quantity}\n` : ''}${d.urgency ? `Urgencia: ${URGENCY_LABELS[d.urgency] ?? d.urgency}\n` : ''}Mensaje: ${d.message}
 
 PRG Inversiones · Santiago, Chile · prg.cl
 `;
