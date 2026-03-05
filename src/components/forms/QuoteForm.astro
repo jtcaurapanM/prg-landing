@@ -12,30 +12,54 @@ const { productName = '', compact = false } = Astro.props;
   border-red-400 ring-red-400 focus:ring-red-400
 -->
 
-<form id="quote-form" class="space-y-4" novalidate>
-  <div class={compact ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'space-y-4'}>
+<!-- ── FORM ──────────────────────────────────────────────────────────────── -->
+<form id="quote-form" class="space-y-5" novalidate>
 
-    <!-- Nombre -->
+  <!-- Honeypot: invisible para usuarios; bots lo completan automáticamente -->
+  <div style="position:absolute;left:-9999px;width:0;height:0;overflow:hidden;" aria-hidden="true">
+    <label for="website">No completar este campo</label>
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <!-- Empresa + Nombre -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label for="empresa" class="block text-sm font-medium text-gray-700 mb-1">
+        Empresa <span class="text-[#F4622A]">*</span>
+      </label>
+      <input
+        type="text"
+        id="empresa"
+        name="empresa"
+        required
+        autocomplete="organization"
+        placeholder="Nombre de tu empresa"
+        class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition"
+      />
+      <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
+    </div>
     <div>
       <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
-        Nombre completo <span class="text-[#F4622A]">*</span>
+        Nombre <span class="text-[#F4622A]">*</span>
       </label>
       <input
         type="text"
         id="name"
         name="name"
         required
-        autocomplete="name"
-        placeholder="Juan González"
+        autocomplete="given-name"
+        placeholder="Tu nombre"
         class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition"
       />
       <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
     </div>
+  </div>
 
-    <!-- Email -->
+  <!-- Email + Teléfono -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
       <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-        Correo <span class="text-[#F4622A]">*</span>
+        Correo electrónico <span class="text-[#F4622A]">*</span>
       </label>
       <input
         type="email"
@@ -43,30 +67,28 @@ const { productName = '', compact = false } = Astro.props;
         name="email"
         required
         autocomplete="email"
-        placeholder="juan@empresa.cl"
+        placeholder="tu@empresa.com"
         class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition"
       />
       <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
     </div>
-
-
-{!compact && (
-      <div>
-        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
-          Teléfono <span class="text-gray-400 font-normal">(opcional)</span>
-        </label>
-        <input
-          type="tel"
-          id="phone"
-          name="phone"
-          autocomplete="tel"
-          placeholder="+56 9 0000 0000"
-          class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition"
-        />
-      </div>
-    )}
+    <div>
+      <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+        Teléfono <span class="text-gray-400 font-normal">(opcional)</span>
+      </label>
+      <input
+        type="tel"
+        id="phone"
+        name="phone"
+        autocomplete="tel"
+        placeholder="+56 9 0000 0000"
+        class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition"
+      />
+      <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
+    </div>
   </div>
 
+  <!-- Línea de interés: solo en modo full -->
   {!compact && (
     <div>
       <span class="block text-sm font-medium text-gray-700 mb-2">
@@ -81,12 +103,7 @@ const { productName = '', compact = false } = Astro.props;
           { value: 'packaging-etiquetas',    label: 'Packaging y etiquetas' },
         ].map(({ value, label }) => (
           <label class="category-chip inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 bg-white text-sm font-medium text-gray-600 cursor-pointer select-none transition-colors hover:border-[#F4622A] hover:text-[#F4622A]">
-            <input
-              type="checkbox"
-              name="category"
-              value={value}
-              class="sr-only peer"
-            />
+            <input type="checkbox" name="category" value={value} class="sr-only peer" />
             <span class="w-3.5 h-3.5 shrink-0 rounded-sm border border-gray-300 peer-checked:bg-[#F4622A] peer-checked:border-[#F4622A] transition-colors flex items-center justify-center">
               <svg class="checkmark hidden w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -102,6 +119,7 @@ const { productName = '', compact = false } = Astro.props;
     </div>
   )}
 
+  <!-- Producto de referencia: solo en modo full -->
   {!compact && (
     <div>
       <label for="product-ref" class="block text-sm font-medium text-gray-700 mb-1">
@@ -118,24 +136,45 @@ const { productName = '', compact = false } = Astro.props;
     </div>
   )}
 
+  <!-- Cantidad + Urgencia: solo en modo full -->
   {!compact && (
-    <div>
-      <label for="qty" class="block text-sm font-medium text-gray-700 mb-1">Cantidad aproximada</label>
-      <select
-        id="qty"
-        name="quantity"
-        class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition bg-white"
-      >
-        <option value="">No lo sé aún</option>
-        <option value="1-50">1 – 50 unidades</option>
-        <option value="51-200">51 – 200 unidades</option>
-        <option value="201-1000">201 – 1.000 unidades</option>
-        <option value="1000+">Más de 1.000 unidades</option>
-      </select>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label for="qty" class="block text-sm font-medium text-gray-700 mb-1">
+          Cantidad aproximada <span class="text-gray-400 font-normal">(opcional)</span>
+        </label>
+        <select
+          id="qty"
+          name="quantity"
+          class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition bg-white"
+        >
+          <option value="">No lo sé aún</option>
+          <option value="1-50">1 – 50 unidades</option>
+          <option value="51-200">51 – 200 unidades</option>
+          <option value="201-1000">201 – 1.000 unidades</option>
+          <option value="1000+">Más de 1.000 unidades</option>
+        </select>
+      </div>
+      <div>
+        <label for="urgency" class="block text-sm font-medium text-gray-700 mb-1">
+          ¿Cuándo lo necesitas? <span class="text-gray-400 font-normal">(opcional)</span>
+        </label>
+        <select
+          id="urgency"
+          name="urgency"
+          class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition bg-white"
+        >
+          <option value="">Sin fecha definida</option>
+          <option value="urgente">Lo antes posible</option>
+          <option value="1-2-semanas">En 1 a 2 semanas</option>
+          <option value="1-mes">En aproximadamente 1 mes</option>
+          <option value="mas-1-mes">En más de 1 mes</option>
+        </select>
+      </div>
     </div>
   )}
 
-  <!-- Mensaje -->
+  <!-- Descripción / mensaje -->
   <div>
     <label for="message" class="block text-sm font-medium text-gray-700 mb-1">
       {compact ? 'Mensaje' : 'Descripción de tu necesidad'} <span class="text-[#F4622A]">*</span>
@@ -151,21 +190,22 @@ const { productName = '', compact = false } = Astro.props;
         : 'Ej: Necesito 500 carpetas con logo corporativo para evento en junio. Necesitamos diseño incluido.'}
       class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A] focus:border-transparent transition resize-none"
     ></textarea>
-    <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
+    <div class="flex items-start justify-between mt-1 gap-2">
+      <p class="field-error hidden text-xs text-red-500 leading-relaxed flex-1" aria-live="polite"></p>
+      <p id="char-counter" class="text-xs text-gray-400 tabular-nums shrink-0 ml-auto">0 / 5.000</p>
+    </div>
   </div>
 
-  <!-- Status messages -->
-  <div id="form-success" class="hidden p-4 bg-green-50 border border-green-200 rounded-md">
-    <p class="text-sm text-green-700 font-medium">¡Mensaje enviado! Te contactaremos en 24 horas hábiles.</p>
-  </div>
+  <!-- Error de servidor -->
   <div id="form-error" class="hidden p-4 bg-red-50 border border-red-200 rounded-md">
     <p class="text-sm text-red-700 font-medium">Ocurrió un error. Por favor intenta nuevamente o contáctanos directamente.</p>
   </div>
 
+  <!-- Botón de envío -->
   <button
     type="submit"
     id="form-submit"
-    class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#F4622A] text-white font-semibold rounded-md hover:bg-[#d9521f] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+    class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#F4622A] text-white font-semibold rounded-md hover:bg-[#d9521f] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
   >
     <span id="btn-text">Enviar cotización</span>
     <svg id="btn-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -177,20 +217,91 @@ const { productName = '', compact = false } = Astro.props;
   <p class="text-xs text-gray-400 text-center">No compartimos tu información con terceros.</p>
 </form>
 
+<!-- ── PANEL DE ÉXITO (hermano del form, oculto inicialmente) ─────────────── -->
+<div id="success-panel" class="hidden space-y-6" aria-live="polite" aria-atomic="true">
+
+  <!-- Header -->
+  <div class="text-center py-2">
+    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+    <h3 class="text-xl font-bold text-[#101820] mb-2">¡Solicitud enviada con éxito!</h3>
+    <p class="text-gray-500 text-sm leading-relaxed">
+      Te responderemos en menos de 24 horas hábiles.<br />
+      También recibirás una copia por correo electrónico.
+    </p>
+  </div>
+
+  <!-- Resumen de lo enviado (poblado por JS) -->
+  <div id="success-summary" class="bg-[#F8F8F6] rounded-xl p-5 text-sm">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- ¿Qué sigue? -->
+  <div>
+    <p class="text-sm font-semibold text-[#101820] mb-3">¿Qué sigue?</p>
+    <div class="space-y-3">
+      <div class="flex items-start gap-3">
+        <span class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+        <p class="text-sm text-gray-500">Revisamos los detalles de tu proyecto.</p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+        <p class="text-sm text-gray-500">Preparamos una propuesta a medida, sin costo ni compromiso.</p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+        <p class="text-sm text-gray-500">Recibirás nuestra respuesta por correo electrónico.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón para enviar otra cotización -->
+  <button
+    type="button"
+    id="btn-reset"
+    class="w-full flex items-center justify-center px-6 py-3 border-2 border-[#101820] text-[#101820] font-semibold rounded-md hover:bg-[#101820] hover:text-white transition-colors"
+  >
+    Enviar otra cotización
+  </button>
+</div>
+
 <script>
   type ValidatableInput = HTMLInputElement | HTMLTextAreaElement;
 
+  // Labels de categorías para mostrar en el resumen de éxito
+  const CATEGORY_DISPLAY: Record<string, string> = {
+    'papeleria-corporativa': 'Papelería corporativa',
+    'grandes-formatos':      'Grandes formatos',
+    'promocionales':          'Regalos Promocionales',
+    'packaging-etiquetas':    'Packaging y etiquetas',
+  };
+
   // ── Reglas de validación ────────────────────────────────────────────────────
   const RULES: Record<string, (v: string) => string | null> = {
-    name:    (v) => !v.trim()
+    empresa: (v) => !v.trim()
+      ? 'El nombre de la empresa es obligatorio.'
+      : v.trim().length < 2
+        ? 'Ingresa al menos 2 caracteres.'
+        : null,
+
+    name: (v) => !v.trim()
       ? 'El nombre es obligatorio.'
       : v.trim().length < 2
         ? 'Ingresa al menos 2 caracteres.'
         : null,
 
-    email:   (v) => {
-      if (!v.trim()) return 'El email es obligatorio.';
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())) return 'Ingresa un email válido.';
+    email: (v) => {
+      if (!v.trim()) return 'El correo electrónico es obligatorio.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())) return 'Ingresa un correo electrónico válido.';
+      return null;
+    },
+
+    phone: (v) => {
+      if (!v.trim()) return null; // opcional
+      if (!/^[+\d\s\-().]{6,20}$/.test(v.trim())) return 'Ingresa un número de teléfono válido.';
       return null;
     },
 
@@ -234,9 +345,15 @@ const { productName = '', compact = false } = Astro.props;
     return true;
   }
 
+  function escHtml(s: string): string {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   // ── Chips de categoría ──────────────────────────────────────────────────────
-  // Retorna la función validateCategories como closure para que initForm
-  // la use directamente, sin pasar por window globals (BUG-04/05 fix)
   function initChips(): () => boolean {
     const categoryError = document.getElementById('category-error');
 
@@ -244,7 +361,6 @@ const { productName = '', compact = false } = Astro.props;
       const anyChecked = Array.from(
         document.querySelectorAll<HTMLInputElement>('input[name="category"]')
       ).some((cb) => cb.checked);
-
       if (categoryError) categoryError.classList.toggle('hidden', anyChecked);
       return anyChecked;
     }
@@ -263,30 +379,45 @@ const { productName = '', compact = false } = Astro.props;
           chip.classList.add('border-gray-200', 'text-gray-600', 'bg-white');
           checkmark?.classList.add('hidden');
         }
-        // Si ya hubo intento de envio, re-validar al cambiar
         if (categoryError && !categoryError.classList.contains('hidden')) {
           validateCategories();
         }
       }
 
       checkbox.addEventListener('change', syncChip);
-      syncChip(); // estado inicial
+      syncChip();
     });
 
-    // Retornar para que initForm la use como closure (no via window global)
     return validateCategories;
   }
 
-  // ── Inicializacion ──────────────────────────────────────────────────────────
-  function initForm(validateCategories: () => boolean) {
-    const form       = document.getElementById('quote-form')     as HTMLFormElement | null;
-    const submitBtn  = document.getElementById('form-submit')    as HTMLButtonElement | null;
-    const btnText    = document.getElementById('btn-text') as HTMLElement | null;
-    const btnSpinner = document.getElementById('btn-spinner') as HTMLElement | null;
-    const successMsg = document.getElementById('form-success') as HTMLElement | null;
-    const errorMsg   = document.getElementById('form-error') as HTMLElement | null;
+  // ── Contador de caracteres ──────────────────────────────────────────────────
+  function initCharCounter() {
+    const textarea    = document.getElementById('message') as HTMLTextAreaElement | null;
+    const charCounter = document.getElementById('char-counter');
+    if (!textarea || !charCounter) return;
 
-    if (!form || !submitBtn || !btnText || !btnSpinner || !successMsg || !errorMsg) return;
+    textarea.addEventListener('input', () => {
+      const count = textarea.value.length;
+      charCounter.textContent = `${count.toLocaleString('es-CL')} / 5.000`;
+      charCounter.classList.toggle('text-orange-500', count > 4800 && count <= 5000);
+      charCounter.classList.toggle('text-red-500',    count > 5000);
+      charCounter.classList.toggle('text-gray-400',   count <= 4800);
+    });
+  }
+
+  // ── Inicialización del formulario ───────────────────────────────────────────
+  function initForm(validateCategories: () => boolean) {
+    const form           = document.getElementById('quote-form')      as HTMLFormElement    | null;
+    const successPanel   = document.getElementById('success-panel')   as HTMLElement        | null;
+    const successSummary = document.getElementById('success-summary') as HTMLElement        | null;
+    const submitBtn      = document.getElementById('form-submit')     as HTMLButtonElement  | null;
+    const btnText        = document.getElementById('btn-text')        as HTMLElement        | null;
+    const btnSpinner     = document.getElementById('btn-spinner')     as HTMLElement        | null;
+    const errorMsg       = document.getElementById('form-error')      as HTMLElement        | null;
+    const btnReset       = document.getElementById('btn-reset')       as HTMLButtonElement  | null;
+
+    if (!form || !submitBtn || !btnText || !btnSpinner || !errorMsg || !successPanel) return;
 
     // Pre-fill producto desde URL param
     const productRef = form.querySelector<HTMLInputElement>('#product-ref');
@@ -295,15 +426,11 @@ const { productName = '', compact = false } = Astro.props;
       if (param) productRef.value = decodeURIComponent(param);
     }
 
-    // Campos que admiten live validation (solo despues de un intento de envio o blur)
     const liveFields = new Set<string>();
 
-    // ── Fix scroll iOS: cuando el teclado virtual abre, iOS puede desplazar la
-    // página dejando el input fuera de vista. Con un pequeño delay esperamos a
-    // que el teclado termine de abrirse y scrolleamos el input al centro. ──
+    // iOS: scroll al input cuando el teclado abre
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
 
-    // Adjuntar listeners de blur e input a todos los campos validables
     form.querySelectorAll<ValidatableInput>('.field-input').forEach((el) => {
       el.addEventListener('blur', () => {
         if (RULES[el.name]) {
@@ -311,43 +438,63 @@ const { productName = '', compact = false } = Astro.props;
           validateInput(el);
         }
       });
-
       el.addEventListener('input', () => {
         if (liveFields.has(el.name)) validateInput(el);
       });
-
-      // iOS: al enfocar un input, el teclado abre y puede mover el scroll.
-      // Esperamos 350ms (tiempo de animación del teclado) y luego reposicionamos.
       if (isIOS) {
         el.addEventListener('focus', () => {
-          setTimeout(() => {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }, 350);
+          setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 350);
         });
       }
     });
 
-    // Submit handler
+    // ── Restaurar formulario ──────────────────────────────────────────────────
+    // Asignación local para que TypeScript sepa que form no es null dentro del closure
+    const safeForm = form;
+    function resetForm() {
+      safeForm.reset();
+      liveFields.clear();
+      safeForm.querySelectorAll<ValidatableInput>('.field-input').forEach((el) => {
+        if (RULES[el.name]) markValid(el);
+      });
+      document.getElementById('category-error')?.classList.add('hidden');
+      document.querySelectorAll<HTMLLabelElement>('.category-chip').forEach((chip) => {
+        chip.classList.remove('border-[#F4622A]', 'text-[#F4622A]', 'bg-orange-50');
+        chip.classList.add('border-gray-200', 'text-gray-600', 'bg-white');
+        chip.querySelector<SVGElement>('.checkmark')?.classList.add('hidden');
+      });
+      const counter = document.getElementById('char-counter');
+      if (counter) counter.textContent = '0 / 5.000';
+    }
+
+    btnReset?.addEventListener('click', () => {
+      successPanel.classList.add('hidden');
+      form.classList.remove('hidden');
+      resetForm();
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // ── Submit ────────────────────────────────────────────────────────────────
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      successMsg.classList.add('hidden');
       errorMsg.classList.add('hidden');
 
       const inputs = Array.from(form.querySelectorAll<ValidatableInput>('.field-input'));
       let firstInvalid: ValidatableInput | null = null;
       let allValid = true;
 
-      inputs.forEach((el) => {
-        if (!RULES[el.name]) return;
+      // for...of permite que TypeScript rastree la asignación a firstInvalid correctamente
+      for (const el of inputs) {
+        if (!RULES[el.name]) continue;
         liveFields.add(el.name);
         const ok = validateInput(el);
-        if (!ok && !firstInvalid) firstInvalid = el;
+        if (!ok && firstInvalid === null) firstInvalid = el;
         if (!ok) allValid = false;
-      });
+      }
 
-      // Validar checkboxes de categoria usando la funcion closure (sin global)
-      const categoriesValid = validateCategories();
-      if (!categoriesValid) allValid = false;
+      // Validar categorías solo si el grupo existe en el DOM (modo full)
+      const hasCategoryGroup = !!document.getElementById('category-group');
+      if (hasCategoryGroup && !validateCategories()) allValid = false;
 
       if (!allValid) {
         if (firstInvalid) {
@@ -358,11 +505,19 @@ const { productName = '', compact = false } = Astro.props;
         return;
       }
 
+      // Capturar datos antes del reset para el resumen de éxito
+      const submittedEmpresa = (form.querySelector<HTMLInputElement>('#empresa')?.value ?? '').trim();
+      const submittedName    = (form.querySelector<HTMLInputElement>('#name')?.value ?? '').trim();
+      const submittedEmail   = (form.querySelector<HTMLInputElement>('#email')?.value ?? '').trim();
+      const submittedCats    = Array.from(
+        form.querySelectorAll<HTMLInputElement>('input[name="category"]:checked')
+      ).map((cb) => CATEGORY_DISPLAY[cb.value] ?? cb.value);
+
       submitBtn.disabled = true;
       btnText.textContent = 'Enviando...';
       btnSpinner.classList.remove('hidden');
 
-      const formData = new FormData(form);
+      const formData  = new FormData(form);
       const categories = formData.getAll('category') as string[];
       const data = {
         ...Object.fromEntries(formData.entries()),
@@ -371,23 +526,39 @@ const { productName = '', compact = false } = Astro.props;
 
       try {
         const res = await fetch('/api/send', {
-          method: 'POST',
+          method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
+          body:    JSON.stringify(data),
         });
 
         if (res.ok) {
-          successMsg.classList.remove('hidden');
-          form.reset();
-          liveFields.clear();
-          inputs.forEach((el) => { if (RULES[el.name]) markValid(el); });
-          document.getElementById('category-error')?.classList.add('hidden');
-          // Re-sincronizar chips al hacer reset
-          document.querySelectorAll<HTMLLabelElement>('.category-chip').forEach((chip) => {
-            chip.classList.remove('border-[#F4622A]', 'text-[#F4622A]', 'bg-orange-50');
-            chip.classList.add('border-gray-200', 'text-gray-600', 'bg-white');
-            chip.querySelector<SVGElement>('.checkmark')?.classList.add('hidden');
-          });
+          // Poblar resumen de éxito
+          if (successSummary) {
+            const rows: Array<{ label: string; value: string }> = [
+              { label: 'Empresa',           value: submittedEmpresa },
+              { label: 'Contacto',          value: submittedName    },
+              { label: 'Correo',            value: submittedEmail   },
+              ...(submittedCats.length > 0
+                ? [{ label: 'Líneas de interés', value: submittedCats.join(', ') }]
+                : []),
+            ].filter((r) => r.value.length > 0);
+
+            successSummary.innerHTML = rows
+              .map((r, i) => `
+                <div class="flex justify-between gap-4 py-2.5 ${i > 0 ? 'border-t border-gray-200' : ''}">
+                  <span class="text-gray-500 text-sm shrink-0">${escHtml(r.label)}</span>
+                  <span class="text-[#101820] font-medium text-sm text-right break-all">${escHtml(r.value)}</span>
+                </div>
+              `)
+              .join('');
+          }
+
+          // Mostrar panel de éxito, ocultar formulario
+          form.classList.add('hidden');
+          successPanel.classList.remove('hidden');
+          successPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+          resetForm();
         } else {
           errorMsg.classList.remove('hidden');
         }
@@ -395,7 +566,7 @@ const { productName = '', compact = false } = Astro.props;
         errorMsg.classList.remove('hidden');
       } finally {
         submitBtn.disabled = false;
-        btnText.textContent = 'Enviar cotizacion';
+        btnText.textContent = 'Enviar cotización';
         btnSpinner.classList.add('hidden');
       }
     });
@@ -403,6 +574,7 @@ const { productName = '', compact = false } = Astro.props;
 
   document.addEventListener('astro:page-load', () => {
     const validateCategories = initChips();
+    initCharCounter();
     initForm(validateCategories);
   });
 </script>
