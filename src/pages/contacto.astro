@@ -10,7 +10,7 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
   description="Solicita una cotización personalizada para tu proyecto de impresión corporativa. Respondemos en 24 horas hábiles."
 >
 
-  <div class="bg-[#F8F8F6] border-b border-gray-100 py-14">
+  <section data-gpu-fix class="bg-[#F8F8F6] border-b border-gray-100 py-14">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <span class="text-xs font-semibold uppercase tracking-widest text-[#F4622A]">Cotización</span>
       <h1 class="mt-2 text-3xl sm:text-4xl font-bold text-[#101820]">Hablemos de tu proyecto</h1>
@@ -19,40 +19,291 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
         Sin costo ni compromiso.
       </p>
     </div>
-  </div>
+  </section>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
 
       <!-- Sidebar info -->
-      <div class="lg:col-span-1">
+      <div class="lg:col-span-1 lg:sticky lg:top-[calc(var(--navbar-height,88px)+2rem)] lg:self-start">
         <h2 class="font-bold text-[#101820] text-xl mb-6">¿Por qué elegirnos?</h2>
-
         <div class="space-y-6 mb-10">
-          {[
-            { icon: '⏱', title: 'Respuesta en 24h', desc: 'Revisamos cada consulta y respondemos con una propuesta real.' },
-            { icon: '📋', title: 'Sin compromiso', desc: 'La cotización es sin costo. Si no te convence, no hay ningún problema.' },
-            { icon: '🌿', title: 'Certificación FSC', desc: 'Tu pedido puede incluir insumos con cadena de custodia certificada.' },
-            { icon: '🏭', title: 'Producción propia', desc: 'Sin intermediarios. Controlamos el proceso de principio a fin.' },
-          ].map((item) => (
-            <div class="flex gap-4">
-              <span class="text-2xl mt-0.5">{item.icon}</span>
-              <div>
-                <div class="font-semibold text-[#101820] text-sm mb-1">{item.title}</div>
-                <div class="text-sm text-gray-500 leading-relaxed">{item.desc}</div>
-              </div>
-            </div>
-          ))}
-        </div>
 
+          <div class="flex gap-4">
+            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#F4622A]/10 text-[#F4622A] shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <div>
+              <div class="font-semibold text-[#101820] text-sm mb-1">Respuesta en 24h</div>
+              <div class="text-sm text-gray-500 leading-relaxed">Revisamos cada consulta y respondemos con una propuesta real.</div>
+            </div>
+          </div>
+
+          <div class="flex gap-4">
+            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#F4622A]/10 text-[#F4622A] shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+            </div>
+            <div>
+              <div class="font-semibold text-[#101820] text-sm mb-1">Sin compromiso</div>
+              <div class="text-sm text-gray-500 leading-relaxed">La cotización es sin costo. Si no te convence, no hay ningún problema.</div>
+            </div>
+          </div>
+
+          <div class="flex gap-4">
+            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#F4622A]/10 text-[#F4622A] shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+            </div>
+            <div>
+              <div class="font-semibold text-[#101820] text-sm mb-1">Certificación FSC</div>
+              <div class="text-sm text-gray-500 leading-relaxed">Tu pedido puede incluir insumos con cadena de custodia certificada.</div>
+            </div>
+          </div>
+
+          <div class="flex gap-4">
+            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#F4622A]/10 text-[#F4622A] shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+            </div>
+            <div>
+              <div class="font-semibold text-[#101820] text-sm mb-1">Producción propia</div>
+              <div class="text-sm text-gray-500 leading-relaxed">Sin intermediarios. Controlamos el proceso de principio a fin.</div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      <!-- Form -->
-      <div class="lg:col-span-2 bg-white border border-gray-100 rounded-2xl p-8 shadow-sm">
-        <QuoteForm productName={productParam} />
+      <!-- Form preview card (non-interactive) + overlay trigger -->
+      <div class="lg:col-span-2">
+        <div id="form-trigger" class="relative group cursor-pointer" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="quote-dialog" aria-label="Abrir formulario de cotización">
+
+          <!-- Visual preview (pointer-events-none so the overlay handles clicks) -->
+          <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm pointer-events-none select-none">
+
+            <!-- Header preview row -->
+            <div class="flex items-center justify-between mb-6 pb-5 border-b border-gray-50">
+              <p class="text-sm text-gray-500">Completa el formulario y te responderemos en menos de 24h.</p>
+              <span class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-[#F4622A] shrink-0 ml-4">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                Haz click para completar
+              </span>
+            </div>
+
+            <!-- Row 1: Nombre + Email -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <div class="text-sm font-medium text-gray-700 mb-1">Nombre <span class="text-[#F4622A]">*</span></div>
+                <div data-preview-for="name" class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-300 bg-gray-50/60 truncate">Tu nombre</div>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-gray-700 mb-1">Correo electrónico <span class="text-[#F4622A]">*</span></div>
+                <div data-preview-for="email" class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-300 bg-gray-50/60 truncate">tu@empresa.com</div>
+              </div>
+            </div>
+
+            <!-- Row 2: Teléfono + Producto de referencia -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <div class="text-sm font-medium text-gray-700 mb-1">Teléfono <span class="text-gray-400 font-normal">(opcional)</span></div>
+                <div data-preview-for="phone" class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-300 bg-gray-50/60 truncate">+56 9 ...</div>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-gray-700 mb-1">Producto de referencia <span class="text-gray-400 font-normal">(opcional)</span></div>
+                <div data-preview-for="productRef" class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-300 bg-gray-50/60 truncate">Ej: Tarjetas de presentación...</div>
+              </div>
+            </div>
+
+            <!-- Row 3: Descripción -->
+            <div class="mb-5">
+              <div class="text-sm font-medium text-gray-700 mb-1">Descripción de tu necesidad <span class="text-[#F4622A]">*</span></div>
+              <div data-preview-for="message" class="w-full px-4 py-3 border border-gray-200 rounded-md text-sm text-gray-300 bg-gray-50/60 h-20 leading-relaxed overflow-hidden">
+                Ej: Necesito 500 carpetas con logo corporativo para evento en junio...
+              </div>
+            </div>
+
+            <!-- Submit button (visual only) -->
+            <div class="w-full h-11 bg-[#F4622A] rounded-md flex items-center justify-center">
+              <span class="text-white text-sm font-semibold">Enviar cotización</span>
+            </div>
+
+          </div>
+
+          <!-- Hover overlay with CTA -->
+          <div class="absolute inset-0 rounded-2xl bg-[#101820]/5 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+            <div class="bg-[#F4622A] text-white text-sm font-semibold px-7 py-3.5 rounded-full shadow-2xl flex items-center gap-2.5 scale-95 group-hover:scale-100 group-focus:scale-100 transition-transform duration-200">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+              Completar formulario
+            </div>
+          </div>
+
+        </div>
+
+        <p class="mt-4 text-center text-xs text-gray-400">Sin costo ni compromiso · Respondemos en menos de 24 horas hábiles</p>
       </div>
 
     </div>
-  </div>
+  </section>
 
 </BaseLayout>
+
+<!-- ── Dialog modal ───────────────────────────────────────────────────────── -->
+<dialog id="quote-dialog" aria-modal="true" aria-labelledby="dialog-title">
+  <!-- Sticky dialog header -->
+  <div class="sticky top-0 z-10 flex items-center justify-between px-6 sm:px-8 py-4 bg-white border-b border-gray-100">
+    <h2 id="dialog-title" class="font-bold text-[#101820] text-base">Solicitar cotización</h2>
+    <button
+      type="button"
+      id="close-quote-dialog"
+      class="flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:text-[#101820] hover:bg-gray-100 transition-colors"
+      aria-label="Cerrar formulario"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+  <!-- Form content -->
+  <div class="px-6 sm:px-8 py-6">
+    <QuoteForm productName={productParam} dialogMode={true} />
+  </div>
+</dialog>
+
+<style>
+  /* ── Dialog reset + sizing ── */
+  #quote-dialog {
+    border: none;
+    padding: 0;
+    border-radius: 1.25rem;
+    background: white;
+    /* Centering: browsers apply margin:auto by default for showModal(), making this explicit */
+    margin: auto;
+    width: calc(100% - 2rem);
+    max-width: 820px;
+    /* Allow native scrolling only on very small screens; for typical desktops the form fits */
+    max-height: 96dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.04),
+      0 25px 60px -12px rgba(0,0,0,0.28);
+  }
+
+  /* ── Backdrop ── */
+  #quote-dialog::backdrop {
+    background: rgba(16, 24, 32, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  /* ── Open animation ── */
+  #quote-dialog[open] {
+    animation: dialog-in 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  /* ── Close animation (JS adds .is-closing before dialog.close()) ── */
+  #quote-dialog.is-closing {
+    animation: dialog-out 180ms ease both;
+  }
+
+  @keyframes dialog-in {
+    from { opacity: 0; transform: scale(0.95) translateY(16px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0);    }
+  }
+  @keyframes dialog-out {
+    to { opacity: 0; transform: scale(0.96) translateY(8px); }
+  }
+
+  /* Preview filled state */
+  [data-preview-for].is-filled {
+    color: #374151; /* gray-700 */
+    background-color: white;
+    border-color: #d1d5db; /* gray-300 */
+  }
+</style>
+
+<script>
+  /* ── Preview update: reads dialog form values and updates the preview card ── */
+  function updateFormPreview() {
+    const dialog = document.getElementById('quote-dialog') as HTMLDialogElement | null;
+    if (!dialog) return;
+
+    const fieldMap: Record<string, string> = {
+      name:       'Tu nombre',
+      email:      'tu@empresa.com',
+      phone:      '+56 9 ...',
+      productRef: 'Ej: Tarjetas de presentación...',
+      message:    'Ej: Necesito 500 carpetas con logo corporativo para evento en junio...',
+    };
+
+    for (const [fieldName, placeholder] of Object.entries(fieldMap)) {
+      const input   = dialog.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${fieldName}"]`);
+      const preview = document.querySelector<HTMLElement>(`[data-preview-for="${fieldName}"]`);
+      if (!input || !preview) continue;
+
+      const value = (input as HTMLInputElement).value.trim();
+      if (value) {
+        const display = fieldName === 'message' && value.length > 90
+          ? value.slice(0, 90) + '…'
+          : value;
+        preview.textContent = display;
+        preview.classList.add('is-filled');
+      } else {
+        preview.textContent = placeholder;
+        preview.classList.remove('is-filled');
+      }
+    }
+  }
+
+  function initFormDialog() {
+    const trigger  = document.getElementById('form-trigger');
+    const dialog   = document.getElementById('quote-dialog')       as HTMLDialogElement | null;
+    const closeBtn = document.getElementById('close-quote-dialog') as HTMLButtonElement  | null;
+
+    if (!trigger || !dialog) return;
+
+    function openDialog() {
+      dialog!.showModal();
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDialog() {
+      updateFormPreview();
+      dialog!.classList.add('is-closing');
+      dialog!.addEventListener('animationend', () => {
+        dialog!.classList.remove('is-closing');
+        dialog!.close();
+        document.body.style.overflow = '';
+      }, { once: true });
+    }
+
+    // Open on click / keyboard Enter or Space on the trigger card
+    trigger.addEventListener('click', openDialog);
+    trigger.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDialog(); }
+    });
+
+    // Close via button
+    closeBtn?.addEventListener('click', closeDialog);
+
+    // Close when clicking the backdrop (click on <dialog> itself, not its content)
+    dialog.addEventListener('click', (e: MouseEvent) => {
+      if (e.target === dialog) closeDialog();
+    });
+
+    // Intercept ESC to play the close animation
+    dialog.addEventListener('cancel', (e: Event) => {
+      e.preventDefault();
+      closeDialog();
+    });
+  }
+
+  document.addEventListener('astro:page-load', initFormDialog);
+
+  // Close cleanly before View Transitions swap
+  document.addEventListener('astro:before-swap', () => {
+    const dialog = document.getElementById('quote-dialog') as HTMLDialogElement | null;
+    if (dialog?.open) {
+      dialog.classList.remove('is-closing');
+      dialog.close();
+    }
+    document.body.style.overflow = '';
+  });
+</script>

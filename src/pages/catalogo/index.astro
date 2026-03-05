@@ -17,7 +17,7 @@ const sortedProducts = [...products].sort((a, b) => {
   title="Catálogo · PRG Inversiones"
   description="Catálogo completo de productos de impresión: papelería corporativa, grandes formatos, packaging y más."
 >
-  <div class="bg-[#F8F8F6] border-b border-gray-100">
+  <section data-gpu-fix class="bg-[#F8F8F6] border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
       <span class="text-xs font-semibold uppercase tracking-widest text-[#F4622A]">Catálogo</span>
       <h1 id="catalog-title" class="mt-2 text-3xl sm:text-4xl font-bold text-[#101820]">
@@ -27,9 +27,9 @@ const sortedProducts = [...products].sort((a, b) => {
         Catálogo completo de productos de impresión: papelería corporativa, grandes formatos, packaging y más.
       </p>
     </div>
-  </div>
+  </section>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <section data-gpu-fix class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
     <!-- Filtros de categoría -->
     <div class="flex flex-wrap gap-2 mb-10">
@@ -68,7 +68,7 @@ const sortedProducts = [...products].sort((a, b) => {
       No hay productos en esta categoría aún.
     </p>
 
-  </div>
+  </section>
 
   <!--
     Tailwind safelist — clases usadas sólo en JS.

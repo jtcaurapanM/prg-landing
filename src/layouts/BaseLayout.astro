@@ -50,6 +50,9 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    <!-- Preload fuentes críticas en WOFF2 (formato óptimo generado con convert-fonts.sh) -->
+    <link rel="preload" href="/fonts/Gotham-Medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Gotham-Bold.woff2"   as="font" type="font/woff2" crossorigin />
 
     <ClientRouter />
 
@@ -79,7 +82,7 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#101820] text-white">
+    <footer data-gpu-fix class="bg-[#101820] text-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div>
@@ -92,12 +95,14 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
               respaldo de la certificación FSC C143583.
             </p>
             <div
-              class="mt-4 inline-flex items-center gap-2 bg-white/10 rounded-md px-3 py-2"
+              class="mt-4 flex w-fit items-center gap-2 bg-white/10 rounded-md px-3 py-2"
             >
-              <span class="text-xs text-gray-300 font-medium"
+              <span class="block text-xs text-gray-300 font-medium leading-none"
                 >Certificación FSC</span
               >
-              <span class="text-xs text-[#F4622A] font-bold">C143583</span>
+              <span class="block text-xs text-[#F4622A] font-bold leading-none"
+                >C143583</span
+              >
             </div>
           </div>
 
@@ -176,11 +181,10 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
     </footer>
 
     <script>
-      const getEl = (id: string) => document.getElementById(id)!;
-
       // ── Scroll shadow ──────────────────────────────────────────────────────
       function handleScroll() {
-        const navbar = getEl("navbar");
+        const navbar = document.getElementById("navbar");
+        if (!navbar) return;
         if (window.scrollY > 20) {
           navbar.classList.add("shadow-md");
           navbar.classList.remove("border-gray-100");
@@ -233,20 +237,24 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
         });
       }
 
-      // ── Antes de swap: marcar dirección ───────────────────────────────────
+      // ── Antes de swap: marcar dirección + reset del flag ──────────────────
       document.addEventListener("astro:before-swap", () => {
         document.documentElement.dataset.navDirection = isBackNav
           ? "back"
           : "forward";
+        // Resetear aquí también para evitar que un popstate tardío
+        // contamine la siguiente navegación forward
+        isBackNav = false;
       });
 
       // ── After swap: filtro catálogo + scroll ──────────────────────────────
       document.addEventListener("astro:after-swap", () => {
+        const navDir = document.documentElement.dataset.navDirection;
         const filterCat = new URLSearchParams(window.location.search).get(
           "categoria",
         );
 
-        if (isBackNav) {
+        if (navDir === "back") {
           const savedScrollY = parseInt(
             sessionStorage.getItem("catalogScrollY") ?? "0",
             10,
@@ -283,7 +291,15 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
         document.body.style.overflow = "";
         clearCardTransitions();
         delete document.documentElement.dataset.navDirection;
-        isBackNav = false;
+
+        // Actualizar CSS custom property con la altura real del navbar
+        const navbar = document.getElementById("navbar");
+        if (navbar) {
+          document.documentElement.style.setProperty(
+            "--navbar-height",
+            navbar.offsetHeight + "px",
+          );
+        }
 
         const slugMatch = window.location.pathname.match(/\/catalogo\/([^/]+)/);
         if (slugMatch) sessionStorage.setItem("lastProductSlug", slugMatch[1]);

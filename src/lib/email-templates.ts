@@ -1,19 +1,26 @@
+import { CATEGORY_LABELS as CAT_LABELS } from '../data/categories';
+
 export interface QuoteData {
+  empresa?: string;
   name: string;
   email: string;
   phone?: string;
   category?: string;
   productRef?: string;
   quantity?: string;
+  urgency?: string;
   message: string;
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  'papeleria-corporativa': 'Papelería Corporativa',
-  'grandes-formatos':      'Grandes Formatos',
-  'promocionales':         'Regalos Promocionales',
-  'packaging-etiquetas':   'Packaging y Etiquetas',
+const URGENCY_LABELS: Record<string, string> = {
+  'urgente':     'Lo antes posible',
+  '1-2-semanas': 'En 1 a 2 semanas',
+  '1-mes':       'En aproximadamente 1 mes',
+  'mas-1-mes':   'En más de 1 mes',
 };
+
+// Re-exportar como Record<string, string> para uso interno flexible (DT-02)
+const CATEGORY_LABELS: Record<string, string> = CAT_LABELS as Record<string, string>;
 
 function esc(str: string): string {
   return str
@@ -148,6 +155,7 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
           </td></tr>
           <tr><td style="padding:4px 24px 20px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              ${d.empresa ? dataRow('Empresa', val(esc(d.empresa))) : ''}
               ${dataRow('Nombre', val(esc(d.name)))}
               ${dataRow('Correo',
                 `<a href="mailto:${esc(d.email)}" style="color:#F4622A;font-size:13px;
@@ -171,7 +179,8 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               ${dataRow('Línea de interés', catPills)}
               ${dataRow('Producto referencia', d.productRef ? val(esc(d.productRef)) : emptyVal())}
-              ${dataRow('Cantidad aproximada', d.quantity ? val(esc(d.quantity)) : emptyVal(), false)}
+              ${dataRow('Cantidad aproximada', d.quantity ? val(esc(d.quantity)) : emptyVal())}
+              ${dataRow('Urgencia', d.urgency ? val(esc(URGENCY_LABELS[d.urgency] ?? d.urgency)) : emptyVal(), false)}
             </table>
           </td></tr>
         </table>
@@ -243,13 +252,14 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
   const text = `Nueva cotización — PRG Inversiones
 ${dateStr} · ${timeStr}
 
-Nombre:   ${d.name}
+${d.empresa ? `Empresa:  ${d.empresa}\n` : ''}Nombre:   ${d.name}
 Correo:   ${d.email}
 Teléfono: ${d.phone || 'No indicado'}
 
 Línea de interés: ${cats.join(', ') || 'No indicada'}
 Producto:         ${d.productRef || 'No indicado'}
 Cantidad:         ${d.quantity || 'No indicada'}
+Urgencia:         ${d.urgency ? (URGENCY_LABELS[d.urgency] ?? d.urgency) : 'No indicada'}
 
 Mensaje:
 ${d.message}
@@ -313,9 +323,11 @@ export function buildConfirmationEmail(d: QuoteData): { subject: string; html: s
   ).join('');
 
   const summaryRows = [
+    d.empresa ? dataRow('Empresa', val(esc(d.empresa))) : '',
     cats.length > 0 ? dataRow('Línea de interés', catPills) : '',
     d.productRef ? dataRow('Producto', val(esc(d.productRef))) : '',
-    d.quantity    ? dataRow('Cantidad', val(esc(d.quantity)))   : '',
+    d.quantity    ? dataRow('Cantidad',  val(esc(d.quantity)))  : '',
+    d.urgency     ? dataRow('Urgencia',  val(esc(URGENCY_LABELS[d.urgency] ?? d.urgency))) : '',
     dataRow(
       'Mensaje',
       `<span style="color:#101820;font-size:13px;font-family:Arial,Helvetica,sans-serif;
@@ -444,7 +456,7 @@ Nos pondremos en contacto contigo en menos de 24 horas hábiles.
 3. Te respondemos en menos de 24 horas hábiles
 
 Resumen de tu solicitud:
-${cats.length > 0 ? `Línea de interés: ${cats.join(', ')}\n` : ''}${d.productRef ? `Producto: ${d.productRef}\n` : ''}${d.quantity ? `Cantidad: ${d.quantity}\n` : ''}Mensaje: ${d.message}
+${d.empresa ? `Empresa: ${d.empresa}\n` : ''}${cats.length > 0 ? `Línea de interés: ${cats.join(', ')}\n` : ''}${d.productRef ? `Producto: ${d.productRef}\n` : ''}${d.quantity ? `Cantidad: ${d.quantity}\n` : ''}${d.urgency ? `Urgencia: ${URGENCY_LABELS[d.urgency] ?? d.urgency}\n` : ''}Mensaje: ${d.message}
 
 PRG Inversiones · Santiago, Chile · prg.cl
 `;

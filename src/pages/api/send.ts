@@ -4,7 +4,7 @@ import { buildNotificationEmail, buildConfirmationEmail } from "../../lib/email-
 
 export const prerender = false;
 
-// ── Validación whitelist de categorías ────────────────────────────────────────
+// ── Whitelists de valores permitidos ──────────────────────────────────────────
 const VALID_CATEGORIES = new Set([
   'papeleria-corporativa',
   'grandes-formatos',
@@ -14,6 +14,10 @@ const VALID_CATEGORIES = new Set([
 
 const VALID_QUANTITIES = new Set([
   '', '1-50', '51-200', '201-1000', '1000+',
+]);
+
+const VALID_URGENCIES = new Set([
+  '', 'urgente', '1-2-semanas', '1-mes', 'mas-1-mes',
 ]);
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -38,6 +42,18 @@ function validateCategories(raw: unknown): string | null {
 
 // ── Endpoint ──────────────────────────────────────────────────────────────────
 export const POST: APIRoute = async ({ request }) => {
+  // ── Verificación de origen (MEJ-04: rate limiting básico) ───────────────
+  const origin  = request.headers.get('origin')  ?? '';
+  const referer = request.headers.get('referer') ?? '';
+  const isDev   = import.meta.env.DEV;
+
+  if (!isDev && !origin.includes('prg.cl') && !referer.includes('prg.cl')) {
+    return new Response(
+      JSON.stringify({ error: "Solicitud no permitida." }),
+      { status: 403 },
+    );
+  }
+
   const body = await request.json().catch(() => null);
 
   if (!body || typeof body !== 'object') {
@@ -47,7 +63,14 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
+  // ── Honeypot: si el campo "website" tiene valor, es un bot.
+  //    Retornar 200 silenciosamente para no delatar el filtro. ────────────────
+  if (typeof body.website === 'string' && body.website.trim().length > 0) {
+    return new Response(JSON.stringify({ ok: true }), { status: 200 });
+  }
+
   // ── Validar y sanitizar campos ───────────────────────────────────────────
+  const empresa = sanitizeString(body.empresa, 200) ?? undefined;
   const name    = sanitizeString(body.name,    100);
   const email   = sanitizeString(body.email,   254);
   const phone   = sanitizeString(body.phone,    30) ?? undefined;
@@ -67,9 +90,10 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  // Categorías: al menos una, todas válidas
-  const category = validateCategories(body.category);
-  if (!category) {
+  // Categorías: opcionales en modo compact (campo ausente); si se envían deben ser válidas
+  const rawCategoryStr = typeof body.category === 'string' ? body.category.trim() : '';
+  const category = rawCategoryStr ? validateCategories(body.category) : undefined;
+  if (rawCategoryStr && !category) {
     return new Response(
       JSON.stringify({ error: "Línea de interés inválida." }),
       { status: 422 },
@@ -79,7 +103,10 @@ export const POST: APIRoute = async ({ request }) => {
   // Campos opcionales con whitelist
   const productRef = sanitizeString(body.productRef, 200) ?? undefined;
   const quantity   = typeof body.quantity === 'string' && VALID_QUANTITIES.has(body.quantity)
-    ? body.quantity
+    ? body.quantity || undefined
+    : undefined;
+  const urgency    = typeof body.urgency === 'string' && VALID_URGENCIES.has(body.urgency)
+    ? body.urgency || undefined
     : undefined;
 
   // ── Variables de entorno ─────────────────────────────────────────────────
@@ -96,7 +123,8 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const resend = new Resend(apiKey);
-  const data   = { name, email, phone, category, productRef, quantity, message };
+  // category es string | null | undefined; QuoteData espera string | undefined
+  const data   = { empresa, name, email, phone, category: category ?? undefined, productRef, quantity, urgency, message };
 
   // ── 1. Notificación interna al equipo PRG ────────────────────────────────
   const notification = buildNotificationEmail(data);

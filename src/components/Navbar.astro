@@ -42,15 +42,15 @@ function isActive(href: string) {
             "relative px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
             isActive("/") ? "text-[#F4622A]" : "text-gray-600 hover:text-[#101820] hover:bg-gray-50",
           ]}
-          aria-current={isActive("/") ? "page" : "false"}
+          aria-current={isActive("/") ? "page" : undefined}
         >
           Inicio
           <span data-nav-indicator style={isActive("/") ? "" : "display:none"}
             class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[#F4622A] rounded-full" />
         </a>
 
-        <!-- Catálogo con dropdown -->
-        <div class="relative group">
+        <!-- Catalogo con dropdown -->
+        <div class="relative group" data-catalog-group>
           <a
             href="/catalogo"
             data-nav-link
@@ -58,7 +58,7 @@ function isActive(href: string) {
               "relative flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
               isActive("/catalogo") ? "text-[#F4622A]" : "text-gray-600 hover:text-[#101820] hover:bg-gray-50",
             ]}
-            aria-current={isActive("/catalogo") ? "page" : "false"}
+            aria-current={isActive("/catalogo") ? "page" : undefined}
           >
             Catálogo
             <svg class="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +68,7 @@ function isActive(href: string) {
               class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-[#F4622A] rounded-full" />
           </a>
 
-          <div class="absolute top-full left-0 pt-1 z-50 min-w-[210px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-150">
+          <div data-catalog-dropdown class="absolute top-full left-0 pt-1 z-50 min-w-[210px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-150">
             <div class="bg-white rounded-xl border border-gray-100 shadow-xl overflow-hidden py-1.5">
               <a href="/catalogo" class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-[#101820] hover:bg-gray-50 border-b border-gray-50">
                 Todos los productos
@@ -78,7 +78,7 @@ function isActive(href: string) {
                   href={`/catalogo?categoria=${slug}`}
                   class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#F4622A] transition-colors"
                 >
-                  <span class="w-1 h-1 rounded-full bg-[#F4622A] shrink-0" />
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" />
                   {label}
                 </a>
               ))}
@@ -95,7 +95,7 @@ function isActive(href: string) {
               "relative px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
               isActive(href) ? "text-[#F4622A]" : "text-gray-600 hover:text-[#101820] hover:bg-gray-50",
             ]}
-            aria-current={isActive(href) ? "page" : "false"}
+            aria-current={isActive(href) ? "page" : undefined}
           >
             {label}
             <span data-nav-indicator style={isActive(href) ? "" : "display:none"}
@@ -134,7 +134,8 @@ function isActive(href: string) {
   <!-- Mobile menu panel -->
   <div
     id="mobile-menu"
-    class="md:hidden overflow-hidden max-h-0 transition-[max-height] duration-300 ease-in-out bg-white border-t border-gray-100"
+    class="md:hidden bg-white border-t border-gray-100"
+    style="max-height:0;overflow:hidden;transition:max-height 320ms cubic-bezier(0.4,0,0.2,1)"
   >
     <nav class="px-4 pt-3 pb-5 flex flex-col gap-1">
 
@@ -230,31 +231,73 @@ function isActive(href: string) {
   </div>
 </header>
 
+<!-- Overlay para menú mobile: debe estar FUERA del <header> para no quedar
+     dentro de su stacking context (z-50). Así el header siempre queda encima. -->
+<div
+  id="mobile-overlay"
+  aria-hidden="true"
+  class="md:hidden fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none transition-opacity duration-300"
+></div>
+
 <script>
   const getEl = (id: string) => document.getElementById(id)!;
 
-  // ── Estado del menú ────────────────────────────────────────────────────────
+  // ── Estado ────────────────────────────────────────────────────────────────
   let menuOpen = false;
   let resizeHandler: (() => void) | null = null;
 
+  // ── Helpers de overlay ────────────────────────────────────────────────────
+  function showOverlay() {
+    const overlay = document.getElementById("mobile-overlay");
+    if (!overlay) return;
+    overlay.classList.remove("opacity-0", "pointer-events-none");
+    overlay.classList.add("opacity-100");
+  }
+
+  function hideOverlay() {
+    const overlay = document.getElementById("mobile-overlay");
+    if (!overlay) return;
+    overlay.classList.remove("opacity-100");
+    overlay.classList.add("opacity-0", "pointer-events-none");
+  }
+
+  // ── Abrir / cerrar menú ───────────────────────────────────────────────────
+  // Se usa dvh (dynamic viewport height) para que el menú no quede cortado
+  // por la barra del navegador en iOS. El menú scrollea internamente cuando
+  // el contenido supera el espacio disponible — esto elimina el cálculo
+  // dinámico de altura al abrir/cerrar el submenu (fix del "buceo").
   function openMenu() {
     menuOpen = true;
-    const menu = getEl("mobile-menu");
-    menu.style.maxHeight = menu.scrollHeight + "px";
+    const menu       = getEl("mobile-menu");
+    const navbarEl   = document.getElementById("navbar");
+    const navH       = navbarEl ? navbarEl.offsetHeight : 72;
+    // 100dvh = viewport dinámico (excluye barra del browser en iOS)
+    menu.style.maxHeight  = `calc(100dvh - ${navH}px)`;
+    menu.style.overflowY  = "auto";
     getEl("icon-open").classList.add("opacity-0", "-rotate-90");
     getEl("icon-close").classList.remove("opacity-0", "rotate-90");
-    getEl("mobile-menu-btn").setAttribute("aria-expanded", "true");
+    const menuBtn = getEl("mobile-menu-btn");
+    menuBtn.setAttribute("aria-expanded", "true");
+    menuBtn.setAttribute("aria-label", "Cerrar menú");
     document.body.style.overflow = "hidden";
+    showOverlay();
   }
 
   function closeMenu() {
     menuOpen = false;
     const menu = getEl("mobile-menu");
     menu.style.maxHeight = "0px";
+    // Volver a overflow:hidden después de la transición para que no se vea contenido
+    menu.addEventListener("transitionend", () => {
+      if (!menuOpen) menu.style.overflowY = "hidden";
+    }, { once: true });
     getEl("icon-open").classList.remove("opacity-0", "-rotate-90");
     getEl("icon-close").classList.add("opacity-0", "rotate-90");
-    getEl("mobile-menu-btn").setAttribute("aria-expanded", "false");
+    const menuBtn2 = getEl("mobile-menu-btn");
+    menuBtn2.setAttribute("aria-expanded", "false");
+    menuBtn2.setAttribute("aria-label", "Abrir menú");
     document.body.style.overflow = "";
+    hideOverlay();
   }
 
   // ── Active state móvil ────────────────────────────────────────────────────
@@ -270,7 +313,7 @@ function isActive(href: string) {
       catalogLink.classList.toggle("text-[#F4622A]",   isCatalogActive);
       catalogLink.classList.toggle("font-semibold",    isCatalogActive);
       catalogLink.classList.toggle("text-gray-700",   !isCatalogActive);
-      catalogLink.setAttribute("aria-current", isCatalogActive ? "page" : "false");
+      if (isCatalogActive) { catalogLink.setAttribute("aria-current", "page"); } else { catalogLink.removeAttribute("aria-current"); }
       const dot = catalogLink.querySelector<HTMLElement>("[data-mobile-dot]");
       if (dot) dot.className = isCatalogActive ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" : "hidden";
     }
@@ -290,41 +333,37 @@ function isActive(href: string) {
       link.classList.toggle("text-[#F4622A]",  active);
       link.classList.toggle("font-semibold",   active);
       link.classList.toggle("text-gray-700",  !active);
-      link.setAttribute("aria-current", active ? "page" : "false");
+      if (active) { link.setAttribute("aria-current", "page"); } else { link.removeAttribute("aria-current"); }
       const dot = link.querySelector<HTMLElement>("[data-mobile-dot]");
       if (dot) dot.className = active ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" : "hidden";
     });
   }
 
   // ── Submenu catálogo móvil ────────────────────────────────────────────────
+  // IMPORTANTE: Ya NO recalculamos la altura del menú padre al abrir/cerrar el
+  // submenu. El menú padre ahora usa overflow-y:auto con max-height basado en
+  // dvh, por lo que el submenu se expande naturalmente dentro del scroll.
   function initCatalogMobileSubmenu() {
-    const toggle  = document.getElementById("catalog-mobile-toggle");
-    const submenu = document.getElementById("catalog-mobile-submenu");
-    const chevron = document.getElementById("catalog-mobile-chevron");
-    if (!toggle || !submenu) return;
+    const toggle    = document.getElementById("catalog-mobile-toggle");
+    const submenuEl = document.getElementById("catalog-mobile-submenu");
+    const chevron   = document.getElementById("catalog-mobile-chevron");
+    if (!toggle || !submenuEl) return;
 
+    const submenu: HTMLElement = submenuEl;
     const newToggle = toggle.cloneNode(true) as HTMLElement;
     toggle.replaceWith(newToggle);
 
     function openSubmenu() {
+      void submenu.offsetHeight;
       submenu.style.maxHeight = submenu.scrollHeight + "px";
       chevron?.classList.add("rotate-180");
       newToggle.setAttribute("aria-expanded", "true");
-      const mobileMenu = document.getElementById("mobile-menu");
-      if (mobileMenu) {
-        // Force reflow so scrollHeight includes the newly revealed submenu
-        void mobileMenu.offsetHeight;
-        mobileMenu.style.maxHeight = mobileMenu.scrollHeight + "px";
-      }
     }
 
     function closeSubmenu() {
-      const h = parseInt(submenu.style.maxHeight) || 0;
       submenu.style.maxHeight = "0px";
       chevron?.classList.remove("rotate-180");
       newToggle.setAttribute("aria-expanded", "false");
-      const mobileMenu = document.getElementById("mobile-menu");
-      if (mobileMenu) mobileMenu.style.maxHeight = Math.max(0, (parseInt(mobileMenu.style.maxHeight) || 0) - h) + "px";
     }
 
     newToggle.addEventListener("click", () => {
@@ -350,7 +389,13 @@ function isActive(href: string) {
     newBtn.addEventListener("click", () => menuOpen ? closeMenu() : openMenu());
     menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
 
-    // Close when clicking outside the navbar
+    // Cerrar al hacer click en el overlay
+    const overlay = document.getElementById("mobile-overlay");
+    if (overlay) {
+      overlay.addEventListener("click", closeMenu);
+    }
+
+    // Cerrar al hacer click fuera del navbar
     if (outsideClickHandler) document.removeEventListener("click", outsideClickHandler);
     outsideClickHandler = (e: MouseEvent) => {
       const navbar = document.getElementById("navbar");
@@ -360,7 +405,12 @@ function isActive(href: string) {
 
     if (resizeHandler) window.removeEventListener("resize", resizeHandler);
     resizeHandler = () => {
-      if (menuOpen) getEl("mobile-menu").style.maxHeight = getEl("mobile-menu").scrollHeight + "px";
+      if (menuOpen) {
+        // Recalcular altura en cambio de orientación
+        const navbarEl = document.getElementById("navbar");
+        const navH = navbarEl ? navbarEl.offsetHeight : 72;
+        getEl("mobile-menu").style.maxHeight = `calc(100dvh - ${navH}px)`;
+      }
       if (window.innerWidth >= 768) closeMenu();
     };
     window.addEventListener("resize", resizeHandler);
@@ -370,7 +420,6 @@ function isActive(href: string) {
     if (e.key === "Escape" && menuOpen) closeMenu();
   });
 
-  // Cerrar menú al navegar
   document.addEventListener("astro:before-swap", closeMenu);
 
   document.addEventListener("astro:page-load", () => {
@@ -385,11 +434,38 @@ function isActive(href: string) {
       const link   = el as HTMLAnchorElement;
       const href   = link.getAttribute("href") ?? "";
       const active = href === "/" ? currentPath === "/" : currentPath.startsWith(href);
-      link.setAttribute("aria-current", active ? "page" : "false");
+      if (active) { link.setAttribute("aria-current", "page"); } else { link.removeAttribute("aria-current"); }
       link.classList.toggle("text-[#F4622A]", active);
       link.classList.toggle("text-gray-600", !active);
       const indicator = link.querySelector("[data-nav-indicator]") as HTMLElement | null;
       if (indicator) indicator.style.display = active ? "block" : "none";
     });
+
+    // CB-06: Touch support para dropdown catalogo en tablets/touch devices
+    const catalogGroup = document.querySelector('[data-catalog-group]') as HTMLElement | null;
+    if (catalogGroup) {
+      catalogGroup.addEventListener('touchstart', (e) => {
+        const dropdown = catalogGroup.querySelector('[data-catalog-dropdown]') as HTMLElement | null;
+        if (!dropdown) return;
+        const isOpen = dropdown.classList.contains('touch-open');
+        if (!isOpen) {
+          e.preventDefault();
+          document.querySelectorAll('[data-catalog-dropdown].touch-open').forEach((el) => {
+            el.classList.remove('touch-open', 'opacity-100', 'visible');
+            el.classList.add('opacity-0', 'invisible');
+          });
+          dropdown.classList.add('touch-open', 'opacity-100', 'visible');
+          dropdown.classList.remove('opacity-0', 'invisible');
+          const closeOnOutside = (ev: TouchEvent) => {
+            if (!catalogGroup.contains(ev.target as Node)) {
+              dropdown.classList.remove('touch-open', 'opacity-100', 'visible');
+              dropdown.classList.add('opacity-0', 'invisible');
+              document.removeEventListener('touchstart', closeOnOutside as EventListener);
+            }
+          };
+          setTimeout(() => document.addEventListener('touchstart', closeOnOutside as EventListener), 0);
+        }
+      }, { passive: false });
+    }
   });
 </script>
