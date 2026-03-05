@@ -17,20 +17,11 @@ function isActive(href: string) {
 }
 ---
 
-<!-- Mobile overlay -->
-<div
-  id="mobile-overlay"
-  transition:persist
-  class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm opacity-0 transition-opacity duration-300"
-  style="display:none"
-  aria-hidden="true"
-></div>
-
 <!-- Header -->
 <header
   id="navbar"
   transition:persist
-  class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 transition-shadow duration-300"
+  class="sticky top-0 z-50 bg-white border-b border-gray-100 transition-shadow duration-300"
 >
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between py-2">
@@ -47,10 +38,10 @@ function isActive(href: string) {
         <a
           href="/"
           data-nav-link
-          class={[
+          class:list={[
             "relative px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
             isActive("/") ? "text-[#F4622A]" : "text-gray-600 hover:text-[#101820] hover:bg-gray-50",
-          ].join(" ")}
+          ]}
           aria-current={isActive("/") ? "page" : "false"}
         >
           Inicio
@@ -63,10 +54,10 @@ function isActive(href: string) {
           <a
             href="/catalogo"
             data-nav-link
-            class={[
+            class:list={[
               "relative flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
               isActive("/catalogo") ? "text-[#F4622A]" : "text-gray-600 hover:text-[#101820] hover:bg-gray-50",
-            ].join(" ")}
+            ]}
             aria-current={isActive("/catalogo") ? "page" : "false"}
           >
             Catálogo
@@ -100,10 +91,10 @@ function isActive(href: string) {
           <a
             href={href}
             data-nav-link
-            class={[
+            class:list={[
               "relative px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
               isActive(href) ? "text-[#F4622A]" : "text-gray-600 hover:text-[#101820] hover:bg-gray-50",
-            ].join(" ")}
+            ]}
             aria-current={isActive(href) ? "page" : "false"}
           >
             {label}
@@ -152,10 +143,10 @@ function isActive(href: string) {
         <a
           href={href}
           data-mobile-nav-link
-          class={[
+          class:list={[
             "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200",
             isActive(href) ? "bg-[#F4622A]/8 text-[#F4622A] font-semibold" : "text-gray-700 hover:bg-gray-50 hover:text-[#101820]",
-          ].join(" ")}
+          ]}
           aria-current={isActive(href) ? "page" : undefined}
         >
           <span data-mobile-dot class={isActive(href) ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" : "hidden"} />
@@ -169,10 +160,10 @@ function isActive(href: string) {
           <a
             href="/catalogo"
             data-mobile-catalog-link
-            class={[
+            class:list={[
               "flex-1 flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors duration-200",
               isActive("/catalogo") ? "bg-[#F4622A]/8 text-[#F4622A] font-semibold" : "text-gray-700 hover:bg-gray-50 hover:text-[#101820]",
-            ].join(" ")}
+            ]}
             aria-current={isActive("/catalogo") ? "page" : undefined}
           >
             <span data-mobile-dot class={isActive("/catalogo") ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" : "hidden"} />
@@ -183,12 +174,12 @@ function isActive(href: string) {
             data-mobile-catalog-toggle
             aria-label="Ver categorías"
             aria-expanded="false"
-            class={[
+            class:list={[
               "flex items-center justify-center px-3 border-l transition-colors duration-200",
               isActive("/catalogo")
                 ? "border-[#F4622A]/20 text-[#F4622A] bg-[#F4622A]/8"
                 : "border-gray-100 text-gray-400 hover:text-[#F4622A] hover:bg-gray-50",
-            ].join(" ")}
+            ]}
           >
             <svg id="catalog-mobile-chevron" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
@@ -216,10 +207,10 @@ function isActive(href: string) {
         <a
           href={href}
           data-mobile-nav-link
-          class={[
+          class:list={[
             "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200",
             isActive(href) ? "bg-[#F4622A]/8 text-[#F4622A] font-semibold" : "text-gray-700 hover:bg-gray-50 hover:text-[#101820]",
-          ].join(" ")}
+          ]}
           aria-current={isActive(href) ? "page" : undefined}
         >
           <span data-mobile-dot class={isActive(href) ? "w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0" : "hidden"} />
@@ -244,17 +235,12 @@ function isActive(href: string) {
 
   // ── Estado del menú ────────────────────────────────────────────────────────
   let menuOpen = false;
+  let resizeHandler: (() => void) | null = null;
 
   function openMenu() {
     menuOpen = true;
-    const menu    = getEl("mobile-menu");
-    const overlay = getEl("mobile-overlay");
+    const menu = getEl("mobile-menu");
     menu.style.maxHeight = menu.scrollHeight + "px";
-    overlay.style.display = '';
-    requestAnimationFrame(() => {
-      overlay.classList.remove("opacity-0");
-      overlay.classList.add("opacity-100");
-    });
     getEl("icon-open").classList.add("opacity-0", "-rotate-90");
     getEl("icon-close").classList.remove("opacity-0", "rotate-90");
     getEl("mobile-menu-btn").setAttribute("aria-expanded", "true");
@@ -263,12 +249,8 @@ function isActive(href: string) {
 
   function closeMenu() {
     menuOpen = false;
-    const menu    = getEl("mobile-menu");
-    const overlay = getEl("mobile-overlay");
+    const menu = getEl("mobile-menu");
     menu.style.maxHeight = "0px";
-    overlay.classList.add("opacity-0");
-    overlay.classList.remove("opacity-100");
-    setTimeout(() => { overlay.style.display = 'none'; }, 300);
     getEl("icon-open").classList.remove("opacity-0", "-rotate-90");
     getEl("icon-close").classList.add("opacity-0", "rotate-90");
     getEl("mobile-menu-btn").setAttribute("aria-expanded", "false");
@@ -325,12 +307,15 @@ function isActive(href: string) {
     toggle.replaceWith(newToggle);
 
     function openSubmenu() {
-      const h = submenu.scrollHeight;
-      submenu.style.maxHeight = h + "px";
+      submenu.style.maxHeight = submenu.scrollHeight + "px";
       chevron?.classList.add("rotate-180");
       newToggle.setAttribute("aria-expanded", "true");
       const mobileMenu = document.getElementById("mobile-menu");
-      if (mobileMenu) mobileMenu.style.maxHeight = (parseInt(mobileMenu.style.maxHeight) || 0) + h + "px";
+      if (mobileMenu) {
+        // Force reflow so scrollHeight includes the newly revealed submenu
+        void mobileMenu.offsetHeight;
+        mobileMenu.style.maxHeight = mobileMenu.scrollHeight + "px";
+      }
     }
 
     function closeSubmenu() {
@@ -353,25 +338,32 @@ function isActive(href: string) {
   }
 
   // ── Mobile menu init ──────────────────────────────────────────────────────
+  let outsideClickHandler: ((e: MouseEvent) => void) | null = null;
+
   function initMobileMenu() {
-    const btn     = getEl("mobile-menu-btn");
-    const overlay = getEl("mobile-overlay");
-    const menu    = getEl("mobile-menu");
+    const btn  = getEl("mobile-menu-btn");
+    const menu = getEl("mobile-menu");
 
     const newBtn = btn.cloneNode(true) as HTMLElement;
     btn.replaceWith(newBtn);
-    const newOverlay = overlay.cloneNode(true) as HTMLElement;
-    newOverlay.style.display = 'none';
-    overlay.replaceWith(newOverlay);
 
     newBtn.addEventListener("click", () => menuOpen ? closeMenu() : openMenu());
-    newOverlay.addEventListener("click", closeMenu);
     menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
 
-    window.addEventListener("resize", () => {
+    // Close when clicking outside the navbar
+    if (outsideClickHandler) document.removeEventListener("click", outsideClickHandler);
+    outsideClickHandler = (e: MouseEvent) => {
+      const navbar = document.getElementById("navbar");
+      if (menuOpen && navbar && !navbar.contains(e.target as Node)) closeMenu();
+    };
+    document.addEventListener("click", outsideClickHandler);
+
+    if (resizeHandler) window.removeEventListener("resize", resizeHandler);
+    resizeHandler = () => {
       if (menuOpen) getEl("mobile-menu").style.maxHeight = getEl("mobile-menu").scrollHeight + "px";
       if (window.innerWidth >= 768) closeMenu();
-    });
+    };
+    window.addEventListener("resize", resizeHandler);
   }
 
   document.addEventListener("keydown", (e) => {
@@ -382,6 +374,7 @@ function isActive(href: string) {
   document.addEventListener("astro:before-swap", closeMenu);
 
   document.addEventListener("astro:page-load", () => {
+    document.body.style.overflow = "";
     initMobileMenu();
     initCatalogMobileSubmenu();
     updateMobileNavActive();
