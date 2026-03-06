@@ -207,9 +207,14 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
       window.addEventListener("scroll", handleScroll, { passive: true });
 
       // ── Dirección de navegación ────────────────────────────────────────────
+      // astro:before-preparation siempre es el primer evento del sistema de
+      // navegación de Astro, garantizando que isBackNav esté listo cuando
+      // astro:before-swap lo lee (evita la race condition con popstate).
       let isBackNav = false;
-      window.addEventListener("popstate", () => {
-        isBackNav = true;
+      document.addEventListener("astro:before-preparation", (e) => {
+        isBackNav =
+          (e as unknown as { navigationType: string }).navigationType ===
+          "traverse";
       });
 
       // ── Product card transitions ───────────────────────────────────────────
@@ -247,17 +252,15 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
         });
       }
 
-      // ── Antes de swap: marcar dirección + reset del flag ──────────────────
+      // ── Antes de swap: marcar dirección ──────────────────────────────────
       document.addEventListener("astro:before-swap", () => {
         document.documentElement.dataset.navDirection = isBackNav
           ? "back"
           : "forward";
-        // Resetear aquí también para evitar que un popstate tardío
-        // contamine la siguiente navegación forward
         isBackNav = false;
       });
 
-      // ── After swap: filtro catálogo + scroll ──────────────────────────────
+      // ── After swap: filtro catálogo ───────────────────────────────────────
       document.addEventListener("astro:after-swap", () => {
         const navDir = document.documentElement.dataset.navDirection;
         const filterCat = new URLSearchParams(window.location.search).get(
@@ -265,12 +268,6 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
         );
 
         if (navDir === "back") {
-          const savedScrollY = parseInt(
-            sessionStorage.getItem("catalogScrollY") ?? "0",
-            10,
-          );
-          sessionStorage.removeItem("catalogScrollY");
-
           document
             .querySelectorAll<HTMLElement>("[data-card-wrapper]")
             .forEach((wrapper) => {
@@ -278,13 +275,17 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
               wrapper.style.display = show ? "" : "none";
             });
 
-          window.scrollTo(0, savedScrollY);
-
-          const slug = sessionStorage.getItem("lastProductSlug");
-          if (slug) setCardTransition(slug);
+          // En back no se activa el morph del elemento compartido:
+          // al volver, el producto está en la parte superior del detalle y
+          // la card puede estar en cualquier punto del grid. El morph produce
+          // el efecto visual de "subida" que reporta el usuario porque anima
+          // el elemento desde el top de la pantalla hacia abajo mientras el
+          // scroll también cambia. Sin morph, Astro restaura el scroll desde
+          // history.state de forma limpia con un simple fade.
           return;
         }
 
+        // Navegación forward: activar morph del elemento compartido
         document
           .querySelectorAll<HTMLElement>("[data-card-wrapper]")
           .forEach((wrapper) => {
@@ -300,7 +301,23 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
       document.addEventListener("astro:page-load", () => {
         document.body.style.overflow = "";
         clearCardTransitions();
+
+        const prevNavDir = document.documentElement.dataset.navDirection;
         delete document.documentElement.dataset.navDirection;
+
+        // Fallback de scroll para back nav: si Astro no restauró la posición
+        // (edge cases: iOS Safari, primera visita sin history.state guardado),
+        // la aplicamos manualmente desde sessionStorage.
+        if (prevNavDir === "back") {
+          const savedScrollY = parseInt(
+            sessionStorage.getItem("catalogScrollY") ?? "0",
+            10,
+          );
+          if (savedScrollY > 0 && window.scrollY === 0) {
+            window.scrollTo({ top: savedScrollY, behavior: "instant" });
+          }
+          sessionStorage.removeItem("catalogScrollY");
+        }
 
         // Actualizar CSS custom property con la altura real del navbar
         const navbar = document.getElementById("navbar");
