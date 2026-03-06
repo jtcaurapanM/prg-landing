@@ -164,6 +164,7 @@
     function closeFscDialog() {
       const panel = dialog!.querySelector<HTMLElement>(".cert-panel");
       if (!panel) { dialog!.close(); return; }
+      dialog!.classList.remove("is-open");
       dialog!.classList.add("is-closing");
       panel.addEventListener("animationend", () => {
         dialog!.classList.remove("is-closing");
@@ -173,7 +174,12 @@
 
     document.querySelectorAll("[data-cert-open]").forEach((btn) => {
       btn.addEventListener("click", () => {
-        if (!dialog!.open) dialog!.showModal();
+        if (!dialog!.open) {
+          dialog!.showModal();
+          // rAF needed: Safari doesn't fire CSS animations on [open] children;
+          // adding the class one frame later ensures the animation triggers.
+          requestAnimationFrame(() => dialog!.classList.add("is-open"));
+        }
       }, { signal });
     });
 
