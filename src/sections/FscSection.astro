@@ -149,35 +149,57 @@
 </dialog>
 
 <script>
+  // AbortController scoped to each page load: prevents listener accumulation
+  // across View Transitions navigations.
+  let _fscCtrl: AbortController | null = null;
+
   function initFscLightbox() {
+    _fscCtrl?.abort();
+    _fscCtrl = new AbortController();
+    const { signal } = _fscCtrl;
+
     const dialog = document.getElementById("fsc-cert-dialog") as HTMLDialogElement | null;
     if (!dialog) return;
 
     function closeFscDialog() {
-      const panel = dialog.querySelector<HTMLElement>(".cert-panel");
-      if (!panel) { dialog.close(); return; }
-      dialog.classList.add("is-closing");
-      panel.addEventListener("animationend", () => {
-        dialog.classList.remove("is-closing");
-        dialog.close();
-      }, { once: true });
+      const panel = dialog!.querySelector<HTMLElement>(".cert-panel");
+      if (!panel) { dialog!.close(); return; }
+      dialog!.classList.remove("is-open");
+      dialog!.classList.add("is-closing");
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        dialog!.classList.remove("is-closing");
+        dialog!.close();
+      };
+      panel.addEventListener("animationend", finish, { once: true });
+      // Fallback: si animationend no dispara (prefers-reduced-motion, GPU off…)
+      setTimeout(finish, 250);
     }
 
     document.querySelectorAll("[data-cert-open]").forEach((btn) => {
-      btn.addEventListener("click", () => dialog.showModal());
+      btn.addEventListener("click", () => {
+        if (!dialog!.open) {
+          dialog!.showModal();
+          // rAF needed: Safari doesn't fire CSS animations on [open] children;
+          // adding the class one frame later ensures the animation triggers.
+          requestAnimationFrame(() => dialog!.classList.add("is-open"));
+        }
+      }, { signal });
     });
 
-    dialog.querySelector("[data-cert-close]")?.addEventListener("click", closeFscDialog);
+    dialog.querySelector("[data-cert-close]")?.addEventListener("click", closeFscDialog, { signal });
 
     dialog.addEventListener("click", (e) => {
       if (e.target === dialog) closeFscDialog();
-    });
+    }, { signal });
 
     // Captura Escape del navegador para animar el cierre
     dialog.addEventListener("cancel", (e) => {
       e.preventDefault();
       closeFscDialog();
-    });
+    }, { signal });
   }
 
   document.addEventListener("astro:page-load", initFscLightbox);

@@ -263,19 +263,28 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
         const dialog = document.getElementById("global-quote-dialog") as HTMLDialogElement | null;
         if (dialog && !dialog.open) {
           dialog.showModal();
+          // rAF: Safari no dispara animaciones CSS en <dialog> al cambiar [open]
+          requestAnimationFrame(() => dialog.classList.add("is-open"));
           document.body.style.overflow = "hidden";
         }
       });
 
       function closeGlobalDialog() {
         const dialog = document.getElementById("global-quote-dialog") as HTMLDialogElement | null;
-        if (!dialog) return;
+        if (!dialog || !dialog.open) return;
+        dialog.classList.remove("is-open");
         dialog.classList.add("is-closing");
-        dialog.addEventListener("animationend", () => {
+        let done = false;
+        const finish = () => {
+          if (done) return;
+          done = true;
           dialog.classList.remove("is-closing");
           dialog.close();
           document.body.style.overflow = "";
-        }, { once: true });
+        };
+        dialog.addEventListener("animationend", finish, { once: true });
+        // Fallback: si animationend no dispara (prefers-reduced-motion, GPU off, etc.)
+        setTimeout(finish, 250);
       }
 
       // ── Dirección de navegación ────────────────────────────────────────────
@@ -332,7 +341,7 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
         isBackNav = false;
         const gDialog = document.getElementById("global-quote-dialog") as HTMLDialogElement | null;
         if (gDialog?.open) {
-          gDialog.classList.remove("is-closing");
+          gDialog.classList.remove("is-closing", "is-open");
           gDialog.close();
           document.body.style.overflow = "";
         }

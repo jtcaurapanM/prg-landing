@@ -140,6 +140,14 @@ const sortedProducts = [...products].sort((a, b) => {
     }
 
     function initCatalogFilter() {
+      // define:vars produce un script inline que re-ejecuta en cada visita.
+      // Usamos window para persistir el AbortController entre re-ejecuciones
+      // y evitar que los botones de filtro acumulen click listeners.
+      if (window.__catalogCtrl) window.__catalogCtrl.abort();
+      const ctrl = new AbortController();
+      window.__catalogCtrl = ctrl;
+      const signal = ctrl.signal;
+
       // Leer categoría de la URL
       const params   = new URLSearchParams(window.location.search);
       const category = params.get('categoria') || null;
@@ -163,7 +171,7 @@ const sortedProducts = [...products].sort((a, b) => {
           // Preservar history.state de Astro — si se pasa null se borra el
           // estado interno que Astro necesita para el View Transition de vuelta.
           history.replaceState(history.state, '', url.toString());
-        });
+        }, { signal });
       });
     }
 

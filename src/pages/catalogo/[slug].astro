@@ -226,7 +226,9 @@ const structuredData = {
   #quote-dialog.is-closing::backdrop {
     animation: lightbox-backdrop-out 200ms ease both;
   }
-  #quote-dialog[open] {
+  /* .is-open en lugar de [open]: Safari no dispara animaciones en <dialog>
+     al cambiar el atributo open vía showModal(). La clase se añade con rAF. */
+  #quote-dialog.is-open {
     animation: dialog-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   #quote-dialog.is-closing {
@@ -236,7 +238,15 @@ const structuredData = {
 </style>
 
 <script>
+  // AbortController por ciclo de página: evita acumulación de listeners
+  // al visitar múltiples páginas de producto via View Transitions.
+  let _slugCtrl: AbortController | null = null;
+
   function initQuoteDialog() {
+    _slugCtrl?.abort();
+    _slugCtrl = new AbortController();
+    const { signal } = _slugCtrl;
+
     const openBtn  = document.getElementById('open-quote-dialog');
     const dialog   = document.getElementById('quote-dialog')       as HTMLDialogElement | null;
     const closeBtn = document.getElementById('close-quote-dialog') as HTMLButtonElement  | null;
@@ -244,41 +254,52 @@ const structuredData = {
     if (!openBtn || !dialog) return;
 
     function openDialog() {
+      if (dialog!.open) return;
       dialog!.showModal();
+      // rAF: Safari no dispara animaciones CSS en <dialog> al cambiar [open]
+      requestAnimationFrame(() => dialog!.classList.add('is-open'));
       document.body.style.overflow = 'hidden';
     }
 
     function closeDialog() {
+      dialog!.classList.remove('is-open');
       dialog!.classList.add('is-closing');
-      dialog!.addEventListener('animationend', () => {
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
         dialog!.classList.remove('is-closing');
         dialog!.close();
         document.body.style.overflow = '';
-      }, { once: true });
+      };
+      dialog!.addEventListener('animationend', finish, { once: true });
+      // Fallback: si animationend no dispara (prefers-reduced-motion, GPU off…)
+      setTimeout(finish, 250);
     }
 
-    openBtn.addEventListener('click', openDialog);
-    closeBtn?.addEventListener('click', closeDialog);
+    openBtn.addEventListener('click', openDialog, { signal });
+    closeBtn?.addEventListener('click', closeDialog, { signal });
 
     // Clic en el backdrop (fuera del contenido del dialog)
     dialog.addEventListener('click', (e: MouseEvent) => {
       if (e.target === dialog) closeDialog();
-    });
+    }, { signal });
 
     // Interceptar ESC para ejecutar la animación de cierre
     dialog.addEventListener('cancel', (e: Event) => {
       e.preventDefault();
       closeDialog();
-    });
+    }, { signal });
   }
 
   document.addEventListener('astro:page-load', initQuoteDialog);
 
-  // Cerrar limpiamente antes de View Transitions
+  // Cerrar limpiamente antes de View Transitions y abortar listeners activos
   document.addEventListener('astro:before-swap', () => {
+    _slugCtrl?.abort();
     const dialog = document.getElementById('quote-dialog') as HTMLDialogElement | null;
     if (dialog?.open) {
-      dialog.classList.remove('is-closing');
+      dialog.classList.remove('is-closing', 'is-open');
       dialog.close();
     }
     document.body.style.overflow = '';

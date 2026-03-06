@@ -209,7 +209,9 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
   #quote-dialog.is-closing::backdrop {
     animation: lightbox-backdrop-out 200ms ease both;
   }
-  #quote-dialog[open] {
+  /* .is-open en lugar de [open]: Safari no dispara animaciones en <dialog>
+     al cambiar el atributo open vía showModal(). La clase se añade con rAF. */
+  #quote-dialog.is-open {
     animation: dialog-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   #quote-dialog.is-closing {
@@ -257,7 +259,15 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
     }
   }
 
+  // AbortController scoped to each page load: prevents listener accumulation
+  // across View Transitions navigations.
+  let _pageCtrl: AbortController | null = null;
+
   function initFormDialog() {
+    _pageCtrl?.abort();
+    _pageCtrl = new AbortController();
+    const { signal } = _pageCtrl;
+
     const trigger  = document.getElementById('form-trigger');
     const dialog   = document.getElementById('quote-dialog')       as HTMLDialogElement | null;
     const closeBtn = document.getElementById('close-quote-dialog') as HTMLButtonElement  | null;
@@ -265,48 +275,59 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
     if (!trigger || !dialog) return;
 
     function openDialog() {
+      if (dialog!.open) return;
       dialog!.showModal();
+      // rAF: Safari no dispara animaciones CSS en <dialog> al cambiar [open]
+      requestAnimationFrame(() => dialog!.classList.add('is-open'));
       document.body.style.overflow = 'hidden';
     }
 
     function closeDialog() {
       updateFormPreview();
+      dialog!.classList.remove('is-open');
       dialog!.classList.add('is-closing');
-      dialog!.addEventListener('animationend', () => {
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
         dialog!.classList.remove('is-closing');
         dialog!.close();
         document.body.style.overflow = '';
-      }, { once: true });
+      };
+      dialog!.addEventListener('animationend', finish, { once: true });
+      // Fallback: si animationend no dispara (prefers-reduced-motion, GPU off…)
+      setTimeout(finish, 250);
     }
 
     // Open on click / keyboard Enter or Space on the trigger card
-    trigger.addEventListener('click', openDialog);
+    trigger.addEventListener('click', openDialog, { signal });
     trigger.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDialog(); }
-    });
+    }, { signal });
 
     // Close via button
-    closeBtn?.addEventListener('click', closeDialog);
+    closeBtn?.addEventListener('click', closeDialog, { signal });
 
     // Close when clicking the backdrop (click on <dialog> itself, not its content)
     dialog.addEventListener('click', (e: MouseEvent) => {
       if (e.target === dialog) closeDialog();
-    });
+    }, { signal });
 
     // Intercept ESC to play the close animation
     dialog.addEventListener('cancel', (e: Event) => {
       e.preventDefault();
       closeDialog();
-    });
+    }, { signal });
   }
 
   document.addEventListener('astro:page-load', initFormDialog);
 
-  // Close cleanly before View Transitions swap
+  // Close cleanly before View Transitions swap and abort active listeners
   document.addEventListener('astro:before-swap', () => {
+    _pageCtrl?.abort();
     const dialog = document.getElementById('quote-dialog') as HTMLDialogElement | null;
     if (dialog?.open) {
-      dialog.classList.remove('is-closing');
+      dialog.classList.remove('is-closing', 'is-open');
       dialog.close();
     }
     document.body.style.overflow = '';

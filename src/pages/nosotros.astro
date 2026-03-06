@@ -233,34 +233,56 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 </BaseLayout>
 
 <script>
+  // AbortController scoped to each page load: prevents listener accumulation
+  // across View Transitions navigations.
+  let _nosotrosCtrl: AbortController | null = null;
+
   function initNosotrosCertLightbox() {
+    _nosotrosCtrl?.abort();
+    _nosotrosCtrl = new AbortController();
+    const { signal } = _nosotrosCtrl;
+
     const dialog = document.getElementById("nosotros-cert-dialog") as HTMLDialogElement | null;
     if (!dialog) return;
 
     function closeNosotrosDialog() {
-      const panel = dialog.querySelector<HTMLElement>(".cert-panel");
-      if (!panel) { dialog.close(); return; }
-      dialog.classList.add("is-closing");
-      panel.addEventListener("animationend", () => {
-        dialog.classList.remove("is-closing");
-        dialog.close();
-      }, { once: true });
+      const panel = dialog!.querySelector<HTMLElement>(".cert-panel");
+      if (!panel) { dialog!.close(); return; }
+      dialog!.classList.remove("is-open");
+      dialog!.classList.add("is-closing");
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        dialog!.classList.remove("is-closing");
+        dialog!.close();
+      };
+      panel.addEventListener("animationend", finish, { once: true });
+      // Fallback: si animationend no dispara (prefers-reduced-motion, GPU off…)
+      setTimeout(finish, 250);
     }
 
     document.querySelectorAll("[data-nosotros-cert-open]").forEach((btn) => {
-      btn.addEventListener("click", () => dialog.showModal());
+      btn.addEventListener("click", () => {
+        if (!dialog!.open) {
+          dialog!.showModal();
+          // rAF needed: Safari doesn't fire CSS animations on [open] children;
+          // adding the class one frame later ensures the animation triggers.
+          requestAnimationFrame(() => dialog!.classList.add("is-open"));
+        }
+      }, { signal });
     });
 
-    dialog.querySelector("[data-nosotros-cert-close]")?.addEventListener("click", closeNosotrosDialog);
+    dialog.querySelector("[data-nosotros-cert-close]")?.addEventListener("click", closeNosotrosDialog, { signal });
 
     dialog.addEventListener("click", (e) => {
       if (e.target === dialog) closeNosotrosDialog();
-    });
+    }, { signal });
 
     dialog.addEventListener("cancel", (e) => {
       e.preventDefault();
       closeNosotrosDialog();
-    });
+    }, { signal });
   }
 
   document.addEventListener("astro:page-load", initNosotrosCertLightbox);
