@@ -254,6 +254,18 @@ html {
   [data-gpu-fix] {
     transform: translateZ(0);
   }
+
+  /* ── Gotham badge: compensación óptica de métricas en Safari ──────────────
+     ascent-override no es soportado en WebKit/Safari. En Safari, Gotham usa
+     sus métricas nativas (sTypo: ascender=730, descender=-160) que sitúan el
+     cap-center ~1px por encima del centro matemático del line box.
+     position: relative + top: 1px desplaza SOLO la renderización visual
+     (no afecta el flex layout) para compensar ese desfase.
+     Chrome usa ascent-override: 80% y no entra en este bloque. */
+  .badge-fsc > span {
+    position: relative;
+    top: 1px;
+  }
 }
 
 /* ── Accesibilidad: focus visible en chips de categoria (ACC-04) ─────────── */

@@ -42,6 +42,7 @@ const lines = [
       {lines.map((line) => (
         <a
           href={`/catalogo?categoria=${line.slug}`}
+          data-gpu-fix
           class="group flex flex-col p-7 rounded-xl border border-gray-100 hover:border-[#F4622A]/30 hover:shadow-lg transition-all duration-300 bg-white"
         >
           <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-[#F4622A]/8 text-[#F4622A] mb-5 group-hover:bg-[#F4622A] group-hover:text-white transition-colors duration-300">

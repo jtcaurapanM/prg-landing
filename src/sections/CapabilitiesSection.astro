@@ -62,7 +62,7 @@ const capabilities = [
 
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {capabilities.map((cap) => (
-          <div class="flex flex-col p-5 rounded-xl bg-white/5 border border-white/10 hover:border-[#F4622A]/30 transition-colors">
+          <div data-gpu-fix class="flex flex-col p-5 rounded-xl bg-white/5 border border-white/10 hover:border-[#F4622A]/30 transition-colors">
             <div class="text-[#F4622A] mb-3">
               <Fragment set:html={cap.icon} />
             </div>
