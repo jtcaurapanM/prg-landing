@@ -50,9 +50,13 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    <meta name="theme-color" content="#F4622A" />
     <!-- Preload fuentes críticas en WOFF2 (formato óptimo generado con convert-fonts.sh) -->
     <link rel="preload" href="/fonts/Gotham-Medium.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Gotham-Bold.woff2"   as="font" type="font/woff2" crossorigin />
+    <!-- Preconnect para imágenes externas: amortiza DNS + TCP + TLS antes del primer request -->
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
 
     <ClientRouter />
 
@@ -75,9 +79,15 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
   </head>
 
   <body class="bg-white text-[#101820] font-sans antialiased">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-[#F4622A] focus:text-white focus:font-semibold focus:rounded-md"
+    >
+      Saltar al contenido
+    </a>
     <Navbar />
 
-    <main>
+    <main id="main-content">
       <slot />
     </main>
 

@@ -9,6 +9,10 @@ export default defineConfig({
   output: "static",
   adapter: vercel(),
   integrations: [sitemap()],
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: "viewport",
+  },
   image: {
     remotePatterns: [{ protocol: "https", hostname: "**.unsplash.com" }],
   },

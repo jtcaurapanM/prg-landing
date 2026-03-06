@@ -1,5 +1,5 @@
 ---
-
+import { Image } from 'astro:assets';
 ---
 
 <section
@@ -9,14 +9,14 @@
 >
   <!-- Background image -->
   <div class="absolute inset-0">
-    <img
+    <Image
       src="https://images.unsplash.com/photo-1562774053-701939374585?w=1600&q=80&fm=webp"
       alt="Producción industrial de impresión"
-      width="1600"
-      height="900"
+      width={1600}
+      height={900}
       loading="eager"
       fetchpriority="high"
-      decoding="async"
+      sizes="100vw"
       class="w-full h-full object-cover opacity-25"
     />
     <div

@@ -153,7 +153,7 @@ export const products: Product[] = [
       'Diseño disponible',
     ],
     materials: ['Vinilo cast', 'Vinilo calendrado', 'Laminado protector'],
-    images: ['https://images.unsplash.com/photo-1558981852-426c349659c1?w=800&q=80&fm=webp'],
+    images: ['https://images.unsplash.com/photo-1504215680853-026ed2a45def?w=800&q=80&fm=webp'],
     featured: true,
   },
   {
@@ -238,7 +238,7 @@ export const products: Product[] = [
       'Cantidad mínima: 50 unidades',
     ],
     materials: ['Aluminio anodizado', 'Madera', 'Plástico ABS'],
-    images: ['https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80&fm=webp'],
+    images: ['https://images.unsplash.com/photo-1618220179428-22790b461013?w=800&q=80&fm=webp'],
     fscEligible: true,
   },
 
