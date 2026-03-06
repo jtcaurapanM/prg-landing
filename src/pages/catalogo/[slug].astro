@@ -192,6 +192,10 @@ const structuredData = {
   <!-- Form content -->
   <div class="px-6 sm:px-8 py-6">
     <QuoteForm productName={product.name} dialogMode={true} />
+    <p class="mt-5 text-center text-xs text-gray-400">
+      ¿Prefieres escribir directo?
+      <a href="mailto:contacto@prg.cl" class="text-[#F4622A] hover:underline font-medium">contacto@prg.cl</a>
+    </p>
   </div>
 </dialog>
 
@@ -216,11 +220,17 @@ const structuredData = {
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
   }
+  #quote-dialog::backdrop {
+    animation: lightbox-backdrop-in 260ms ease both;
+  }
+  #quote-dialog.is-closing::backdrop {
+    animation: lightbox-backdrop-out 200ms ease both;
+  }
   #quote-dialog[open] {
-    animation: dialog-in 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: dialog-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   #quote-dialog.is-closing {
-    animation: dialog-out 180ms ease both;
+    animation: dialog-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
   }
 
 </style>
