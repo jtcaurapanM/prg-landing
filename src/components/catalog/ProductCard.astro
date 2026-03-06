@@ -18,33 +18,71 @@ const categoryLabel = CATEGORY_LABELS[product.category];
   data-slug={product.slug}
   class="group flex flex-col bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-300"
 >
+  <!-- Image carousel (crossfade) -->
   <div
-    data-card-image
+    data-card-carousel
     class="relative aspect-[4/3] overflow-hidden rounded-t-xl bg-gray-50"
   >
-    <Image
-      src={product.images[0]}
-      alt={product.name}
-      width={800}
-      height={600}
-      loading="lazy"
-      decoding="async"
-      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-    />
+    <!-- Slide 1: optimized via Image component -->
+    <div data-carousel-slide class="absolute inset-0" style="opacity:1;transition:opacity 700ms ease;">
+      <Image
+        src={product.images[0]}
+        alt={product.name}
+        width={800}
+        height={600}
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-cover"
+      />
+    </div>
+
+    <!-- Slides 2+: plain img (served directly from Unsplash CDN) -->
+    {product.images.slice(1).map((img, i) => (
+      <div data-carousel-slide class="absolute inset-0" style="opacity:0;transition:opacity 700ms ease;">
+        <img
+          src={img}
+          alt={`${product.name} — vista ${i + 2}`}
+          width="800"
+          height="600"
+          loading="lazy"
+          decoding="async"
+          class="w-full h-full object-cover"
+        />
+      </div>
+    ))}
+
+    <!-- Badge -->
     {product.featured && (
-      <div class="absolute top-3 left-3">
+      <div class="absolute top-3 left-3 z-10">
         <Badge text="Destacado" variant="orange" />
+      </div>
+    )}
+
+    <!-- Dot indicators -->
+    {product.images.length > 1 && (
+      <div
+        class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1 z-10 pointer-events-none"
+        aria-hidden="true"
+      >
+        {product.images.map((_, i) => (
+          <span
+            data-card-dot
+            class="block rounded-full"
+            style={`width:5px;height:5px;background:white;transition:opacity 300ms,transform 300ms;opacity:${i === 0 ? '1' : '0.35'};transform:${i === 0 ? 'scale(1.3)' : 'scale(1)'}`}
+          />
+        ))}
       </div>
     )}
   </div>
 
+  <!-- Card content -->
   <div data-card-content data-gpu-fix class="p-5 flex flex-col gap-2 flex-1 bg-white">
     <span class="text-xs font-semibold uppercase tracking-widest text-gray-400">{categoryLabel}</span>
-    <h3 class="font-bold text-[#101820] group-hover:text-[#F4622A] transition-colors leading-snug">
+    <h3 class="font-bold text-brand-black group-hover:text-brand-orange transition-colors leading-snug">
       {product.name}
     </h3>
     <p class="text-sm text-gray-500 leading-relaxed flex-1">{product.shortDesc}</p>
-    <span class="text-sm font-semibold text-[#F4622A] mt-2 flex items-center gap-1">
+    <span class="text-sm font-semibold text-brand-orange mt-2 flex items-center gap-1">
       <span class="leading-none">Ver ficha</span>
       <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
@@ -52,3 +90,61 @@ const categoryLabel = CATEGORY_LABELS[product.category];
     </span>
   </div>
 </a>
+
+<script>
+  function initCardCarousels() {
+    // AbortController global para evitar acumulación de listeners entre navegaciones
+    if ((window as any).__cardCarouselCtrl) (window as any).__cardCarouselCtrl.abort();
+    const ctrl = new AbortController();
+    (window as any).__cardCarouselCtrl = ctrl;
+    const { signal } = ctrl;
+
+    const observers: IntersectionObserver[] = [];
+
+    document.querySelectorAll('[data-card-carousel]').forEach((card) => {
+      const slides = card.querySelectorAll<HTMLElement>('[data-carousel-slide]');
+      const dots   = card.querySelectorAll<HTMLElement>('[data-card-dot]');
+      const total  = slides.length;
+      if (total <= 1) return;
+
+      let current = 0;
+      let timer: ReturnType<typeof setInterval> | null = null;
+
+      function show(index: number) {
+        slides[current].style.opacity = '0';
+        if (dots[current]) { dots[current].style.opacity = '0.35'; dots[current].style.transform = 'scale(1)'; }
+        current = ((index % total) + total) % total;
+        slides[current].style.opacity = '1';
+        if (dots[current]) { dots[current].style.opacity = '1'; dots[current].style.transform = 'scale(1.3)'; }
+      }
+
+      function startAuto() {
+        if (timer || signal.aborted) return;
+        timer = setInterval(() => show(current + 1), 3000);
+      }
+
+      function stopAuto() {
+        if (timer) { clearInterval(timer); timer = null; }
+      }
+
+      // Pause mientras el cursor está sobre la card
+      card.addEventListener('mouseenter', stopAuto, { signal });
+      card.addEventListener('mouseleave', () => { if (!signal.aborted) startAuto(); }, { signal });
+
+      // Solo animar cuando la card es visible (ahorra CPU en listas largas)
+      const obs = new IntersectionObserver(([entry]) => {
+        if (signal.aborted) { obs.disconnect(); return; }
+        entry.isIntersecting ? startAuto() : stopAuto();
+      }, { threshold: 0.25 });
+      obs.observe(card);
+      observers.push(obs);
+    });
+
+    // Limpiar observers al abortar (antes de View Transition)
+    signal.addEventListener('abort', () => {
+      observers.forEach(o => o.disconnect());
+    });
+  }
+
+  document.addEventListener('astro:page-load', initCardCarousels);
+</script>

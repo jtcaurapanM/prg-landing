@@ -27,7 +27,7 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
       <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
-        Nombre <span class="text-[#F4622A]">*</span>
+        Nombre <span class="text-brand-orange">*</span>
       </label>
       <input
         type="text"
@@ -36,13 +36,13 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
         required
         autocomplete="given-name"
         placeholder="Tu nombre"
-        class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition"
+        class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/20 focus:border-brand-orange transition"
       />
       <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
     </div>
     <div>
       <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-        Correo electrónico <span class="text-[#F4622A]">*</span>
+        Correo electrónico <span class="text-brand-orange">*</span>
       </label>
       <input
         type="email"
@@ -51,7 +51,7 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
         required
         autocomplete="email"
         placeholder="tu@empresa.com"
-        class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition"
+        class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/20 focus:border-brand-orange transition"
       />
       <p class="field-error hidden text-xs text-red-500 mt-1.5" aria-live="polite"></p>
     </div>
@@ -68,7 +68,7 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
       name="productRef"
       value={productName}
       placeholder="Ej: Tarjetas de presentación, gigantografía..."
-      class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition"
+      class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/20 focus:border-brand-orange transition"
     />
   </div>
 
@@ -76,7 +76,7 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
   <div>
     <label for="message" class="block text-sm font-medium text-gray-700 mb-1">
       {compact ? "Mensaje" : "Descripción de tu necesidad"}
-      <span class="text-[#F4622A]">*</span>
+      <span class="text-brand-orange">*</span>
     </label>
     <textarea
       id="message"
@@ -87,7 +87,7 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
       placeholder={compact
         ? "Cuéntanos en qué podemos ayudarte..."
         : "Ej: Necesito 500 carpetas con logo corporativo para evento en junio. Necesitamos diseño incluido."}
-      class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#F4622A]/20 focus:border-[#F4622A] transition resize-none"
+      class="field-input w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/20 focus:border-brand-orange transition resize-none"
     ></textarea>
     <div class="flex items-start justify-between mt-1 gap-2">
       <p class="field-error hidden text-xs text-red-500 leading-relaxed flex-1" aria-live="polite"></p>
@@ -106,7 +106,7 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
   <button
     type="submit"
     id="form-submit"
-    class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#F4622A] text-white font-semibold rounded-md hover:bg-[#d9521f] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+    class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-orange text-white font-semibold rounded-md hover:bg-brand-orange-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
   >
     <span id="btn-text">Enviar cotización</span>
     <svg id="btn-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -128,28 +128,28 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
       </svg>
     </div>
-    <h3 class="text-xl font-bold text-[#101820] mb-2">¡Solicitud enviada con éxito!</h3>
+    <h3 class="text-xl font-bold text-brand-black mb-2">¡Solicitud enviada con éxito!</h3>
     <p class="text-gray-500 text-sm leading-relaxed">
       Te responderemos en menos de 24 horas hábiles.<br />
       También recibirás una copia por correo electrónico.
     </p>
   </div>
 
-  <div id="success-summary" class="bg-[#F8F8F6] rounded-xl p-5 text-sm"></div>
+  <div id="success-summary" class="bg-brand-surface rounded-xl p-5 text-sm"></div>
 
   <div>
-    <p class="text-sm font-semibold text-[#101820] mb-3">¿Qué sigue?</p>
+    <p class="text-sm font-semibold text-brand-black mb-3">¿Qué sigue?</p>
     <div class="space-y-3">
       <div class="flex items-start gap-3">
-        <span class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+        <span class="w-6 h-6 rounded-full bg-brand-orange text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
         <p class="text-sm text-gray-500">Revisamos los detalles de tu proyecto.</p>
       </div>
       <div class="flex items-start gap-3">
-        <span class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+        <span class="w-6 h-6 rounded-full bg-brand-orange text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
         <p class="text-sm text-gray-500">Preparamos una propuesta a medida, sin costo ni compromiso.</p>
       </div>
       <div class="flex items-start gap-3">
-        <span class="w-6 h-6 rounded-full bg-[#F4622A] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+        <span class="w-6 h-6 rounded-full bg-brand-orange text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
         <p class="text-sm text-gray-500">Recibirás nuestra respuesta por correo electrónico.</p>
       </div>
     </div>
@@ -158,7 +158,7 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
   <button
     type="button"
     id="btn-reset"
-    class="w-full flex items-center justify-center px-6 py-3 border-2 border-[#101820] text-[#101820] font-semibold rounded-md hover:bg-[#101820] hover:text-white transition-colors"
+    class="w-full flex items-center justify-center px-6 py-3 border-2 border-brand-black text-brand-black font-semibold rounded-md hover:bg-brand-black hover:text-white transition-colors"
   >
     Enviar otra cotización
   </button>
@@ -357,7 +357,7 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
                 (r, i) => `
                 <div class="flex justify-between gap-4 py-2.5 ${i > 0 ? "border-t border-gray-200" : ""}">
                   <span class="text-gray-500 text-sm shrink-0">${escHtml(r.label)}</span>
-                  <span class="text-[#101820] font-medium text-sm text-right break-all">${escHtml(r.value)}</span>
+                  <span class="text-brand-black font-medium text-sm text-right break-all">${escHtml(r.value)}</span>
                 </div>`,
               )
               .join("");

@@ -38,20 +38,20 @@ const structuredData = {
   title={`${product.name} · Catálogo PRG Inversiones`}
   description={`${product.shortDesc} Solicita cotización sin compromiso.`}
 >
-  {/* Sanitizar </script> dentro del JSON-LD para prevenir XSS (PERF-07) */}
+  {/* JSON-LD sanitizado para prevenir XSS */}
   <script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/<\//g, '<\\/')} />
 
   <!-- Breadcrumb -->
-  <section data-gpu-fix class="bg-[#F8F8F6] border-b border-gray-100">
+  <section data-gpu-fix class="bg-brand-surface border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <nav class="flex items-center gap-2 text-sm text-gray-400" aria-label="Breadcrumb">
-        <a href="/" class="hover:text-[#F4622A] transition-colors">Inicio</a>
+        <a href="/" class="hover:text-brand-orange transition-colors">Inicio</a>
         <span>/</span>
-        <a href="/catalogo" class="hover:text-[#F4622A] transition-colors">Catálogo</a>
+        <a href="/catalogo" class="hover:text-brand-orange transition-colors">Catálogo</a>
         <span>/</span>
-        <a href={`/catalogo?categoria=${product.category}`} class="hover:text-[#F4622A] transition-colors">{categoryLabel}</a>
+        <a href={`/catalogo?categoria=${product.category}`} class="hover:text-brand-orange transition-colors">{categoryLabel}</a>
         <span>/</span>
-        <span class="text-[#101820] font-medium">{product.name}</span>
+        <span class="text-brand-black font-medium">{product.name}</span>
       </nav>
     </div>
   </section>
@@ -60,43 +60,113 @@ const structuredData = {
   <section data-gpu-fix class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
 
-      <!-- Image -->
-      <div>
+      <!-- ── Carousel ──────────────────────────────────────────────────────── -->
+      <div
+        id="product-carousel"
+        transition:name={`product-img-${product.slug}`}
+        data-gpu-fix
+        data-current="0"
+        class="group relative rounded-2xl overflow-hidden bg-gray-50 aspect-[4/3] select-none cursor-zoom-in"
+        role="region"
+        aria-label={`Galería de imágenes de ${product.name}`}
+      >
+        <!-- Track horizontal -->
         <div
-          transition:name={`product-img-${product.slug}`}
-          data-gpu-fix
-          class="rounded-2xl overflow-hidden bg-gray-50 aspect-[4/3]"
+          id="carousel-track"
+          class="flex h-full"
+          style="will-change:transform;transition:transform 380ms cubic-bezier(0.4,0,0.2,1);"
         >
-          <Image
-            src={product.images[0]}
-            alt={product.name}
-            width={800}
-            height={600}
-            loading="eager"
-            fetchpriority="high"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            class="w-full h-full object-cover"
-          />
-        </div>
-          {product.images.length > 1 && (
-          <div class="grid grid-cols-4 gap-3 mt-4">
-            {product.images.slice(1).map((img, i) => (
-              <div class="rounded-lg overflow-hidden aspect-square bg-gray-50">
-                <Image
-                  src={img}
-                  alt={`${product.name} - imagen ${i + 2}`}
-                  width={200}
-                  height={200}
-                  loading="lazy"
-                  decoding="async"
-                  sizes="(max-width: 640px) 25vw, 150px"
-                  class="w-full h-full object-cover"
-                />
-              </div>
-            ))}
+          <!-- Slide 1: optimizada (LCP) -->
+          <div class="flex-none w-full h-full">
+            <Image
+              src={product.images[0]}
+              alt={product.name}
+              width={800}
+              height={600}
+              loading="eager"
+              fetchpriority="high"
+              class="w-full h-full object-cover"
+            />
           </div>
+          <!-- Slides 2+: CDN directo, sin procesamiento Astro -->
+          {product.images.slice(1).map((img, i) => (
+            <div class="flex-none w-full h-full">
+              <img
+                src={img}
+                alt={`${product.name} — vista ${i + 2}`}
+                width="800"
+                height="600"
+                loading="lazy"
+                decoding="async"
+                class="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+
+        {product.images.length > 1 && (
+          <>
+            <!-- Prev -->
+            <button
+              id="carousel-prev"
+              type="button"
+              aria-label="Imagen anterior"
+              class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-md text-brand-black hover:bg-white hover:scale-110 transition-all duration-200 cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <!-- Next -->
+            <button
+              id="carousel-next"
+              type="button"
+              aria-label="Imagen siguiente"
+              class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-md text-brand-black hover:bg-white hover:scale-110 transition-all duration-200 cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            <!-- Contador -->
+            <div
+              class="absolute top-3 right-3 z-10 pointer-events-none bg-black/40 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm"
+              aria-live="polite"
+            >
+              <span id="carousel-counter">1 / {product.images.length}</span>
+            </div>
+
+            <!-- Dots -->
+            <div
+              class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1.5 pointer-events-none"
+              aria-hidden="true"
+            >
+              {product.images.map((_, i) => (
+                <span
+                  data-carousel-dot={i}
+                  class="block rounded-full"
+                  style={`width:7px;height:7px;background:white;transition:opacity 250ms,transform 250ms;opacity:${i === 0 ? '1' : '0.4'};transform:${i === 0 ? 'scale(1.25)' : 'scale(1)'}`}
+                />
+              ))}
+            </div>
+          </>
         )}
+
+        <!-- Hint "Ampliar": siempre visible en mobile, aparece al hover en desktop -->
+        <div
+          class="absolute bottom-12 right-3 z-[5] pointer-events-none flex items-center gap-1.5 bg-black/50 text-white text-xs font-medium px-2.5 py-1.5 rounded-full transition-opacity duration-200 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+          aria-hidden="true"
+        >
+          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+          </svg>
+          Ampliar
+        </div>
       </div>
+      <!-- ── /Carousel ─────────────────────────────────────────────────────── -->
 
       <!-- Info -->
       <div transition:name={`product-info-${product.slug}`} data-gpu-fix>
@@ -105,19 +175,18 @@ const structuredData = {
           {product.featured && <Badge text="Destacado" variant="orange" />}
         </div>
 
-        <h1 class="text-3xl sm:text-4xl font-bold text-[#101820] mb-4">
+        <h1 class="text-3xl sm:text-4xl font-bold text-brand-black mb-4">
           {product.name}
         </h1>
         <p class="text-gray-600 leading-relaxed mb-8">{product.description}</p>
 
-        <!-- Specs -->
         {SHOW_SPECS && (
           <div class="mb-8">
             <h2 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Especificaciones</h2>
             <ul class="space-y-2">
               {product.specs.map((spec) => (
                 <li class="flex items-start gap-3 text-sm text-gray-700">
-                  <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0"></span>
+                  <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-orange shrink-0"></span>
                   {spec}
                 </li>
               ))}
@@ -125,7 +194,6 @@ const structuredData = {
           </div>
         )}
 
-        <!-- Materials -->
         {SHOW_MATERIALS && product.materials.length > 0 && (
           <div class="mb-8">
             <h2 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Materiales disponibles</h2>
@@ -137,18 +205,17 @@ const structuredData = {
           </div>
         )}
 
-
-        <!-- CTAs -->
         <div class="flex flex-col sm:flex-row gap-3">
           <button
             id="open-quote-dialog"
             type="button"
-            class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#F4622A] text-white font-bold rounded-md hover:bg-[#d9521f] transition-colors"
+            class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-orange text-white font-bold rounded-md hover:bg-brand-orange-dark transition-colors"
             aria-haspopup="dialog"
             aria-controls="quote-dialog"
           >
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             Cotizar este producto
           </button>
@@ -156,10 +223,10 @@ const structuredData = {
       </div>
     </div>
 
-    <!-- Related products -->
+    <!-- Productos relacionados -->
     {relatedProducts.length > 0 && (
       <div class="mt-24">
-        <h2 class="text-2xl font-bold text-[#101820] mb-8">Otros productos en {categoryLabel}</h2>
+        <h2 class="text-2xl font-bold text-brand-black mb-8">Otros productos en {categoryLabel}</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {relatedProducts.map((p) => (
             <ProductCard product={p} />
@@ -170,18 +237,97 @@ const structuredData = {
   </section>
 </BaseLayout>
 
-<!-- ── Dialog modal de cotización ─────────────────────────────────────────── -->
+<!-- ── Lightbox de imágenes ──────────────────────────────────────────────── -->
+<dialog
+  id="product-lightbox"
+  aria-modal="true"
+  aria-label={`Galería ampliada — ${product.name}`}
+>
+  <div class="lb-panel">
+
+    <!-- Barra superior -->
+    <div class="lb-topbar">
+      <p class="lb-product-name">{product.name}</p>
+      <span id="lb-counter" class="lb-counter" aria-live="polite" aria-atomic="true">
+        1 / {product.images.length}
+      </span>
+      <div class="lb-close-btn">
+        <button id="lb-close" type="button" aria-label="Cerrar galería" class="lb-close-icon">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Zona central: flechas + imagen -->
+    <div class="lb-stage">
+      {product.images.length > 1 && (
+        <button id="lb-prev" type="button" aria-label="Imagen anterior" class="lb-arrow">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+      )}
+
+      <!-- Track de slides -->
+      <div class="lb-track-wrap">
+        <div id="lb-track" class="lb-track">
+          {product.images.map((img, i) => (
+            <div class="lb-slide">
+              <img
+                src={img}
+                alt={`${product.name} — imagen ${i + 1}`}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                class="lb-img"
+                draggable="false"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {product.images.length > 1 && (
+        <button id="lb-next" type="button" aria-label="Imagen siguiente" class="lb-arrow">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
+    </div>
+
+    <!-- Dots -->
+    {product.images.length > 1 && (
+      <div class="lb-dots-bar" role="tablist" aria-label="Seleccionar imagen">
+        {product.images.map((_, i) => (
+          <button
+            type="button"
+            role="tab"
+            data-lb-dot={i}
+            aria-label={`Imagen ${i + 1}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            class="lb-dot"
+            style={i === 0 ? 'opacity:1;transform:scale(1.35)' : 'opacity:0.3;transform:scale(1)'}
+          />
+        ))}
+      </div>
+    )}
+
+  </div>
+</dialog>
+
+<!-- ── Modal de cotización ───────────────────────────────────────────────── -->
 <dialog id="quote-dialog" aria-modal="true" aria-labelledby="dialog-title">
-  <!-- Sticky header -->
   <div class="sticky top-0 z-10 flex items-center justify-between px-6 sm:px-8 py-4 bg-white border-b border-gray-100">
     <div>
-      <h2 id="dialog-title" class="font-bold text-[#101820] text-base">Solicitar cotización</h2>
+      <h2 id="dialog-title" class="font-bold text-brand-black text-base">Solicitar cotización</h2>
       <p class="text-xs text-gray-400 mt-0.5 truncate max-w-xs">{product.name}</p>
     </div>
     <button
       type="button"
       id="close-quote-dialog"
-      class="flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:text-[#101820] hover:bg-gray-100 transition-colors"
+      class="flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:text-brand-black hover:bg-gray-100 transition-colors"
       aria-label="Cerrar formulario"
     >
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,12 +335,11 @@ const structuredData = {
       </svg>
     </button>
   </div>
-  <!-- Form content -->
   <div class="px-6 sm:px-8 py-6">
     <QuoteForm productName={product.name} dialogMode={true} />
     <p class="mt-5 text-center text-xs text-gray-400">
       ¿Prefieres escribir directo?
-      <a href="mailto:contacto@prg.cl" class="text-[#F4622A] hover:underline font-medium">contacto@prg.cl</a>
+      <a href="mailto:contacto@prg.cl" class="text-brand-orange hover:underline font-medium">contacto@prg.cl</a>
     </p>
   </div>
 </dialog>
@@ -219,44 +364,183 @@ const structuredData = {
     background: rgba(16, 24, 32, 0.55);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-  }
-  #quote-dialog::backdrop {
     animation: lightbox-backdrop-in 260ms ease both;
   }
-  #quote-dialog.is-closing::backdrop {
-    animation: lightbox-backdrop-out 200ms ease both;
-  }
-  /* .is-open en lugar de [open]: Safari no dispara animaciones en <dialog>
-     al cambiar el atributo open vía showModal(). La clase se añade con rAF. */
-  #quote-dialog.is-open {
-    animation: dialog-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-  #quote-dialog.is-closing {
-    animation: dialog-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
-  }
-
+  #quote-dialog.is-closing::backdrop { animation: lightbox-backdrop-out 200ms ease both; }
+  #quote-dialog.is-open    { animation: dialog-in  380ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  #quote-dialog.is-closing { animation: dialog-out 200ms cubic-bezier(0.4, 0, 1, 1) both; }
 </style>
 
 <script>
-  // AbortController por ciclo de página: evita acumulación de listeners
-  // al visitar múltiples páginas de producto via View Transitions.
   let _slugCtrl: AbortController | null = null;
 
-  function initQuoteDialog() {
-    _slugCtrl?.abort();
-    _slugCtrl = new AbortController();
-    const { signal } = _slugCtrl;
+  // ── Carrusel del producto ────────────────────────────────────────────────
+  function initCarousel(signal: AbortSignal) {
+    const carousel = document.getElementById('product-carousel') as HTMLElement | null;
+    const track    = document.getElementById('carousel-track')   as HTMLElement | null;
+    if (!carousel || !track) return;
 
+    const slides  = track.querySelectorAll<HTMLElement>(':scope > div');
+    const total   = slides.length;
+    if (total <= 1) return;
+
+    const dots    = carousel.querySelectorAll<HTMLElement>('[data-carousel-dot]');
+    const counter = document.getElementById('carousel-counter');
+    let current   = 0;
+    let autoTimer: ReturnType<typeof setTimeout> | null = null;
+
+    function goTo(index: number) {
+      current = ((index % total) + total) % total;
+      track.style.transform = `translateX(-${current * 100}%)`;
+      carousel.dataset.current = String(current); // leído por el lightbox al abrir
+      dots.forEach((d, i) => {
+        d.style.opacity   = i === current ? '1' : '0.4';
+        d.style.transform = i === current ? 'scale(1.25)' : 'scale(1)';
+      });
+      if (counter) counter.textContent = `${current + 1} / ${total}`;
+    }
+
+    function scheduleAuto() {
+      if (autoTimer) clearTimeout(autoTimer);
+      if (!signal.aborted) {
+        autoTimer = setTimeout(() => { goTo(current + 1); scheduleAuto(); }, 4500);
+      }
+    }
+
+    document.getElementById('carousel-prev')?.addEventListener('click', () => { goTo(current - 1); scheduleAuto(); }, { signal });
+    document.getElementById('carousel-next')?.addEventListener('click', () => { goTo(current + 1); scheduleAuto(); }, { signal });
+
+    let touchX = 0;
+    carousel.addEventListener('touchstart', (e: TouchEvent) => { touchX = e.touches[0].clientX; }, { signal, passive: true });
+    carousel.addEventListener('touchend',   (e: TouchEvent) => {
+      const delta = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(delta) > 40) { goTo(current + (delta < 0 ? 1 : -1)); scheduleAuto(); }
+    }, { signal });
+
+    carousel.setAttribute('tabindex', '0');
+    carousel.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft')  { goTo(current - 1); scheduleAuto(); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { goTo(current + 1); scheduleAuto(); e.preventDefault(); }
+    }, { signal });
+
+    carousel.addEventListener('mouseenter', () => { if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; } }, { signal });
+    carousel.addEventListener('mouseleave', scheduleAuto, { signal });
+
+    goTo(0);
+    scheduleAuto();
+  }
+
+  // ── Lightbox de imágenes ─────────────────────────────────────────────────
+  function initLightbox(signal: AbortSignal) {
+    const lb      = document.getElementById('product-lightbox') as HTMLDialogElement | null;
+    const lbTrack = document.getElementById('lb-track')         as HTMLElement | null;
+    if (!lb || !lbTrack) return;
+
+    const lbDots    = lb.querySelectorAll<HTMLElement>('[data-lb-dot]');
+    const lbCounter = document.getElementById('lb-counter');
+    const total     = lb.querySelectorAll<HTMLElement>('.lb-slide').length;
+    if (total === 0) return;
+
+    let lbIdx = 0;
+
+    function lbGoTo(index: number) {
+      lbIdx = ((index % total) + total) % total;
+      lbTrack.style.transform = `translateX(-${lbIdx * 100}%)`;
+      lbDots.forEach((d, i) => {
+        d.style.opacity   = i === lbIdx ? '1'        : '0.3';
+        d.style.transform = i === lbIdx ? 'scale(1.35)' : 'scale(1)';
+        d.setAttribute('aria-selected', String(i === lbIdx));
+      });
+      if (lbCounter) lbCounter.textContent = `${lbIdx + 1} / ${total}`;
+    }
+
+    function openLightbox(startIdx = 0) {
+      lbGoTo(startIdx);
+      lb.showModal();
+      requestAnimationFrame(() => lb.classList.add('is-open'));
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      if (!lb.open) return;
+      lb.classList.remove('is-open');
+      lb.classList.add('is-closing');
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        lb.classList.remove('is-closing');
+        lb.close();
+        document.body.style.overflow = '';
+        // Devolver foco al carousel al cerrar
+        (document.getElementById('product-carousel') as HTMLElement | null)?.focus({ preventScroll: true });
+      };
+      lb.addEventListener('animationend', finish, { once: true });
+      setTimeout(finish, 250);
+    }
+
+    // Abrir al hacer clic en el carousel (excepto en botones prev/next)
+    const carousel = document.getElementById('product-carousel');
+    carousel?.addEventListener('click', (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (t.closest('#carousel-prev') || t.closest('#carousel-next')) return;
+      const idx = parseInt(carousel.dataset.current ?? '0', 10);
+      openLightbox(isNaN(idx) ? 0 : idx);
+    }, { signal });
+
+    // Botón cerrar
+    document.getElementById('lb-close')?.addEventListener('click', closeLightbox, { signal });
+
+    // Flechas del lightbox
+    document.getElementById('lb-prev')?.addEventListener('click', () => lbGoTo(lbIdx - 1), { signal });
+    document.getElementById('lb-next')?.addEventListener('click', () => lbGoTo(lbIdx + 1), { signal });
+
+    // Dots del lightbox
+    lbDots.forEach((dot, i) => {
+      dot.addEventListener('click', () => lbGoTo(i), { signal });
+    });
+
+    // Clic en imagen → cerrar lightbox (cursor zoom-out lo indica)
+    lb.querySelectorAll<HTMLElement>('.lb-img').forEach(img => {
+      img.addEventListener('click', closeLightbox, { signal });
+    });
+
+    // Clic en backdrop (área fuera del panel)
+    lb.addEventListener('click', (e: MouseEvent) => {
+      if (e.target === lb) closeLightbox();
+    }, { signal });
+
+    // ESC
+    lb.addEventListener('cancel', (e: Event) => {
+      e.preventDefault();
+      closeLightbox();
+    }, { signal });
+
+    // Swipe táctil en el lightbox
+    let lbTouchX = 0;
+    lb.addEventListener('touchstart', (e: TouchEvent) => { lbTouchX = e.touches[0].clientX; }, { signal, passive: true });
+    lb.addEventListener('touchend',   (e: TouchEvent) => {
+      const delta = e.changedTouches[0].clientX - lbTouchX;
+      if (Math.abs(delta) > 40) lbGoTo(lbIdx + (delta < 0 ? 1 : -1));
+    }, { signal });
+
+    // Teclado (flechas izq/der)
+    lb.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft')  { lbGoTo(lbIdx - 1); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { lbGoTo(lbIdx + 1); e.preventDefault(); }
+    }, { signal });
+  }
+
+  // ── Modal de cotización ──────────────────────────────────────────────────
+  function initQuoteDialog(signal: AbortSignal) {
     const openBtn  = document.getElementById('open-quote-dialog');
     const dialog   = document.getElementById('quote-dialog')       as HTMLDialogElement | null;
     const closeBtn = document.getElementById('close-quote-dialog') as HTMLButtonElement  | null;
-
     if (!openBtn || !dialog) return;
 
     function openDialog() {
       if (dialog!.open) return;
       dialog!.showModal();
-      // rAF: Safari no dispara animaciones CSS en <dialog> al cambiar [open]
       requestAnimationFrame(() => dialog!.classList.add('is-open'));
       document.body.style.overflow = 'hidden';
     }
@@ -273,35 +557,37 @@ const structuredData = {
         document.body.style.overflow = '';
       };
       dialog!.addEventListener('animationend', finish, { once: true });
-      // Fallback: si animationend no dispara (prefers-reduced-motion, GPU off…)
       setTimeout(finish, 250);
     }
 
     openBtn.addEventListener('click', openDialog, { signal });
     closeBtn?.addEventListener('click', closeDialog, { signal });
-
-    // Clic en el backdrop (fuera del contenido del dialog)
-    dialog.addEventListener('click', (e: MouseEvent) => {
-      if (e.target === dialog) closeDialog();
-    }, { signal });
-
-    // Interceptar ESC para ejecutar la animación de cierre
-    dialog.addEventListener('cancel', (e: Event) => {
-      e.preventDefault();
-      closeDialog();
-    }, { signal });
+    dialog.addEventListener('click',  (e: MouseEvent) => { if (e.target === dialog) closeDialog(); }, { signal });
+    dialog.addEventListener('cancel', (e: Event) => { e.preventDefault(); closeDialog(); }, { signal });
   }
 
-  document.addEventListener('astro:page-load', initQuoteDialog);
+  // ── Inicialización por carga de página ───────────────────────────────────
+  function initPage() {
+    _slugCtrl?.abort();
+    _slugCtrl = new AbortController();
+    const { signal } = _slugCtrl;
+    initCarousel(signal);
+    initLightbox(signal);
+    initQuoteDialog(signal);
+  }
 
-  // Cerrar limpiamente antes de View Transitions y abortar listeners activos
+  document.addEventListener('astro:page-load', initPage);
+
+  // Limpiar antes de View Transition
   document.addEventListener('astro:before-swap', () => {
     _slugCtrl?.abort();
-    const dialog = document.getElementById('quote-dialog') as HTMLDialogElement | null;
-    if (dialog?.open) {
-      dialog.classList.remove('is-closing', 'is-open');
-      dialog.close();
-    }
+
+    const lb = document.getElementById('product-lightbox') as HTMLDialogElement | null;
+    if (lb?.open) { lb.classList.remove('is-closing', 'is-open'); lb.close(); }
+
+    const qd = document.getElementById('quote-dialog') as HTMLDialogElement | null;
+    if (qd?.open) { qd.classList.remove('is-closing', 'is-open'); qd.close(); }
+
     document.body.style.overflow = '';
   });
 </script>

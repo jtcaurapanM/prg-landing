@@ -17,10 +17,10 @@ const sortedProducts = [...products].sort((a, b) => {
   title="Catálogo · PRG Inversiones"
   description="Catálogo completo de productos de impresión: papelería corporativa, grandes formatos, packaging y más."
 >
-  <section data-gpu-fix class="bg-[#F8F8F6] border-b border-gray-100">
+  <section data-gpu-fix class="bg-brand-surface border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-      <span class="text-xs font-semibold uppercase tracking-widest text-[#F4622A]">Catálogo</span>
-      <h1 id="catalog-title" class="mt-2 text-3xl sm:text-4xl font-bold text-[#101820]">
+      <span class="text-xs font-semibold uppercase tracking-widest text-brand-orange">Catálogo</span>
+      <h1 id="catalog-title" class="mt-2 text-3xl sm:text-4xl font-bold text-brand-black">
         Todos los productos
       </h1>
       <p id="catalog-desc" class="mt-3 text-gray-500 max-w-xl">
@@ -72,7 +72,7 @@ const sortedProducts = [...products].sort((a, b) => {
 
   <!--
     Tailwind safelist — clases usadas sólo en JS.
-    bg-[#101820] border-[#101820]
+    bg-brand-black border-brand-black
   -->
 
   <script define:vars={{ categoryLabels: CATEGORY_LABELS, categoryDescriptions: CATEGORY_DESCRIPTIONS }}>
@@ -99,14 +99,14 @@ const sortedProducts = [...products].sort((a, b) => {
           const isActive = btnCat === (category ?? '');
 
           btn.classList.remove(
-            'bg-[#101820]', 'border-[#101820]',
-            'bg-[#F4622A]', 'border-[#F4622A]',
+            'bg-brand-black', 'border-brand-black',
+            'bg-brand-orange', 'border-brand-orange',
             'text-white',
             'bg-white', 'text-gray-600', 'border-gray-200'
           );
 
           if (isActive) {
-            btn.classList.add('bg-[#101820]', 'border-[#101820]', 'text-white');
+            btn.classList.add('bg-brand-black', 'border-brand-black', 'text-white');
           } else {
             btn.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
           }
