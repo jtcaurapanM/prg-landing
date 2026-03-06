@@ -60,43 +60,101 @@ const structuredData = {
   <section data-gpu-fix class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
 
-      <!-- Image -->
-      <div>
+      <!-- ── Carousel ──────────────────────────────────────────────────────── -->
+      <div
+        id="product-carousel"
+        transition:name={`product-img-${product.slug}`}
+        data-gpu-fix
+        class="relative rounded-2xl overflow-hidden bg-gray-50 aspect-[4/3] select-none"
+        role="region"
+        aria-label={`Galería de imágenes de ${product.name}`}
+      >
+        <!-- Track (slides horizontales) -->
         <div
-          transition:name={`product-img-${product.slug}`}
-          data-gpu-fix
-          class="rounded-2xl overflow-hidden bg-gray-50 aspect-[4/3]"
+          id="carousel-track"
+          class="flex h-full"
+          style="will-change:transform;transition:transform 380ms cubic-bezier(0.4,0,0.2,1);"
         >
-          <Image
-            src={product.images[0]}
-            alt={product.name}
-            width={800}
-            height={600}
-            loading="eager"
-            fetchpriority="high"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            class="w-full h-full object-cover"
-          />
-        </div>
-          {product.images.length > 1 && (
-          <div class="grid grid-cols-4 gap-3 mt-4">
-            {product.images.slice(1).map((img, i) => (
-              <div class="rounded-lg overflow-hidden aspect-square bg-gray-50">
-                <Image
-                  src={img}
-                  alt={`${product.name} - imagen ${i + 2}`}
-                  width={200}
-                  height={200}
-                  loading="lazy"
-                  decoding="async"
-                  sizes="(max-width: 640px) 25vw, 150px"
-                  class="w-full h-full object-cover"
-                />
-              </div>
-            ))}
+          <!-- Slide 1: Image optimizada (LCP) -->
+          <div class="flex-none w-full h-full">
+            <Image
+              src={product.images[0]}
+              alt={product.name}
+              width={800}
+              height={600}
+              loading="eager"
+              fetchpriority="high"
+              class="w-full h-full object-cover"
+            />
           </div>
+
+          <!-- Slides 2+: img directo (CDN Unsplash, no precargado por Astro) -->
+          {product.images.slice(1).map((img, i) => (
+            <div class="flex-none w-full h-full">
+              <img
+                src={img}
+                alt={`${product.name} — vista ${i + 2}`}
+                width="800"
+                height="600"
+                loading="lazy"
+                decoding="async"
+                class="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+
+        {product.images.length > 1 && (
+          <>
+            <!-- Botón anterior -->
+            <button
+              id="carousel-prev"
+              type="button"
+              aria-label="Imagen anterior"
+              class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-md text-brand-black hover:bg-white hover:scale-110 transition-all duration-200"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <!-- Botón siguiente -->
+            <button
+              id="carousel-next"
+              type="button"
+              aria-label="Imagen siguiente"
+              class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-md text-brand-black hover:bg-white hover:scale-110 transition-all duration-200"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            <!-- Contador (esquina superior derecha) -->
+            <div
+              class="absolute top-3 right-3 z-10 pointer-events-none bg-black/40 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm"
+              aria-live="polite"
+            >
+              <span id="carousel-counter">1 / {product.images.length}</span>
+            </div>
+
+            <!-- Dots (centro inferior) -->
+            <div
+              class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1.5 pointer-events-none"
+              aria-hidden="true"
+            >
+              {product.images.map((_, i) => (
+                <span
+                  data-carousel-dot={i}
+                  class="block rounded-full"
+                  style={`width:7px;height:7px;background:white;transition:opacity 250ms,transform 250ms;opacity:${i === 0 ? '1' : '0.4'};transform:${i === 0 ? 'scale(1.25)' : 'scale(1)'}`}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
+      <!-- ── /Carousel ─────────────────────────────────────────────────────── -->
 
       <!-- Info -->
       <div transition:name={`product-info-${product.slug}`} data-gpu-fix>
@@ -136,7 +194,6 @@ const structuredData = {
             </div>
           </div>
         )}
-
 
         <!-- CTAs -->
         <div class="flex flex-col sm:flex-row gap-3">
@@ -226,27 +283,80 @@ const structuredData = {
   #quote-dialog.is-closing::backdrop {
     animation: lightbox-backdrop-out 200ms ease both;
   }
-  /* .is-open en lugar de [open]: Safari no dispara animaciones en <dialog>
-     al cambiar el atributo open vía showModal(). La clase se añade con rAF. */
   #quote-dialog.is-open {
     animation: dialog-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   #quote-dialog.is-closing {
     animation: dialog-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
   }
-
 </style>
 
 <script>
-  // AbortController por ciclo de página: evita acumulación de listeners
-  // al visitar múltiples páginas de producto via View Transitions.
   let _slugCtrl: AbortController | null = null;
 
-  function initQuoteDialog() {
-    _slugCtrl?.abort();
-    _slugCtrl = new AbortController();
-    const { signal } = _slugCtrl;
+  // ── Carrusel de imágenes del producto ────────────────────────────────────
+  function initCarousel(signal: AbortSignal) {
+    const carousel = document.getElementById('product-carousel');
+    const track    = document.getElementById('carousel-track') as HTMLElement | null;
+    if (!carousel || !track) return;
 
+    const slides  = track.querySelectorAll<HTMLElement>(':scope > div');
+    const total   = slides.length;
+    if (total <= 1) return;
+
+    const dots    = carousel.querySelectorAll<HTMLElement>('[data-carousel-dot]');
+    const counter = document.getElementById('carousel-counter');
+    let current   = 0;
+    let autoTimer: ReturnType<typeof setTimeout> | null = null;
+
+    function goTo(index: number) {
+      current = ((index % total) + total) % total;
+      track.style.transform = `translateX(-${current * 100}%)`;
+      dots.forEach((d, i) => {
+        d.style.opacity   = i === current ? '1'    : '0.4';
+        d.style.transform = i === current ? 'scale(1.25)' : 'scale(1)';
+      });
+      if (counter) counter.textContent = `${current + 1} / ${total}`;
+    }
+
+    function scheduleAuto() {
+      if (autoTimer) clearTimeout(autoTimer);
+      if (!signal.aborted) {
+        autoTimer = setTimeout(() => { goTo(current + 1); scheduleAuto(); }, 4500);
+      }
+    }
+
+    function resetAuto() { scheduleAuto(); }
+
+    // Botones de navegación
+    document.getElementById('carousel-prev')?.addEventListener('click', () => { goTo(current - 1); resetAuto(); }, { signal });
+    document.getElementById('carousel-next')?.addEventListener('click', () => { goTo(current + 1); resetAuto(); }, { signal });
+
+    // Swipe táctil
+    let touchX = 0;
+    carousel.addEventListener('touchstart', (e: TouchEvent) => { touchX = e.touches[0].clientX; }, { signal, passive: true });
+    carousel.addEventListener('touchend', (e: TouchEvent) => {
+      const delta = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(delta) > 40) { goTo(current + (delta < 0 ? 1 : -1)); resetAuto(); }
+    }, { signal });
+
+    // Teclado (flechas izq/der cuando el carrusel está enfocado)
+    carousel.setAttribute('tabindex', '0');
+    carousel.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft')  { goTo(current - 1); resetAuto(); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { goTo(current + 1); resetAuto(); e.preventDefault(); }
+    }, { signal });
+
+    // Pausar auto-play al pasar el cursor
+    carousel.addEventListener('mouseenter', () => { if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; } }, { signal });
+    carousel.addEventListener('mouseleave', resetAuto, { signal });
+
+    goTo(0);
+    scheduleAuto();
+  }
+
+  // ── Modal de cotización ──────────────────────────────────────────────────
+  function initQuoteDialog(signal: AbortSignal) {
     const openBtn  = document.getElementById('open-quote-dialog');
     const dialog   = document.getElementById('quote-dialog')       as HTMLDialogElement | null;
     const closeBtn = document.getElementById('close-quote-dialog') as HTMLButtonElement  | null;
@@ -256,7 +366,6 @@ const structuredData = {
     function openDialog() {
       if (dialog!.open) return;
       dialog!.showModal();
-      // rAF: Safari no dispara animaciones CSS en <dialog> al cambiar [open]
       requestAnimationFrame(() => dialog!.classList.add('is-open'));
       document.body.style.overflow = 'hidden';
     }
@@ -273,28 +382,31 @@ const structuredData = {
         document.body.style.overflow = '';
       };
       dialog!.addEventListener('animationend', finish, { once: true });
-      // Fallback: si animationend no dispara (prefers-reduced-motion, GPU off…)
       setTimeout(finish, 250);
     }
 
     openBtn.addEventListener('click', openDialog, { signal });
     closeBtn?.addEventListener('click', closeDialog, { signal });
-
-    // Clic en el backdrop (fuera del contenido del dialog)
     dialog.addEventListener('click', (e: MouseEvent) => {
       if (e.target === dialog) closeDialog();
     }, { signal });
-
-    // Interceptar ESC para ejecutar la animación de cierre
     dialog.addEventListener('cancel', (e: Event) => {
       e.preventDefault();
       closeDialog();
     }, { signal });
   }
 
-  document.addEventListener('astro:page-load', initQuoteDialog);
+  // ── Inicialización por página ────────────────────────────────────────────
+  function initPage() {
+    _slugCtrl?.abort();
+    _slugCtrl = new AbortController();
+    const { signal } = _slugCtrl;
+    initCarousel(signal);
+    initQuoteDialog(signal);
+  }
 
-  // Cerrar limpiamente antes de View Transitions y abortar listeners activos
+  document.addEventListener('astro:page-load', initPage);
+
   document.addEventListener('astro:before-swap', () => {
     _slugCtrl?.abort();
     const dialog = document.getElementById('quote-dialog') as HTMLDialogElement | null;
