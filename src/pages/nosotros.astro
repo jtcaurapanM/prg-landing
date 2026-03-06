@@ -250,10 +250,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       if (!panel) { dialog!.close(); return; }
       dialog!.classList.remove("is-open");
       dialog!.classList.add("is-closing");
-      panel.addEventListener("animationend", () => {
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
         dialog!.classList.remove("is-closing");
         dialog!.close();
-      }, { once: true });
+      };
+      panel.addEventListener("animationend", finish, { once: true });
+      // Fallback: si animationend no dispara (prefers-reduced-motion, GPU off…)
+      setTimeout(finish, 250);
     }
 
     document.querySelectorAll("[data-nosotros-cert-open]").forEach((btn) => {

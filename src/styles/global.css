@@ -226,15 +226,15 @@ html {
   animation-duration: 500ms;
 }
 
-/* Respect user motion preferences */
+/* Respect user motion preferences — wildcard cubre root + todos los elementos
+   nombrados (product-img-{slug}, product-info-{slug}, etc.) */
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root),
-  ::view-transition-old(product-image),
-  ::view-transition-new(product-image),
-  ::view-transition-old(product-name),
-  ::view-transition-new(product-name) {
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
     animation: none !important;
+  }
+  ::view-transition-group(*) {
+    animation-duration: 0ms !important;
   }
 }
 
@@ -317,7 +317,9 @@ button:focus-visible {
 #global-quote-dialog.is-closing::backdrop {
   animation: lightbox-backdrop-out 200ms ease both;
 }
-#global-quote-dialog[open] {
+/* .is-open en lugar de [open]: Safari no dispara animaciones CSS en <dialog>
+   al cambiar el atributo open vía showModal(). La clase se añade con rAF. */
+#global-quote-dialog.is-open {
   animation: dialog-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 #global-quote-dialog.is-closing {

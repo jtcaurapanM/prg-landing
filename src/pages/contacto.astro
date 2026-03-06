@@ -209,7 +209,9 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
   #quote-dialog.is-closing::backdrop {
     animation: lightbox-backdrop-out 200ms ease both;
   }
-  #quote-dialog[open] {
+  /* .is-open en lugar de [open]: Safari no dispara animaciones en <dialog>
+     al cambiar el atributo open vía showModal(). La clase se añade con rAF. */
+  #quote-dialog.is-open {
     animation: dialog-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   #quote-dialog.is-closing {
@@ -275,17 +277,26 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
     function openDialog() {
       if (dialog!.open) return;
       dialog!.showModal();
+      // rAF: Safari no dispara animaciones CSS en <dialog> al cambiar [open]
+      requestAnimationFrame(() => dialog!.classList.add('is-open'));
       document.body.style.overflow = 'hidden';
     }
 
     function closeDialog() {
       updateFormPreview();
+      dialog!.classList.remove('is-open');
       dialog!.classList.add('is-closing');
-      dialog!.addEventListener('animationend', () => {
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
         dialog!.classList.remove('is-closing');
         dialog!.close();
         document.body.style.overflow = '';
-      }, { once: true });
+      };
+      dialog!.addEventListener('animationend', finish, { once: true });
+      // Fallback: si animationend no dispara (prefers-reduced-motion, GPU off…)
+      setTimeout(finish, 250);
     }
 
     // Open on click / keyboard Enter or Space on the trigger card
@@ -316,7 +327,7 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
     _pageCtrl?.abort();
     const dialog = document.getElementById('quote-dialog') as HTMLDialogElement | null;
     if (dialog?.open) {
-      dialog.classList.remove('is-closing');
+      dialog.classList.remove('is-closing', 'is-open');
       dialog.close();
     }
     document.body.style.overflow = '';

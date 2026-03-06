@@ -247,6 +247,9 @@ function isActive(href: string) {
   // ── Estado ────────────────────────────────────────────────────────────────
   let menuOpen = false;
   let resizeHandler: (() => void) | null = null;
+  // AbortController por ciclo de página: limpia listeners sobre nodos persistidos
+  // (el Navbar tiene transition:persist — los mismos nodos sobreviven a VT).
+  let _navPageCtrl: AbortController | null = null;
 
   // ── Helpers de overlay ────────────────────────────────────────────────────
   function showOverlay() {
@@ -347,7 +350,7 @@ function isActive(href: string) {
   // IMPORTANTE: Ya NO recalculamos la altura del menú padre al abrir/cerrar el
   // submenu. El menú padre ahora usa overflow-y:auto con max-height basado en
   // dvh, por lo que el submenu se expande naturalmente dentro del scroll.
-  function initCatalogMobileSubmenu() {
+  function initCatalogMobileSubmenu(signal: AbortSignal) {
     const toggle    = document.getElementById("catalog-mobile-toggle");
     const submenuEl = document.getElementById("catalog-mobile-submenu");
     const chevron   = document.getElementById("catalog-mobile-chevron");
@@ -375,15 +378,16 @@ function isActive(href: string) {
       isOpen ? closeSubmenu() : openSubmenu();
     });
 
+    // { signal } evita acumulación sobre los mismos nodos persistidos por transition:persist
     submenu.querySelectorAll("a").forEach((link) =>
-      link.addEventListener("click", closeSubmenu)
+      link.addEventListener("click", closeSubmenu, { signal })
     );
   }
 
   // ── Mobile menu init ──────────────────────────────────────────────────────
   let outsideClickHandler: ((e: MouseEvent) => void) | null = null;
 
-  function initMobileMenu() {
+  function initMobileMenu(signal: AbortSignal) {
     const btn  = getEl("mobile-menu-btn");
     const menu = getEl("mobile-menu");
 
@@ -391,15 +395,15 @@ function isActive(href: string) {
     btn.replaceWith(newBtn);
 
     newBtn.addEventListener("click", () => menuOpen ? closeMenu() : openMenu());
-    // Cerrar al hacer click en links o en el botón CTA de cotización
+    // { signal } evita que los mismos links acumulen closeMenu en cada navegación
     menu.querySelectorAll("a, [data-open-global-quote]").forEach((el) =>
-      el.addEventListener("click", closeMenu)
+      el.addEventListener("click", closeMenu, { signal })
     );
 
     // Cerrar al hacer click en el overlay
     const overlay = document.getElementById("mobile-overlay");
     if (overlay) {
-      overlay.addEventListener("click", closeMenu);
+      overlay.addEventListener("click", closeMenu, { signal });
     }
 
     // Cerrar al hacer click fuera del navbar
@@ -430,9 +434,14 @@ function isActive(href: string) {
   document.addEventListener("astro:before-swap", closeMenu);
 
   document.addEventListener("astro:page-load", () => {
+    // Abortar ciclo anterior: limpia todos los listeners sobre nodos persistidos
+    _navPageCtrl?.abort();
+    _navPageCtrl = new AbortController();
+    const { signal } = _navPageCtrl;
+
     document.body.style.overflow = "";
-    initMobileMenu();
-    initCatalogMobileSubmenu();
+    initMobileMenu(signal);
+    initCatalogMobileSubmenu(signal);
     updateMobileNavActive();
 
     // Active state desktop
@@ -448,7 +457,8 @@ function isActive(href: string) {
       if (indicator) indicator.style.display = active ? "block" : "none";
     });
 
-    // CB-06: Touch support para dropdown catalogo en tablets/touch devices
+    // CB-06: Touch support para dropdown catálogo en tablets/touch devices.
+    // { signal } evita acumulación sobre el mismo nodo persistido por transition:persist.
     const catalogGroup = document.querySelector('[data-catalog-group]') as HTMLElement | null;
     if (catalogGroup) {
       catalogGroup.addEventListener('touchstart', (e) => {
@@ -472,7 +482,7 @@ function isActive(href: string) {
           };
           setTimeout(() => document.addEventListener('touchstart', closeOnOutside as EventListener), 0);
         }
-      }, { passive: false });
+      }, { passive: false, signal });
     }
   });
 </script>

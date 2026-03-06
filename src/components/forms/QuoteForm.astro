@@ -8,7 +8,11 @@ interface Props {
 const { productName = "", compact = false, dialogMode = false } = Astro.props;
 ---
 
-<!-- ── FORM ──────────────────────────────────────────────────────────────── -->
+<!-- ── FORM ─────────────────────────────────────────────────────────────────
+     data-quote-form-root: marca el contenedor de cada instancia para que el
+     script pueda inicializar múltiples formularios en la misma página
+     (p.ej. dialog de producto + dialog global del navbar) de forma independiente. -->
+<div data-quote-form-root>
 <form id="quote-form" class={dialogMode ? "space-y-4" : "space-y-5"} novalidate>
   <!-- Honeypot: invisible para usuarios; bots lo completan automáticamente -->
   <div
@@ -159,6 +163,7 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
     Enviar otra cotización
   </button>
 </div>
+</div><!-- /data-quote-form-root -->
 
 <script>
   type ValidatableInput = HTMLInputElement | HTMLTextAreaElement;
@@ -228,10 +233,11 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
       .replace(/"/g, "&quot;");
   }
 
-  // ── Contador de caracteres ────────────────────────────────────────────────────
-  function initCharCounter() {
-    const textarea   = document.getElementById("message")      as HTMLTextAreaElement | null;
-    const charCounter = document.getElementById("char-counter") as HTMLElement | null;
+  // ── Contador de caracteres ─────────────────────────────────────────────────────
+  // Recibe el root del formulario para soportar múltiples instancias en la página.
+  function initCharCounter(root: Element) {
+    const textarea    = root.querySelector<HTMLTextAreaElement>("#message");
+    const charCounter = root.querySelector<HTMLElement>("#char-counter");
     if (!textarea || !charCounter) return;
 
     textarea.addEventListener("input", () => {
@@ -243,16 +249,19 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
     });
   }
 
-  // ── Inicialización del formulario ─────────────────────────────────────────────
-  function initForm() {
-    const form         = document.getElementById("quote-form")   as HTMLFormElement   | null;
-    const successPanel = document.getElementById("success-panel") as HTMLElement      | null;
-    const successSummary = document.getElementById("success-summary") as HTMLElement  | null;
-    const submitBtn    = document.getElementById("form-submit")   as HTMLButtonElement | null;
-    const btnText      = document.getElementById("btn-text")      as HTMLElement      | null;
-    const btnSpinner   = document.getElementById("btn-spinner")   as HTMLElement      | null;
-    const errorMsg     = document.getElementById("form-error")    as HTMLElement      | null;
-    const btnReset     = document.getElementById("btn-reset")     as HTMLButtonElement | null;
+  // ── Inicialización del formulario ──────────────────────────────────────────────
+  // Recibe el root para soportar múltiples instancias (dialog de producto +
+  // dialog global del navbar) sin que getElementById devuelva el elemento
+  // incorrecto cuando hay IDs duplicados en el documento.
+  function initForm(root: Element) {
+    const form           = root.querySelector<HTMLFormElement>("#quote-form");
+    const successPanel   = root.querySelector<HTMLElement>("#success-panel");
+    const successSummary = root.querySelector<HTMLElement>("#success-summary");
+    const submitBtn      = root.querySelector<HTMLButtonElement>("#form-submit");
+    const btnText        = root.querySelector<HTMLElement>("#btn-text");
+    const btnSpinner     = root.querySelector<HTMLElement>("#btn-spinner");
+    const errorMsg       = root.querySelector<HTMLElement>("#form-error");
+    const btnReset       = root.querySelector<HTMLButtonElement>("#btn-reset");
 
     if (!form || !submitBtn || !btnText || !btnSpinner || !errorMsg || !successPanel) return;
 
@@ -265,6 +274,7 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
 
     const liveFields = new Set<string>();
 
+    // Usar form (no root) para queries de inputs: el form ya está dentro de root
     form.querySelectorAll<ValidatableInput>(".field-input").forEach((el) => {
       el.addEventListener("blur", () => {
         if (RULES[el.name]) { liveFields.add(el.name); validateInput(el); }
@@ -370,9 +380,14 @@ const { productName = "", compact = false, dialogMode = false } = Astro.props;
     });
   }
 
+  // Inicializar CADA instancia de QuoteForm en la página de forma independiente.
+  // En páginas con formulario de página + dialog global del navbar, ambas instancias
+  // quedan correctamente inicializadas sin interferencia entre ellas.
   document.addEventListener("astro:page-load", () => {
-    initCharCounter();
-    initForm();
+    document.querySelectorAll("[data-quote-form-root]").forEach((root) => {
+      initCharCounter(root);
+      initForm(root);
+    });
   });
 </script>
 
