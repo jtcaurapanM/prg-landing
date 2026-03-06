@@ -37,6 +37,7 @@ const structuredData = {
 <BaseLayout
   title={`${product.name} · Catálogo PRG Inversiones`}
   description={`${product.shortDesc} Solicita cotización sin compromiso.`}
+  ogImage={product.images[0]}
 >
   {/* JSON-LD sanitizado para prevenir XSS */}
   <script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/<\//g, '<\\/')} />
