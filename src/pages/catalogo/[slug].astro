@@ -42,16 +42,16 @@ const structuredData = {
   <script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/<\//g, '<\\/')} />
 
   <!-- Breadcrumb -->
-  <section data-gpu-fix class="bg-[#F8F8F6] border-b border-gray-100">
+  <section data-gpu-fix class="bg-brand-surface border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <nav class="flex items-center gap-2 text-sm text-gray-400" aria-label="Breadcrumb">
-        <a href="/" class="hover:text-[#F4622A] transition-colors">Inicio</a>
+        <a href="/" class="hover:text-brand-orange transition-colors">Inicio</a>
         <span>/</span>
-        <a href="/catalogo" class="hover:text-[#F4622A] transition-colors">Catálogo</a>
+        <a href="/catalogo" class="hover:text-brand-orange transition-colors">Catálogo</a>
         <span>/</span>
-        <a href={`/catalogo?categoria=${product.category}`} class="hover:text-[#F4622A] transition-colors">{categoryLabel}</a>
+        <a href={`/catalogo?categoria=${product.category}`} class="hover:text-brand-orange transition-colors">{categoryLabel}</a>
         <span>/</span>
-        <span class="text-[#101820] font-medium">{product.name}</span>
+        <span class="text-brand-black font-medium">{product.name}</span>
       </nav>
     </div>
   </section>
@@ -105,7 +105,7 @@ const structuredData = {
           {product.featured && <Badge text="Destacado" variant="orange" />}
         </div>
 
-        <h1 class="text-3xl sm:text-4xl font-bold text-[#101820] mb-4">
+        <h1 class="text-3xl sm:text-4xl font-bold text-brand-black mb-4">
           {product.name}
         </h1>
         <p class="text-gray-600 leading-relaxed mb-8">{product.description}</p>
@@ -117,7 +117,7 @@ const structuredData = {
             <ul class="space-y-2">
               {product.specs.map((spec) => (
                 <li class="flex items-start gap-3 text-sm text-gray-700">
-                  <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#F4622A] shrink-0"></span>
+                  <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-orange shrink-0"></span>
                   {spec}
                 </li>
               ))}
@@ -143,7 +143,7 @@ const structuredData = {
           <button
             id="open-quote-dialog"
             type="button"
-            class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#F4622A] text-white font-bold rounded-md hover:bg-[#d9521f] transition-colors"
+            class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-orange text-white font-bold rounded-md hover:bg-brand-orange-dark transition-colors"
             aria-haspopup="dialog"
             aria-controls="quote-dialog"
           >
@@ -159,7 +159,7 @@ const structuredData = {
     <!-- Related products -->
     {relatedProducts.length > 0 && (
       <div class="mt-24">
-        <h2 class="text-2xl font-bold text-[#101820] mb-8">Otros productos en {categoryLabel}</h2>
+        <h2 class="text-2xl font-bold text-brand-black mb-8">Otros productos en {categoryLabel}</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {relatedProducts.map((p) => (
             <ProductCard product={p} />
@@ -175,13 +175,13 @@ const structuredData = {
   <!-- Sticky header -->
   <div class="sticky top-0 z-10 flex items-center justify-between px-6 sm:px-8 py-4 bg-white border-b border-gray-100">
     <div>
-      <h2 id="dialog-title" class="font-bold text-[#101820] text-base">Solicitar cotización</h2>
+      <h2 id="dialog-title" class="font-bold text-brand-black text-base">Solicitar cotización</h2>
       <p class="text-xs text-gray-400 mt-0.5 truncate max-w-xs">{product.name}</p>
     </div>
     <button
       type="button"
       id="close-quote-dialog"
-      class="flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:text-[#101820] hover:bg-gray-100 transition-colors"
+      class="flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:text-brand-black hover:bg-gray-100 transition-colors"
       aria-label="Cerrar formulario"
     >
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,7 +194,7 @@ const structuredData = {
     <QuoteForm productName={product.name} dialogMode={true} />
     <p class="mt-5 text-center text-xs text-gray-400">
       ¿Prefieres escribir directo?
-      <a href="mailto:contacto@prg.cl" class="text-[#F4622A] hover:underline font-medium">contacto@prg.cl</a>
+      <a href="mailto:contacto@prg.cl" class="text-brand-orange hover:underline font-medium">contacto@prg.cl</a>
     </p>
   </div>
 </dialog>

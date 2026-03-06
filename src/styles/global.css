@@ -147,7 +147,7 @@
 
 /* ── Caret visible en inputs ─────────────────────────────────────────────── */
 input, textarea {
-  caret-color: #F4622A;
+  caret-color: var(--color-brand-orange);
 }
 
 /* ── iOS Safari: evita zoom automático en inputs (requiere font-size ≥ 16px) ── */
@@ -168,10 +168,23 @@ html {
 @theme {
   --font-sans: 'Gotham', sans-serif;
 
-  --color-brand-orange: #F4622A;
-  --color-brand-black: #101820;
-  --color-brand-gray: #4A4A4A;
-  --color-brand-surface: #F2F2F2;
+  /* ── Colores de marca ─────────────────────────────────────────────────────
+     Valores oficiales Pantone referenciados a sRGB.
+     Cambiar aquí propaga automáticamente a todas las utilidades Tailwind
+     (text-brand-orange, bg-brand-black, border-brand-orange/20, etc.). */
+
+  /* PANTONE 172 C  →  sRGB 250 70 22 */
+  --color-brand-orange:      #FA4616;
+  /* Estado hover de botones naranjos (~12% más oscuro) */
+  --color-brand-orange-dark: #DC3C10;
+
+  /* PANTONE Black 6 C  →  sRGB 16 24 32 */
+  --color-brand-black:       #101820;
+  /* Estado hover de botones negros (~12% más oscuro) */
+  --color-brand-black-dark:  #1e2d3d;
+
+  /* Superficie de fondo clara (secciones alternas) */
+  --color-brand-surface:     #F8F8F6;
 }
 
 /* ── View Transitions ─────────────────────────────────────────────────── */
@@ -270,14 +283,14 @@ html {
 
 /* ── Accesibilidad: focus visible en chips de categoria (ACC-04) ─────────── */
 .category-chip:focus-within {
-  outline: 2px solid #F4622A;
+  outline: 2px solid var(--color-brand-orange);
   outline-offset: 2px;
 }
 
 /* ── Focus visible para botones y links con outline naranja ─────────────── */
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid #F4622A;
+  outline: 2px solid var(--color-brand-orange);
   outline-offset: 2px;
   border-radius: 4px;
 }

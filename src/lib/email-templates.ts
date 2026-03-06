@@ -101,7 +101,7 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
 
   const catPills = cats.length > 0
     ? cats.map(c =>
-        `<span style="display:inline-block;background:#FEF3ED;color:#F4622A;border:1px solid #FBBF99;` +
+        `<span style="display:inline-block;background:#FEF3ED;color:#FA4616;border:1px solid #FBBF99;` +
         `font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;margin:2px 3px 2px 0;` +
         `font-family:Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:0.3px;">${esc(c)}</span>`
       ).join('')
@@ -115,11 +115,11 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
           <tr>
             <td>
               <span style="font-size:20px;font-weight:700;font-family:Arial,Helvetica,sans-serif;">
-                <span style="color:#F4622A;">PRG</span><span style="color:#ffffff;"> Inversiones</span>
+                <span style="color:#FA4616;">PRG</span><span style="color:#ffffff;"> Inversiones</span>
               </span>
             </td>
             <td align="right">
-              <span style="display:inline-block;background-color:#F4622A;color:#ffffff;font-size:10px;
+              <span style="display:inline-block;background-color:#FA4616;color:#ffffff;font-size:10px;
                 font-weight:700;padding:5px 12px;border-radius:4px;letter-spacing:0.8px;
                 text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;">
                 Nueva cotización
@@ -130,7 +130,7 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
       </td>
     </tr>
     <!-- ACCENT BAR -->
-    <tr><td style="background-color:#F4622A;height:3px;font-size:0;line-height:0;mso-line-height-rule:exactly;"> </td></tr>
+    <tr><td style="background-color:#FA4616;height:3px;font-size:0;line-height:0;mso-line-height-rule:exactly;"> </td></tr>
 
     <!-- BODY -->
     <tr>
@@ -158,7 +158,7 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
               ${d.empresa ? dataRow('Empresa', val(esc(d.empresa))) : ''}
               ${dataRow('Nombre', val(esc(d.name)))}
               ${dataRow('Correo',
-                `<a href="mailto:${esc(d.email)}" style="color:#F4622A;font-size:13px;
+                `<a href="mailto:${esc(d.email)}" style="color:#FA4616;font-size:13px;
                   font-family:Arial,Helvetica,sans-serif;text-decoration:none;">${esc(d.email)}</a>`
               )}
               ${dataRow('Teléfono', d.phone ? val(esc(d.phone)) : emptyVal(), false)}
@@ -190,7 +190,7 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
           text-transform:uppercase;letter-spacing:1.2px;font-family:Arial,Helvetica,sans-serif;">
           Mensaje
         </p>
-        <div style="background-color:#F8F8F6;border-left:3px solid #F4622A;
+        <div style="background-color:#F8F8F6;border-left:3px solid #FA4616;
           border-radius:0 6px 6px 0;padding:16px 20px;margin-bottom:32px;">
           <p style="margin:0;color:#101820;font-size:14px;line-height:1.75;
             font-family:Arial,Helvetica,sans-serif;white-space:pre-wrap;">${esc(d.message)}</p>
@@ -203,7 +203,7 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
               <!--[if mso]>
               <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
                 href="mailto:${esc(d.email)}" style="height:48px;v-text-anchor:middle;width:260px;"
-                arcsize="13%" stroke="f" fillcolor="#F4622A">
+                arcsize="13%" stroke="f" fillcolor="#FA4616">
                 <w:anchorlock/>
                 <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:14px;font-weight:700;">
                   Responder a ${esc(d.name)}
@@ -212,7 +212,7 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
               <![endif]-->
               <!--[if !mso]><!-->
               <a href="mailto:${esc(d.email)}"
-                style="display:inline-block;background-color:#F4622A;color:#ffffff;font-size:14px;
+                style="display:inline-block;background-color:#FA4616;color:#ffffff;font-size:14px;
                   font-weight:700;padding:14px 36px;border-radius:6px;text-decoration:none;
                   font-family:Arial,Helvetica,sans-serif;letter-spacing:0.3px;">
                 Responder a ${esc(d.name.split(' ')[0])}
@@ -234,7 +234,7 @@ export function buildNotificationEmail(d: QuoteData): { subject: string; html: s
             <td>
               <p style="margin:0 0 3px;color:#101820;font-size:13px;font-weight:700;
                 font-family:Arial,Helvetica,sans-serif;">
-                <span style="color:#F4622A;">PRG</span> Inversiones
+                <span style="color:#FA4616;">PRG</span> Inversiones
               </p>
               <p style="margin:0;color:#9CA3AF;font-size:11px;font-family:Arial,Helvetica,sans-serif;">
                 Santiago, Chile &nbsp;·&nbsp; FSC C143583
@@ -301,7 +301,7 @@ export function buildConfirmationEmail(d: QuoteData): { subject: string; html: s
       style="margin-bottom:20px;">
       <tr>
         <td style="width:40px;vertical-align:top;padding-right:16px;">
-          <div style="width:30px;height:30px;background-color:#F4622A;border-radius:50%;
+          <div style="width:30px;height:30px;background-color:#FA4616;border-radius:50%;
             text-align:center;line-height:30px;mso-line-height-rule:exactly;">
             <span style="color:#ffffff;font-size:13px;font-weight:700;
               font-family:Arial,Helvetica,sans-serif;">${s.num}</span>
@@ -317,7 +317,7 @@ export function buildConfirmationEmail(d: QuoteData): { subject: string; html: s
     </table>`).join('');
 
   const catPills = cats.map(c =>
-    `<span style="display:inline-block;background:#FEF3ED;color:#F4622A;border:1px solid #FBBF99;` +
+    `<span style="display:inline-block;background:#FEF3ED;color:#FA4616;border:1px solid #FBBF99;` +
     `font-size:11px;font-weight:700;padding:3px 8px;border-radius:12px;margin:2px 0 2px 4px;` +
     `font-family:Arial,Helvetica,sans-serif;">${esc(c)}</span>`
   ).join('');
@@ -343,7 +343,7 @@ export function buildConfirmationEmail(d: QuoteData): { subject: string; html: s
     <tr>
       <td style="background-color:#101820;border-radius:12px 12px 0 0;padding:36px 36px 32px;">
         <p style="margin:0 0 22px;font-size:20px;font-weight:700;font-family:Arial,Helvetica,sans-serif;">
-          <span style="color:#F4622A;">PRG</span>
+          <span style="color:#FA4616;">PRG</span>
           <span style="color:#ffffff;"> Inversiones</span>
         </p>
         <h1 style="margin:0 0 10px;color:#ffffff;font-size:26px;font-weight:700;
@@ -358,7 +358,7 @@ export function buildConfirmationEmail(d: QuoteData): { subject: string; html: s
       </td>
     </tr>
     <!-- ACCENT BAR -->
-    <tr><td style="background-color:#F4622A;height:3px;font-size:0;line-height:0;mso-line-height-rule:exactly;"> </td></tr>
+    <tr><td style="background-color:#FA4616;height:3px;font-size:0;line-height:0;mso-line-height-rule:exactly;"> </td></tr>
 
     <!-- BODY -->
     <tr>
@@ -429,7 +429,7 @@ export function buildConfirmationEmail(d: QuoteData): { subject: string; html: s
             <td>
               <p style="margin:0 0 4px;font-size:13px;font-weight:700;
                 font-family:Arial,Helvetica,sans-serif;">
-                <span style="color:#F4622A;">PRG</span>
+                <span style="color:#FA4616;">PRG</span>
                 <span style="color:#ffffff;"> Inversiones</span>
               </p>
               <p style="margin:0;color:#6B7280;font-size:11px;font-family:Arial,Helvetica,sans-serif;">
