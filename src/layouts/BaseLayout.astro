@@ -22,6 +22,11 @@ const SITE = "https://www.prg.cl";
 const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
 // Soporta tanto rutas relativas ("/og-default.png") como URLs absolutas (Unsplash)
 const ogImageUrl = ogImage.startsWith("http") ? ogImage : `${SITE}${ogImage.startsWith("/") ? "" : "/"}${ogImage}`;
+
+// ── Modo mantenimiento ──────────────────────────────────────────────────────
+// Activar/desactivar desde Vercel: Settings → Environment Variables → MAINTENANCE_MODE = true
+// Requiere un nuevo deploy para aplicarse (la evaluación es en build time).
+const isMaintenanceMode = String(import.meta.env.MAINTENANCE_MODE ?? process.env.MAINTENANCE_MODE) === 'true';
 ---
 
 <!doctype html>
@@ -37,6 +42,7 @@ const ogImageUrl = ogImage.startsWith("http") ? ogImage : `${SITE}${ogImage.star
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {isMaintenanceMode && <meta name="robots" content="noindex, nofollow" />}
 
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
@@ -84,19 +90,51 @@ const ogImageUrl = ogImage.startsWith("http") ? ogImage : `${SITE}${ogImage.star
   </head>
 
   <body class="bg-white text-brand-black font-sans antialiased">
-    <a
-      href="#main-content"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-brand-orange focus:text-white focus:font-semibold focus:rounded-md"
-    >
-      Saltar al contenido
-    </a>
-    <Navbar />
 
-    <main id="main-content">
-      <slot />
-    </main>
+  {isMaintenanceMode ? (
+    <div class="maintenance-page">
+      <div class="maintenance-glow" aria-hidden="true" />
 
-    <!-- Footer -->
+      <div class="maintenance-logo">
+        <img src="/logoPRG.svg" alt="PRG Inversiones" width="180" height="180" />
+      </div>
+
+      <div class="maintenance-divider" aria-hidden="true" />
+
+      <div class="maintenance-content">
+        <span class="maintenance-badge">
+          <span class="maintenance-dot" aria-hidden="true" />
+          En construcción
+        </span>
+        <h1 class="maintenance-title">
+          Estamos preparando<br />algo grande.
+        </h1>
+        <p class="maintenance-sub">
+          Nuestro nuevo sitio web estará disponible muy pronto.<br />
+          Mientras tanto escríbenos a{' '}
+          <a href="mailto:contacto@prg.cl">contacto@prg.cl</a>
+        </p>
+      </div>
+
+      <footer class="maintenance-footer">
+        © {new Date().getFullYear()} Inversiones PRG SpA · Santiago, Chile
+      </footer>
+    </div>
+
+  ) : (
+    <>
+      <a
+        href="#main-content"
+        class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-brand-orange focus:text-white focus:font-semibold focus:rounded-md"
+      >
+        Saltar al contenido
+      </a>
+      <Navbar />
+
+      <main id="main-content">
+        <slot />
+      </main>
+
     <footer data-gpu-fix class="bg-brand-black text-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -193,7 +231,6 @@ const ogImageUrl = ogImage.startsWith("http") ? ogImage : `${SITE}${ogImage.star
       </div>
     </footer>
 
-    <!-- ── Dialog global de cotización (navbar CTA) ────────────────────────── -->
     <dialog id="global-quote-dialog" aria-modal="true" aria-labelledby="global-dialog-title">
       <div class="sticky top-0 z-10 flex items-center justify-between px-6 sm:px-8 py-4 bg-white border-b border-black/[0.06]">
         <div>
@@ -442,5 +479,132 @@ const ogImageUrl = ogImage.startsWith("http") ? ogImage : `${SITE}${ogImage.star
         }
       });
     </script>
+    </>
+  )}
+
   </body>
 </html>
+
+<style>
+  /* ── Maintenance page ───────────────────────────────────────────────────── */
+  .maintenance-page {
+    min-height: 100dvh;
+    background-color: #101820;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    gap: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Halo naranja sutil centrado */
+  .maintenance-glow {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 55% at 50% 42%, rgba(250, 70, 22, 0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .maintenance-logo {
+    width: min(180px, 48vw);
+    aspect-ratio: 1;
+    animation: m-fade-up 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .maintenance-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .maintenance-divider {
+    width: 1px;
+    height: 44px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.12), transparent);
+    animation: m-fade-up 700ms 80ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .maintenance-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    text-align: center;
+    animation: m-fade-up 700ms 140ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .maintenance-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(250, 70, 22, 0.1);
+    border: 1px solid rgba(250, 70, 22, 0.28);
+    color: #FA4616;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+  }
+
+  .maintenance-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #FA4616;
+    flex-shrink: 0;
+    animation: m-pulse 2.2s ease infinite;
+  }
+
+  .maintenance-title {
+    font-size: clamp(26px, 5.5vw, 42px);
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.4px;
+    color: #ffffff;
+  }
+
+  .maintenance-sub {
+    font-size: clamp(14px, 2.5vw, 16px);
+    color: rgba(255, 255, 255, 0.42);
+    max-width: 380px;
+    line-height: 1.7;
+  }
+  .maintenance-sub a {
+    color: #FA4616;
+    text-decoration: none;
+  }
+  .maintenance-sub a:hover {
+    text-decoration: underline;
+  }
+
+  .maintenance-footer {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.18);
+    font-size: 11px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  @keyframes m-fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes m-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.45; transform: scale(0.75); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .maintenance-logo,
+    .maintenance-divider,
+    .maintenance-content { animation: none; }
+    .maintenance-dot { animation: none; }
+  }
+</style>
