@@ -59,6 +59,25 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
             </div>
           </div>
         </div>
+
+        <!-- Contacto directo -->
+        <div class="border-t border-gray-100 pt-6">
+          <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Contacto directo</p>
+          <a
+            href="mailto:contacto@prg.cl"
+            class="inline-flex items-center gap-2.5 text-sm font-medium text-[#101820] hover:text-[#F4622A] transition-colors group"
+          >
+            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#F4622A]/10 text-[#F4622A] shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </span>
+            contacto@prg.cl
+          </a>
+          <p class="mt-2 text-xs text-gray-400 leading-relaxed">
+            También puedes escribirnos directamente y<br class="hidden sm:block" /> te respondemos en 24 horas hábiles.
+          </p>
+        </div>
       </div>
 
       <!-- Form preview card (non-interactive) + overlay trigger -->
@@ -120,7 +139,10 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
 
         </div>
 
-        <p class="mt-4 text-center text-xs text-gray-400">Sin costo ni compromiso · Respondemos en menos de 24 horas hábiles</p>
+        <p class="mt-4 text-center text-xs text-gray-400">
+          Sin costo ni compromiso · Respondemos en menos de 24 horas hábiles
+          · o escríbenos a <a href="mailto:contacto@prg.cl" class="text-[#F4622A] hover:underline font-medium">contacto@prg.cl</a>
+        </p>
       </div>
 
     </div>
@@ -147,6 +169,10 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
   <!-- Form content -->
   <div class="px-6 sm:px-8 py-6">
     <QuoteForm productName={productParam} dialogMode={true} />
+    <p class="mt-5 text-center text-xs text-gray-400">
+      ¿Prefieres escribir directo?
+      <a href="mailto:contacto@prg.cl" class="text-[#F4622A] hover:underline font-medium">contacto@prg.cl</a>
+    </p>
   </div>
 </dialog>
 
@@ -177,13 +203,17 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
     -webkit-backdrop-filter: blur(4px);
   }
 
-  /* ── Open animation ── */
-  #quote-dialog[open] {
-    animation: dialog-in 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  #quote-dialog::backdrop {
+    animation: lightbox-backdrop-in 260ms ease both;
   }
-  /* ── Close animation (JS adds .is-closing before dialog.close()) ── */
+  #quote-dialog.is-closing::backdrop {
+    animation: lightbox-backdrop-out 200ms ease both;
+  }
+  #quote-dialog[open] {
+    animation: dialog-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
   #quote-dialog.is-closing {
-    animation: dialog-out 180ms ease both;
+    animation: dialog-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
   }
 
 
