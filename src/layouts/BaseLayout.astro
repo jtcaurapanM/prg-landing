@@ -2,6 +2,7 @@
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
+import QuoteForm from "../components/forms/QuoteForm.astro";
 
 interface Props {
   title: string;
@@ -190,21 +191,90 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
       </div>
     </footer>
 
+    <!-- ── Dialog global de cotización (navbar CTA) ────────────────────────── -->
+    <dialog id="global-quote-dialog" aria-modal="true" aria-labelledby="global-dialog-title">
+      <div class="sticky top-0 z-10 flex items-center justify-between px-6 sm:px-8 py-4 bg-white border-b border-black/[0.06]">
+        <div>
+          <h2 id="global-dialog-title" class="font-bold text-[#101820] text-base">Solicitar cotización</h2>
+          <p class="text-xs text-gray-400 mt-0.5">Te respondemos a la brevedad</p>
+        </div>
+        <button
+          type="button"
+          id="global-quote-close"
+          class="flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:text-[#101820] hover:bg-gray-100 transition-colors"
+          aria-label="Cerrar formulario"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="px-6 sm:px-8 py-6">
+        <QuoteForm dialogMode={true} />
+      </div>
+    </dialog>
+
     <script>
-      // ── Scroll shadow ──────────────────────────────────────────────────────
+      // ── Mobile auto-hide navbar ────────────────────────────────────────────
+      let lastScrollY = window.scrollY;
+
       function handleScroll() {
         const navbar = document.getElementById("navbar");
         if (!navbar) return;
-        if (window.scrollY > 20) {
-          navbar.classList.add("shadow-md");
-          navbar.classList.remove("border-gray-100");
+
+        const currentScrollY = window.scrollY;
+        const delta = currentScrollY - lastScrollY;
+
+        // Auto-hide solo en mobile (< 768px)
+        if (window.matchMedia("(max-width: 767px)").matches) {
+          const isMenuOpen =
+            document.getElementById("mobile-menu-btn")?.getAttribute("aria-expanded") === "true";
+
+          if (!isMenuOpen) {
+            if (currentScrollY <= 60) {
+              // Cerca del top: siempre visible
+              navbar.classList.remove("navbar-hidden");
+            } else if (delta > 6) {
+              // Scrolleando hacia abajo con suficiente velocidad
+              navbar.classList.add("navbar-hidden");
+            } else if (delta < -4) {
+              // Scrolleando hacia arriba
+              navbar.classList.remove("navbar-hidden");
+            }
+          }
         } else {
-          navbar.classList.remove("shadow-md");
-          navbar.classList.add("border-gray-100");
+          // Desktop: siempre visible
+          navbar.classList.remove("navbar-hidden");
         }
+
+        lastScrollY = currentScrollY;
       }
 
       window.addEventListener("scroll", handleScroll, { passive: true });
+
+      // ── Dialog global de cotización ────────────────────────────────────────
+      // Event delegation: corre una vez al cargar el módulo. Funciona con el
+      // navbar que tiene transition:persist y persiste entre navegaciones.
+      document.addEventListener("click", (e: MouseEvent) => {
+        const btn = (e.target as Element).closest("[data-open-global-quote]");
+        if (!btn) return;
+        const dialog = document.getElementById("global-quote-dialog") as HTMLDialogElement | null;
+        if (dialog && !dialog.open) {
+          dialog.showModal();
+          document.body.style.overflow = "hidden";
+        }
+      });
+
+      function closeGlobalDialog() {
+        const dialog = document.getElementById("global-quote-dialog") as HTMLDialogElement | null;
+        if (!dialog) return;
+        dialog.classList.add("is-closing");
+        dialog.addEventListener("animationend", () => {
+          dialog.classList.remove("is-closing");
+          dialog.close();
+          document.body.style.overflow = "";
+        }, { once: true });
+      }
 
       // ── Dirección de navegación ────────────────────────────────────────────
       // astro:before-preparation siempre es el primer evento del sistema de
@@ -252,12 +322,18 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
         });
       }
 
-      // ── Antes de swap: marcar dirección ──────────────────────────────────
+      // ── Antes de swap: marcar dirección + cerrar dialog global ──────────
       document.addEventListener("astro:before-swap", () => {
         document.documentElement.dataset.navDirection = isBackNav
           ? "back"
           : "forward";
         isBackNav = false;
+        const gDialog = document.getElementById("global-quote-dialog") as HTMLDialogElement | null;
+        if (gDialog?.open) {
+          gDialog.classList.remove("is-closing");
+          gDialog.close();
+          document.body.style.overflow = "";
+        }
       });
 
       // ── After swap: filtro catálogo ───────────────────────────────────────
@@ -301,6 +377,9 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
       document.addEventListener("astro:page-load", () => {
         document.body.style.overflow = "";
         clearCardTransitions();
+        // Resetear auto-hide al navegar: siempre mostrar navbar en página nueva
+        document.getElementById("navbar")?.classList.remove("navbar-hidden");
+        lastScrollY = window.scrollY;
 
         const prevNavDir = document.documentElement.dataset.navDirection;
         delete document.documentElement.dataset.navDirection;
@@ -333,6 +412,19 @@ const fullTitle = title.includes("PRG") ? title : `${title} · PRG Inversiones`;
 
         handleScroll();
         initCardTransitions();
+
+        // Inicializar botón de cierre y backdrop del dialog global
+        const gDialog = document.getElementById("global-quote-dialog") as HTMLDialogElement | null;
+        if (gDialog) {
+          document.getElementById("global-quote-close")?.addEventListener("click", closeGlobalDialog);
+          gDialog.addEventListener("click", (e: MouseEvent) => {
+            if (e.target === gDialog) closeGlobalDialog();
+          });
+          gDialog.addEventListener("cancel", (e: Event) => {
+            e.preventDefault();
+            closeGlobalDialog();
+          });
+        }
       });
     </script>
   </body>

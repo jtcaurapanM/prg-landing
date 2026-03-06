@@ -21,7 +21,7 @@ function isActive(href: string) {
 <header
   id="navbar"
   transition:persist
-  class="sticky top-0 z-50 bg-white border-b border-gray-100 transition-shadow duration-300"
+  class="sticky top-0 z-50 bg-white border-b border-black/[0.06] transition-[transform,box-shadow] duration-300"
 >
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between py-2">
@@ -105,12 +105,13 @@ function isActive(href: string) {
       </nav>
 
       <!-- CTA desktop -->
-      <a
-        href="/contacto"
+      <button
+        type="button"
+        data-open-global-quote
         class="hidden md:inline-flex items-center px-4 py-2 bg-[#F4622A] text-white text-sm font-semibold rounded-md hover:bg-[#d9521f] transition-colors"
       >
         Cotizar ahora
-      </a>
+      </button>
 
       <!-- Mobile menu button -->
       <button
@@ -220,12 +221,13 @@ function isActive(href: string) {
       ))}
 
       <div class="mt-2 pt-3 border-t border-gray-100">
-        <a
-          href="/contacto"
-          class="flex items-center justify-center px-4 py-3 bg-[#F4622A] text-white text-sm font-bold rounded-lg hover:bg-[#d9521f] transition-colors"
+        <button
+          type="button"
+          data-open-global-quote
+          class="w-full flex items-center justify-center px-4 py-3 bg-[#F4622A] text-white text-sm font-bold rounded-lg hover:bg-[#d9521f] transition-colors"
         >
           Cotizar ahora
-        </a>
+        </button>
       </div>
     </nav>
   </div>
@@ -298,6 +300,8 @@ function isActive(href: string) {
     menuBtn2.setAttribute("aria-label", "Abrir menú");
     document.body.style.overflow = "";
     hideOverlay();
+    // Restaurar navbar visible al cerrar el menú
+    document.getElementById("navbar")?.classList.remove("navbar-hidden");
   }
 
   // ── Active state móvil ────────────────────────────────────────────────────
@@ -387,7 +391,10 @@ function isActive(href: string) {
     btn.replaceWith(newBtn);
 
     newBtn.addEventListener("click", () => menuOpen ? closeMenu() : openMenu());
-    menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+    // Cerrar al hacer click en links o en el botón CTA de cotización
+    menu.querySelectorAll("a, [data-open-global-quote]").forEach((el) =>
+      el.addEventListener("click", closeMenu)
+    );
 
     // Cerrar al hacer click en el overlay
     const overlay = document.getElementById("mobile-overlay");
