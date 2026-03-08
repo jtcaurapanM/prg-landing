@@ -101,7 +101,6 @@ export const products: Product[] = [
     images: [
       'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&fm=webp',
-      'https://images.unsplash.com/photo-1497366754035-f200581393ab?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1574027542338-98e75acfd385?w=800&q=80&fm=webp',
     ],
     fscEligible: true,
@@ -170,7 +169,6 @@ export const products: Product[] = [
     images: [
       'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80&fm=webp',
-      'https://images.unsplash.com/photo-1560179707-f14e90ef3603?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1587560699334-cc4ff634909a?w=800&q=80&fm=webp',
     ],
   },
@@ -213,7 +211,6 @@ export const products: Product[] = [
     images: [
       'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800&q=80&fm=webp',
-      'https://images.unsplash.com/photo-1519741497674-4ba1248daee7?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1535016120720-40c646be5580?w=800&q=80&fm=webp',
     ],
   },
@@ -257,7 +254,6 @@ export const products: Product[] = [
     materials: ['PVC', 'Papel laminado', 'Poliéster'],
     images: [
       'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80&fm=webp',
-      'https://images.unsplash.com/photo-1605559424843-9073c6e4631f?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1559223607-a43c990c692c?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80&fm=webp',
     ],
@@ -280,8 +276,6 @@ export const products: Product[] = [
     images: [
       'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80&fm=webp',
-      'https://images.unsplash.com/photo-1521302200778-33500d30b59f?w=800&q=80&fm=webp',
-      'https://images.unsplash.com/photo-1595246135406-4c8e71bb4e36?w=800&q=80&fm=webp',
     ],
   },
   {
@@ -349,7 +343,6 @@ export const products: Product[] = [
       'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1553413077-190dd305871c?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1616400619175-5beda3a17896?w=800&q=80&fm=webp',
-      'https://images.unsplash.com/photo-1573408301185-9519f94a8b8c?w=800&q=80&fm=webp',
     ],
     fscEligible: true,
   },
@@ -372,7 +365,6 @@ export const products: Product[] = [
       'https://images.unsplash.com/photo-1580169980114-ccd0babfa840?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&fm=webp',
       'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=800&q=80&fm=webp',
-      'https://images.unsplash.com/photo-1621188988909-fbef0a0c470e?w=800&q=80&fm=webp',
     ],
     featured: true,
     fscEligible: true,

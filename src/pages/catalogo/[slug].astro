@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Badge from '../../components/ui/Badge.astro';
 import ProductCard from '../../components/catalog/ProductCard.astro';
@@ -22,6 +22,17 @@ const categoryLabel = CATEGORY_LABELS[product.category];
 const relatedProducts = products
   .filter((p) => p.category === product.category && p.slug !== product.slug)
   .slice(0, 3);
+
+// Pre-process all images at build time to serve from /_astro/ instead of
+// loading directly from images.unsplash.com (which sets third-party cookies).
+// Promise.allSettled prevents a single broken URL from failing the whole build.
+const imageResults = await Promise.allSettled(
+  product.images.map((src) =>
+    getImage({ src, width: 800, height: 600, format: 'webp' })
+  )
+);
+const optimizedImages = imageResults
+  .map((r, i) => (r.status === 'fulfilled' ? r.value : { src: product.images[i] }));
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -77,27 +88,16 @@ const structuredData = {
           class="flex h-full"
           style="will-change:transform;transition:transform 380ms cubic-bezier(0.4,0,0.2,1);"
         >
-          <!-- Slide 1: optimizada (LCP) -->
-          <div class="flex-none w-full h-full">
-            <Image
-              src={product.images[0]}
-              alt={product.name}
-              width={800}
-              height={600}
-              loading="eager"
-              fetchpriority="high"
-              class="w-full h-full object-cover"
-            />
-          </div>
-          <!-- Slides 2+: CDN directo, sin procesamiento Astro -->
-          {product.images.slice(1).map((img, i) => (
+          <!-- Todos los slides servidos desde /_astro/ (getImage pre-procesa en build) -->
+          {optimizedImages.map((img, i) => (
             <div class="flex-none w-full h-full">
               <img
-                src={img}
-                alt={`${product.name} — vista ${i + 2}`}
+                src={img.src}
+                alt={i === 0 ? product.name : `${product.name} — vista ${i + 1}`}
                 width="800"
                 height="600"
-                loading="lazy"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : undefined}
                 decoding="async"
                 class="w-full h-full object-cover"
               />
@@ -274,10 +274,10 @@ const structuredData = {
       <!-- Track de slides -->
       <div class="lb-track-wrap">
         <div id="lb-track" class="lb-track">
-          {product.images.map((img, i) => (
+          {optimizedImages.map((img, i) => (
             <div class="lb-slide">
               <img
-                src={img}
+                src={img.src}
                 alt={`${product.name} — imagen ${i + 1}`}
                 loading={i === 0 ? 'eager' : 'lazy'}
                 decoding="async"
