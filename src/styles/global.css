@@ -177,6 +177,10 @@ html {
   --color-brand-orange:      #FA4616;
   /* Estado hover de botones naranjos (~12% más oscuro) */
   --color-brand-orange-dark: #DC3C10;
+  /* Naranja accesible para texto pequeño sobre fondos claros (≥4.5:1 sobre blanco) */
+  --color-brand-orange-text: #C8350D;
+  /* Hover de naranja accesible */
+  --color-brand-orange-text-hover: #A82C0B;
 
   /* PANTONE Black 6 C  →  sRGB 16 24 32 */
   --color-brand-black:       #101820;

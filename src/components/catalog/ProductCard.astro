@@ -1,15 +1,28 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import Badge from '../ui/Badge.astro';
 import type { Product } from '../../data/products';
 import { CATEGORY_LABELS } from '../../data/categories';
 
 interface Props {
   product: Product;
+  headingLevel?: 'h2' | 'h3';
 }
 
-const { product } = Astro.props;
+const { product, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
 const categoryLabel = CATEGORY_LABELS[product.category];
+
+// Pre-process all images at build time so they are served from /_astro/
+// instead of directly from images.unsplash.com (which sets third-party cookies).
+// Promise.allSettled prevents a single broken URL from failing the whole build.
+const imageResults = await Promise.allSettled(
+  product.images.map((src) =>
+    getImage({ src, width: 800, height: 600, format: 'webp' })
+  )
+);
+const optimizedImages = imageResults
+  .map((r, i) => (r.status === 'fulfilled' ? r.value : { src: product.images[i] }));
 ---
 
 <a
@@ -24,28 +37,15 @@ const categoryLabel = CATEGORY_LABELS[product.category];
     data-card-image
     class="relative aspect-[4/3] overflow-hidden rounded-t-xl bg-gray-50"
   >
-    <!-- Slide 1: optimized via Image component -->
-    <div data-carousel-slide class="absolute inset-0" style="opacity:1;transition:opacity 700ms ease;">
-      <Image
-        src={product.images[0]}
-        alt={product.name}
-        width={800}
-        height={600}
-        loading="lazy"
-        decoding="async"
-        class="w-full h-full object-cover"
-      />
-    </div>
-
-    <!-- Slides 2+: plain img (served directly from Unsplash CDN) -->
-    {product.images.slice(1).map((img, i) => (
-      <div data-carousel-slide class="absolute inset-0" style="opacity:0;transition:opacity 700ms ease;">
+    <!-- All slides served from /_astro/ (getImage pre-processes at build time) -->
+    {optimizedImages.map((img, i) => (
+      <div data-carousel-slide class="absolute inset-0" style={`opacity:${i === 0 ? '1' : '0'};transition:opacity 700ms ease;`}>
         <img
-          src={img}
-          alt={`${product.name} — vista ${i + 2}`}
+          src={img.src}
+          alt={i === 0 ? product.name : `${product.name} — vista ${i + 1}`}
           width="800"
           height="600"
-          loading="lazy"
+          loading={i === 0 ? 'lazy' : 'lazy'}
           decoding="async"
           class="w-full h-full object-cover"
         />
@@ -78,12 +78,12 @@ const categoryLabel = CATEGORY_LABELS[product.category];
 
   <!-- Card content -->
   <div data-card-content data-gpu-fix class="p-5 flex flex-col gap-2 flex-1 bg-white">
-    <span class="text-xs font-semibold uppercase tracking-widest text-gray-400">{categoryLabel}</span>
-    <h3 class="font-bold text-brand-black group-hover:text-brand-orange transition-colors leading-snug">
+    <span class="text-xs font-semibold uppercase tracking-widest text-gray-600">{categoryLabel}</span>
+    <Heading class="font-bold text-brand-black group-hover:text-brand-orange transition-colors leading-snug">
       {product.name}
-    </h3>
+    </Heading>
     <p class="text-sm text-gray-500 leading-relaxed flex-1">{product.shortDesc}</p>
-    <span class="text-sm font-semibold text-brand-orange mt-2 flex items-center gap-1">
+    <span class="text-sm font-semibold text-brand-orange-text mt-2 flex items-center gap-1">
       <span class="leading-none">Ver ficha</span>
       <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />

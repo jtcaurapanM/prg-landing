@@ -219,10 +219,10 @@ const isMaintenanceMode = String(import.meta.env.MAINTENANCE_MODE ?? process.env
         <div
           class="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4"
         >
-          <p class="text-gray-500 text-xs">
+          <p class="text-gray-400 text-xs">
             © {new Date().getFullYear()} Inversiones PRG SpA. Todos los derechos reservados.
           </p>
-          <p class="text-gray-600 text-xs">Santiago, Chile · Fundada 2011</p>
+          <p class="text-gray-400 text-xs">Santiago, Chile · Fundada 2011</p>
         </div>
       </div>
     </footer>
@@ -231,7 +231,7 @@ const isMaintenanceMode = String(import.meta.env.MAINTENANCE_MODE ?? process.env
       <div class="sticky top-0 z-10 flex items-center justify-between px-6 sm:px-8 py-4 bg-white border-b border-black/[0.06]">
         <div>
           <h2 id="global-dialog-title" class="font-bold text-brand-black text-base">Solicitar cotización</h2>
-          <p class="text-xs text-gray-400 mt-0.5">Te respondemos a la brevedad</p>
+          <p class="text-xs text-gray-600 mt-0.5">Te respondemos a la brevedad</p>
         </div>
         <button
           type="button"
@@ -246,9 +246,9 @@ const isMaintenanceMode = String(import.meta.env.MAINTENANCE_MODE ?? process.env
       </div>
       <div class="px-6 sm:px-8 py-6">
         <QuoteForm dialogMode={true} />
-        <p class="mt-5 text-center text-xs text-gray-400">
+        <p class="mt-5 text-center text-xs text-gray-600">
           ¿Prefieres escribir directo?
-          <a href="mailto:contacto@prg.cl" class="text-brand-orange hover:underline font-medium">contacto@prg.cl</a>
+          <a href="mailto:contacto@prg.cl" class="text-brand-orange-text hover:underline font-medium">contacto@prg.cl</a>
         </p>
       </div>
     </dialog>
