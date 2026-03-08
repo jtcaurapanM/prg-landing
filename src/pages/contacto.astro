@@ -84,16 +84,12 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
       <div class="lg:col-span-2">
         <div id="form-trigger" class="relative group cursor-pointer" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="quote-dialog" aria-label="Abrir formulario de cotización">
 
-          <!-- Visual preview (pointer-events-none so the overlay handles clicks) -->
-          <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm pointer-events-none select-none">
+          <!-- Card preview: se eleva en hover -->
+          <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm pointer-events-none select-none transition-all duration-300 ease-out group-hover:-translate-y-2 group-hover:shadow-2xl group-focus:-translate-y-2 group-focus:shadow-2xl">
 
             <!-- Header preview row -->
-            <div class="flex items-center justify-between mb-6 pb-5 border-b border-gray-50">
+            <div class="mb-6 pb-5 border-b border-gray-50">
               <p class="text-sm text-gray-500">Completa el formulario y te responderemos en menos de 24h.</p>
-              <span class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-brand-orange-text shrink-0 ml-4">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                Haz click para completar
-              </span>
             </div>
 
             <!-- Row 1: Nombre + Email -->
@@ -122,17 +118,12 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
               </div>
             </div>
 
-            <!-- Submit button (visual only) -->
-            <div class="w-full h-11 bg-brand-orange-text rounded-md flex items-center justify-center">
-              <span class="text-white text-sm font-semibold">Enviar cotización</span>
-            </div>
-
           </div>
 
-          <!-- Hover overlay with CTA -->
-          <div class="absolute inset-0 rounded-2xl bg-brand-black/5 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-            <div class="bg-brand-orange-text text-white text-sm font-semibold px-7 py-3.5 rounded-full shadow-2xl flex items-center gap-2.5 scale-95 group-hover:scale-100 group-focus:scale-100 transition-transform duration-200">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+          <!-- CTA siempre visible debajo del card -->
+          <div class="mt-5 flex justify-center pointer-events-none">
+            <div class="inline-flex items-center gap-2.5 bg-brand-orange-text text-white text-sm font-semibold px-7 py-3.5 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-105 group-focus:shadow-xl group-focus:scale-105">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
               Completar formulario
             </div>
           </div>
