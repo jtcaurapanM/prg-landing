@@ -71,7 +71,6 @@ const isMaintenanceMode = String(import.meta.env.MAINTENANCE_MODE ?? process.env
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
 
     <ClientRouter />
-    <Analytics />
 
     <script type="application/ld+json">
       {
@@ -125,7 +124,7 @@ const isMaintenanceMode = String(import.meta.env.MAINTENANCE_MODE ?? process.env
 
   ) : (
     <>
-      <Navbar />
+      <Navbar transition:persist />
 
       <main id="main-content">
         <slot />
@@ -227,7 +226,7 @@ const isMaintenanceMode = String(import.meta.env.MAINTENANCE_MODE ?? process.env
       </div>
     </footer>
 
-    <dialog id="global-quote-dialog" aria-modal="true" aria-labelledby="global-dialog-title">
+    <dialog id="global-quote-dialog" aria-modal="true" aria-labelledby="global-dialog-title" transition:persist>
       <div class="sticky top-0 z-10 flex items-center justify-between px-6 sm:px-8 py-4 bg-white border-b border-black/[0.06]">
         <div>
           <h2 id="global-dialog-title" class="font-bold text-brand-black text-base">Solicitar cotización</h2>
@@ -477,6 +476,7 @@ const isMaintenanceMode = String(import.meta.env.MAINTENANCE_MODE ?? process.env
     </script>
     </>
   )}
+  <Analytics />
 
   </body>
 </html>
