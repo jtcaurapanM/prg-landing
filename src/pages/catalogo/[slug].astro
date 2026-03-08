@@ -45,7 +45,7 @@ const structuredData = {
   <!-- Breadcrumb -->
   <section data-gpu-fix class="bg-brand-surface border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <nav class="flex items-center gap-2 text-sm text-gray-400" aria-label="Breadcrumb">
+      <nav class="flex items-center gap-2 text-sm text-gray-600" aria-label="Breadcrumb">
         <a href="/" class="hover:text-brand-orange transition-colors">Inicio</a>
         <span>/</span>
         <a href="/catalogo" class="hover:text-brand-orange transition-colors">Catálogo</a>
@@ -210,7 +210,7 @@ const structuredData = {
           <button
             id="open-quote-dialog"
             type="button"
-            class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-orange text-white font-bold rounded-md hover:bg-brand-orange-dark transition-colors"
+            class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-orange-text text-white font-bold rounded-md hover:bg-brand-orange-text-hover transition-colors"
             aria-haspopup="dialog"
             aria-controls="quote-dialog"
           >
@@ -323,7 +323,7 @@ const structuredData = {
   <div class="sticky top-0 z-10 flex items-center justify-between px-6 sm:px-8 py-4 bg-white border-b border-gray-100">
     <div>
       <h2 id="dialog-title" class="font-bold text-brand-black text-base">Solicitar cotización</h2>
-      <p class="text-xs text-gray-400 mt-0.5 truncate max-w-xs">{product.name}</p>
+      <p class="text-xs text-gray-600 mt-0.5 truncate max-w-xs">{product.name}</p>
     </div>
     <button
       type="button"
@@ -338,9 +338,9 @@ const structuredData = {
   </div>
   <div class="px-6 sm:px-8 py-6">
     <QuoteForm productName={product.name} dialogMode={true} />
-    <p class="mt-5 text-center text-xs text-gray-400">
+    <p class="mt-5 text-center text-xs text-gray-600">
       ¿Prefieres escribir directo?
-      <a href="mailto:contacto@prg.cl" class="text-brand-orange hover:underline font-medium">contacto@prg.cl</a>
+      <a href="mailto:contacto@prg.cl" class="text-brand-orange-text hover:underline font-medium">contacto@prg.cl</a>
     </p>
   </div>
 </dialog>
