@@ -47,7 +47,7 @@ export const POST: APIRoute = async ({ request }) => {
   const referer = request.headers.get('referer') ?? '';
   const isDev   = import.meta.env.DEV;
 
-  if (!isDev && !origin.includes('prg.cl') && !referer.includes('prg.cl')) {
+  if (!isDev && !origin.includes('prg.cl') && !referer.includes('prg.cl') && !origin.includes('vercel.app') && !referer.includes('vercel.app')) {
     return new Response(
       JSON.stringify({ error: "Solicitud no permitida." }),
       { status: 403 },
