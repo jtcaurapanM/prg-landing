@@ -6,9 +6,11 @@ import { CATEGORY_LABELS } from '../../data/categories';
 
 interface Props {
   product: Product;
+  headingLevel?: 'h2' | 'h3';
 }
 
-const { product } = Astro.props;
+const { product, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
 const categoryLabel = CATEGORY_LABELS[product.category];
 
 // Pre-process all images at build time so they are served from /_astro/
@@ -77,9 +79,9 @@ const optimizedImages = imageResults
   <!-- Card content -->
   <div data-card-content data-gpu-fix class="p-5 flex flex-col gap-2 flex-1 bg-white">
     <span class="text-xs font-semibold uppercase tracking-widest text-gray-600">{categoryLabel}</span>
-    <h3 class="font-bold text-brand-black group-hover:text-brand-orange transition-colors leading-snug">
+    <Heading class="font-bold text-brand-black group-hover:text-brand-orange transition-colors leading-snug">
       {product.name}
-    </h3>
+    </Heading>
     <p class="text-sm text-gray-500 leading-relaxed flex-1">{product.shortDesc}</p>
     <span class="text-sm font-semibold text-brand-orange-text mt-2 flex items-center gap-1">
       <span class="leading-none">Ver ficha</span>

@@ -59,7 +59,7 @@ const sortedProducts = [...products].sort((a, b) => {
     >
       {sortedProducts.map((product) => (
         <div data-card-wrapper data-category={product.category}>
-          <ProductCard product={product} />
+          <ProductCard product={product} headingLevel="h2" />
         </div>
       ))}
     </div>

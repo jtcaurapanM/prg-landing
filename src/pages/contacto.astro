@@ -100,24 +100,24 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <div class="text-sm font-medium text-gray-700 mb-1">Nombre <span class="text-brand-orange-text">*</span></div>
-                <div data-preview-for="name" class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-300 bg-gray-50/60 truncate">Tu nombre</div>
+                <div data-preview-for="name" class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-600 bg-gray-50 truncate">Tu nombre</div>
               </div>
               <div>
                 <div class="text-sm font-medium text-gray-700 mb-1">Correo electrónico <span class="text-brand-orange-text">*</span></div>
-                <div data-preview-for="email" class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-300 bg-gray-50/60 truncate">tu@empresa.com</div>
+                <div data-preview-for="email" class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-600 bg-gray-50 truncate">tu@empresa.com</div>
               </div>
             </div>
 
             <!-- Row 2: Producto de referencia (full width) -->
             <div class="mb-4">
               <div class="text-sm font-medium text-gray-700 mb-1">Producto de referencia <span class="text-gray-600 font-normal">(opcional)</span></div>
-              <div data-preview-for="productRef" class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-300 bg-gray-50/60 truncate">Ej: Tarjetas de presentación...</div>
+              <div data-preview-for="productRef" class="w-full px-4 py-2.5 border border-gray-200 rounded-md text-sm text-gray-600 bg-gray-50 truncate">Ej: Tarjetas de presentación...</div>
             </div>
 
             <!-- Row 3: Descripción -->
             <div class="mb-5">
               <div class="text-sm font-medium text-gray-700 mb-1">Descripción de tu necesidad <span class="text-brand-orange-text">*</span></div>
-              <div data-preview-for="message" class="w-full px-4 py-3 border border-gray-200 rounded-md text-sm text-gray-300 bg-gray-50/60 h-20 leading-relaxed overflow-hidden">
+              <div data-preview-for="message" class="w-full px-4 py-3 border border-gray-200 rounded-md text-sm text-gray-600 bg-gray-50 h-20 leading-relaxed overflow-hidden">
                 Ej: Necesito 500 carpetas con logo corporativo para evento en junio...
               </div>
             </div>
