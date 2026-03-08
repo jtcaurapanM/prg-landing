@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Badge from '../../components/ui/Badge.astro';
 import ProductCard from '../../components/catalog/ProductCard.astro';
@@ -23,6 +23,17 @@ const relatedProducts = products
   .filter((p) => p.category === product.category && p.slug !== product.slug)
   .slice(0, 3);
 
+// Pre-process all images at build time to serve from /_astro/ instead of
+// loading directly from images.unsplash.com (which sets third-party cookies).
+// Promise.allSettled prevents a single broken URL from failing the whole build.
+const imageResults = await Promise.allSettled(
+  product.images.map((src) =>
+    getImage({ src, width: 800, height: 600, format: 'webp' })
+  )
+);
+const optimizedImages = imageResults
+  .map((r, i) => (r.status === 'fulfilled' ? r.value : { src: product.images[i] }));
+
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'Product',
@@ -45,7 +56,7 @@ const structuredData = {
   <!-- Breadcrumb -->
   <section data-gpu-fix class="bg-brand-surface border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <nav class="flex items-center gap-2 text-sm text-gray-400" aria-label="Breadcrumb">
+      <nav class="flex items-center gap-2 text-sm text-gray-600" aria-label="Breadcrumb">
         <a href="/" class="hover:text-brand-orange transition-colors">Inicio</a>
         <span>/</span>
         <a href="/catalogo" class="hover:text-brand-orange transition-colors">Catálogo</a>
@@ -77,27 +88,16 @@ const structuredData = {
           class="flex h-full"
           style="will-change:transform;transition:transform 380ms cubic-bezier(0.4,0,0.2,1);"
         >
-          <!-- Slide 1: optimizada (LCP) -->
-          <div class="flex-none w-full h-full">
-            <Image
-              src={product.images[0]}
-              alt={product.name}
-              width={800}
-              height={600}
-              loading="eager"
-              fetchpriority="high"
-              class="w-full h-full object-cover"
-            />
-          </div>
-          <!-- Slides 2+: CDN directo, sin procesamiento Astro -->
-          {product.images.slice(1).map((img, i) => (
+          <!-- Todos los slides servidos desde /_astro/ (getImage pre-procesa en build) -->
+          {optimizedImages.map((img, i) => (
             <div class="flex-none w-full h-full">
               <img
-                src={img}
-                alt={`${product.name} — vista ${i + 2}`}
+                src={img.src}
+                alt={i === 0 ? product.name : `${product.name} — vista ${i + 1}`}
                 width="800"
                 height="600"
-                loading="lazy"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : undefined}
                 decoding="async"
                 class="w-full h-full object-cover"
               />
@@ -210,7 +210,7 @@ const structuredData = {
           <button
             id="open-quote-dialog"
             type="button"
-            class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-orange text-white font-bold rounded-md hover:bg-brand-orange-dark transition-colors"
+            class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-orange-text text-white font-bold rounded-md hover:bg-brand-orange-text-hover transition-colors"
             aria-haspopup="dialog"
             aria-controls="quote-dialog"
           >
@@ -274,10 +274,10 @@ const structuredData = {
       <!-- Track de slides -->
       <div class="lb-track-wrap">
         <div id="lb-track" class="lb-track">
-          {product.images.map((img, i) => (
+          {optimizedImages.map((img, i) => (
             <div class="lb-slide">
               <img
-                src={img}
+                src={img.src}
                 alt={`${product.name} — imagen ${i + 1}`}
                 loading={i === 0 ? 'eager' : 'lazy'}
                 decoding="async"
@@ -323,7 +323,7 @@ const structuredData = {
   <div class="sticky top-0 z-10 flex items-center justify-between px-6 sm:px-8 py-4 bg-white border-b border-gray-100">
     <div>
       <h2 id="dialog-title" class="font-bold text-brand-black text-base">Solicitar cotización</h2>
-      <p class="text-xs text-gray-400 mt-0.5 truncate max-w-xs">{product.name}</p>
+      <p class="text-xs text-gray-600 mt-0.5 truncate max-w-xs">{product.name}</p>
     </div>
     <button
       type="button"
@@ -338,9 +338,9 @@ const structuredData = {
   </div>
   <div class="px-6 sm:px-8 py-6">
     <QuoteForm productName={product.name} dialogMode={true} />
-    <p class="mt-5 text-center text-xs text-gray-400">
+    <p class="mt-5 text-center text-xs text-gray-600">
       ¿Prefieres escribir directo?
-      <a href="mailto:contacto@prg.cl" class="text-brand-orange hover:underline font-medium">contacto@prg.cl</a>
+      <a href="mailto:contacto@prg.cl" class="text-brand-orange-text hover:underline font-medium">contacto@prg.cl</a>
     </p>
   </div>
 </dialog>
