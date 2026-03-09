@@ -40,7 +40,7 @@ function isActive(href: string) {
           data-nav-link
           class:list={[
             "relative px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
-            isActive("/") ? "text-brand-orange" : "text-gray-600 hover:text-brand-black hover:bg-gray-50",
+            isActive("/") ? "text-brand-orange-text" : "text-gray-600 hover:text-brand-black hover:bg-gray-50",
           ]}
           aria-current={isActive("/") ? "page" : undefined}
         >
@@ -56,7 +56,7 @@ function isActive(href: string) {
             data-nav-link
             class:list={[
               "relative flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
-              isActive("/catalogo") ? "text-brand-orange" : "text-gray-600 hover:text-brand-black hover:bg-gray-50",
+              isActive("/catalogo") ? "text-brand-orange-text" : "text-gray-600 hover:text-brand-black hover:bg-gray-50",
             ]}
             aria-current={isActive("/catalogo") ? "page" : undefined}
           >
@@ -93,7 +93,7 @@ function isActive(href: string) {
             data-nav-link
             class:list={[
               "relative px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200",
-              isActive(href) ? "text-brand-orange" : "text-gray-600 hover:text-brand-black hover:bg-gray-50",
+              isActive(href) ? "text-brand-orange-text" : "text-gray-600 hover:text-brand-black hover:bg-gray-50",
             ]}
             aria-current={isActive(href) ? "page" : undefined}
           >
@@ -147,7 +147,7 @@ function isActive(href: string) {
           data-mobile-nav-link
           class:list={[
             "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200",
-            isActive(href) ? "bg-brand-orange/8 text-brand-orange font-semibold" : "text-gray-700 hover:bg-gray-50 hover:text-brand-black",
+            isActive(href) ? "bg-brand-orange/8 text-brand-orange-text font-semibold" : "text-gray-700 hover:bg-gray-50 hover:text-brand-black",
           ]}
           aria-current={isActive(href) ? "page" : undefined}
         >
@@ -164,7 +164,7 @@ function isActive(href: string) {
             data-mobile-catalog-link
             class:list={[
               "flex-1 flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors duration-200",
-              isActive("/catalogo") ? "bg-brand-orange/8 text-brand-orange font-semibold" : "text-gray-700 hover:bg-gray-50 hover:text-brand-black",
+              isActive("/catalogo") ? "bg-brand-orange/8 text-brand-orange-text font-semibold" : "text-gray-700 hover:bg-gray-50 hover:text-brand-black",
             ]}
             aria-current={isActive("/catalogo") ? "page" : undefined}
           >
@@ -179,7 +179,7 @@ function isActive(href: string) {
             class:list={[
               "flex items-center justify-center px-3 border-l transition-colors duration-200",
               isActive("/catalogo")
-                ? "border-brand-orange/20 text-brand-orange bg-brand-orange/8"
+                ? "border-brand-orange/20 text-brand-orange-text bg-brand-orange/8"
                 : "border-gray-100 text-gray-400 hover:text-brand-orange hover:bg-gray-50",
             ]}
           >
@@ -211,7 +211,7 @@ function isActive(href: string) {
           data-mobile-nav-link
           class:list={[
             "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200",
-            isActive(href) ? "bg-brand-orange/8 text-brand-orange font-semibold" : "text-gray-700 hover:bg-gray-50 hover:text-brand-black",
+            isActive(href) ? "bg-brand-orange/8 text-brand-orange-text font-semibold" : "text-gray-700 hover:bg-gray-50 hover:text-brand-black",
           ]}
           aria-current={isActive(href) ? "page" : undefined}
         >
@@ -317,7 +317,7 @@ function isActive(href: string) {
 
     if (catalogLink) {
       catalogLink.classList.toggle("bg-brand-orange/8",   isCatalogActive);
-      catalogLink.classList.toggle("text-brand-orange",   isCatalogActive);
+      catalogLink.classList.toggle("text-brand-orange-text",   isCatalogActive);
       catalogLink.classList.toggle("font-semibold",    isCatalogActive);
       catalogLink.classList.toggle("text-gray-700",   !isCatalogActive);
       if (isCatalogActive) { catalogLink.setAttribute("aria-current", "page"); } else { catalogLink.removeAttribute("aria-current"); }
@@ -327,7 +327,7 @@ function isActive(href: string) {
 
     if (catalogToggle) {
       catalogToggle.classList.toggle("border-brand-orange/20",  isCatalogActive);
-      catalogToggle.classList.toggle("text-brand-orange",       isCatalogActive);
+      catalogToggle.classList.toggle("text-brand-orange-text",       isCatalogActive);
       catalogToggle.classList.toggle("bg-brand-orange/8",       isCatalogActive);
       catalogToggle.classList.toggle("border-gray-100",     !isCatalogActive);
       catalogToggle.classList.toggle("text-gray-400",       !isCatalogActive);
@@ -337,7 +337,7 @@ function isActive(href: string) {
       const href   = link.getAttribute("href") ?? "";
       const active = href === "/" ? currentPath === "/" : currentPath.startsWith(href);
       link.classList.toggle("bg-brand-orange/8",  active);
-      link.classList.toggle("text-brand-orange",  active);
+      link.classList.toggle("text-brand-orange-text",  active);
       link.classList.toggle("font-semibold",   active);
       link.classList.toggle("text-gray-700",  !active);
       if (active) { link.setAttribute("aria-current", "page"); } else { link.removeAttribute("aria-current"); }
@@ -451,7 +451,7 @@ function isActive(href: string) {
       const href   = link.getAttribute("href") ?? "";
       const active = href === "/" ? currentPath === "/" : currentPath.startsWith(href);
       if (active) { link.setAttribute("aria-current", "page"); } else { link.removeAttribute("aria-current"); }
-      link.classList.toggle("text-brand-orange", active);
+      link.classList.toggle("text-brand-orange-text", active);
       link.classList.toggle("text-gray-600", !active);
       const indicator = link.querySelector("[data-nav-indicator]") as HTMLElement | null;
       if (indicator) indicator.style.display = active ? "block" : "none";
