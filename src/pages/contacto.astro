@@ -85,7 +85,7 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
         <div id="form-trigger" class="relative group cursor-pointer" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="quote-dialog" aria-label="Abrir formulario de cotización">
 
           <!-- Card preview: se eleva en hover -->
-          <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm pointer-events-none select-none transition-all duration-300 ease-out group-hover:-translate-y-2 group-hover:shadow-2xl group-focus:-translate-y-2 group-focus:shadow-2xl">
+          <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm pointer-events-none select-none transition-all duration-300 ease-out group-hover:-translate-y-2 group-hover:shadow-2xl group-focus-visible:-translate-y-2 group-focus-visible:shadow-2xl">
 
             <!-- Header preview row -->
             <div class="mb-6 pb-5 border-b border-gray-50">
@@ -122,7 +122,7 @@ const productParam = Astro.url.searchParams.get('producto') ?? '';
 
           <!-- CTA siempre visible debajo del card -->
           <div class="mt-5 flex justify-center pointer-events-none">
-            <div class="inline-flex items-center gap-2.5 bg-brand-orange-text text-white text-sm font-semibold px-7 py-3.5 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-105 group-focus:shadow-xl group-focus:scale-105">
+            <div class="inline-flex items-center gap-2.5 bg-brand-orange-text text-white text-sm font-semibold px-7 py-3.5 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-105 group-focus-visible:shadow-xl group-focus-visible:scale-105">
               <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
               Completar formulario
             </div>
