@@ -76,7 +76,7 @@ function isActive(href: string) {
               {categoryEntries.map(([slug, label]) => (
                 <a
                   href={`/catalogo?categoria=${slug}`}
-                  class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-orange transition-colors"
+                  class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-orange-text transition-colors"
                 >
                   <span class="w-1.5 h-1.5 rounded-full bg-brand-orange shrink-0" />
                   {label}
@@ -116,7 +116,7 @@ function isActive(href: string) {
       <!-- Mobile menu button -->
       <button
         id="mobile-menu-btn"
-        class="md:hidden relative z-50 w-9 h-9 flex items-center justify-center rounded-md text-gray-600 hover:text-brand-orange transition-colors"
+        class="md:hidden relative z-50 w-9 h-9 flex items-center justify-center rounded-md text-gray-600 hover:text-brand-orange-text transition-colors"
         aria-label="Abrir menú"
         aria-expanded="false"
       >
@@ -180,7 +180,7 @@ function isActive(href: string) {
               "flex items-center justify-center px-3 border-l transition-colors duration-200",
               isActive("/catalogo")
                 ? "border-brand-orange/20 text-brand-orange-text bg-brand-orange/8"
-                : "border-gray-100 text-gray-400 hover:text-brand-orange hover:bg-gray-50",
+                : "border-gray-100 text-gray-400 hover:text-brand-orange-text hover:bg-gray-50",
             ]}
           >
             <svg id="catalog-mobile-chevron" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,7 +194,7 @@ function isActive(href: string) {
             {categoryEntries.map(([slug, label]) => (
               <a
                 href={`/catalogo?categoria=${slug}`}
-                class="flex items-center gap-2.5 px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-orange transition-colors"
+                class="flex items-center gap-2.5 px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-orange-text transition-colors"
               >
                 <span class="w-1 h-1 rounded-full bg-gray-300 shrink-0" />
                 {label}
