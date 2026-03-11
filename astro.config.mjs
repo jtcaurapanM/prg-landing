@@ -6,7 +6,7 @@ import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
   site: "https://prg.cl",
-  output: "server",
+  output: "static",
   adapter: vercel(),
   integrations: [sitemap()],
   prefetch: {
